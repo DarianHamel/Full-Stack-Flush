@@ -2,6 +2,7 @@
 
 ## Project Summary and Vision
 The main vision and goal of our project is to deliver the most engaging and fun gambling experience possible to all users.
+[The main vision and goal of our project is to deliver a variety of games based on skill and chance enhancing their competitive gameplay experience with user credits.] --> Insinuate gambling but don't really say gambling 
 
 OR
 
@@ -26,7 +27,10 @@ Another feature that can complement our user accounts functionality is our leade
 ### 6. Roulette
 There will be a roulette table game on our website as an alternative option to playing card games. It will be a simple roulette table that follows typical roulette rules and standards.
 
-### 7. Time Limit Reminders ?
+### 7. Slots 
+There will be an interactive slot machine experience as another alternative option to playing card or pricey betting games. Users can enjoy watching the interactive slot machine spin different combination. 
+
+### 8. Time Limit Reminders ?
 *This is an extra feature I thought of in case we want to take be a more moral/ethical stance in our project overall. Could tie into our vision statement somewhere about how we're advocating for gambling addiction awareness ? idk like forcing reminders that tell people to take breaks or forcing pop-ups that remind people the dangers and risks of gambling and getting addicted. Could argue we're taking a stance of trying to force all gambling websites to follow some set of standards that warn people about the risks rather than trying to be as addictive as possible. Not really a realistic goal but could be interesting, or we could also just go the complete opposite route and say we want our site to be as addictive as possible LOL*
 
 ## Technologies
@@ -46,16 +50,33 @@ As a group we have not fully decided which technologies we will be using to buil
 ## User Stories
 Each user story will have a number at the end that indicates which feature it relates to.
 
-As a logged-in user, I want to be able to play my favourite gambling card games so that I can have fun and enjoy my free time. (1)
+### 1. Card Games
+* "As a logged-in user, I want to be able to play my favourite gambling card games so that I can have fun and enjoy my free time." Time Estimate: 
+* "As a logged-in user, I want to receive notifications if I need to input more money into my account before I place my bet." Time Estimate: 
 
-As a logged-out user, I want to be able to log in to my account so that I can access my user profile and find fun gambling games to play (2)
+### 2. User Accounts
+* "As a new user, I want to be able to create a new account and access the whole web application." Time Estimate: 
+* "As a logged-out user, I want to be able to log in to my account so that I can access my user profile and find fun gambling games to play." Time Estimate: 
+* "As a logged-in user, I want to be able to log out of my account whenever I want to." Time Estimate: 
+* "As a logged-in user, I want to be able to access any games that are present anytime I want." Time Estimate:
+* "As a logged-in user, I want to be able to access put money into my account." Time Estimate: 
+* "As a logged-in user, I want to be able to see my basic personal information like username and email." Time Estimate:
+* "As a logged-in user, I want to be able to change my basic information like email and card information but not my username." Time estimate: 
 
-As a logged-in user, I want to be able to view my user profile so that I can see different information related to my account, such as my username, email, gambling stats, and transaction history. (3)
+### 3. User Stats
+* "As a logged-in user, I want to be able to view my win-to-loss ratio." Time Estimate:
+* "As a logged-in user, I want to be able to view my transaction history." Time Estiamte:
 
-As a user that is new to gambling, I want to be able to find tutorials or lessons related to the games on the website so that I can learn how to properly play them. (4)
+### 4. Teaching Fundamentals
+* "As a user that is new to gambling, I want to be able to find tutorials or lessons related to the games on the website so that I can learn how to properly play them." Time Estimate:
 
-As a logged-in user, I want to be able to view a leaderboard that compares my win/loss ratio against everyone else's so that I can see how well I am doing compared to others. (5)
+### 5. Leaderboard
+* "As a logged-in user, I want to be able to view a leaderboard that compares my win/loss ratio against everyone else's so that I can see how well I am doing compared to others." Time Estimate: 
 
-As a logged-in user, I want to be able to play roulette so that I can have fun playing one of my favourite gambling games, and also because I do not enjoy card games. (6)
+### 6. Roulette
+* "As a logged-in user, I want to be able to play roulette so that I can have fun playing one of my favourite gambling games, and also because I do not enjoy card games." Time Estimate: 
 
-As a user, I want to receive warnings, reminders, and useful facts about the dangers of online gambling so that I can be aware and educated about the issues surrounding gambling addictions, and also so that I can be sure I am gambling responsibly. (7) 
+### 7. Slots 
+
+### 8. Time Limit Reminders ?
+* "As a user, I want to receive warnings, reminders, and useful facts about the dangers of online gambling so that I can be aware and educated about the issues surrounding gambling addictions, and also so that I can be sure I am gambling responsibly." Time Estimate: 
