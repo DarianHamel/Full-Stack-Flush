@@ -1,7 +1,11 @@
 # Full Stack Flush Project Proposal
 
 ## Project Summary and Vision
+The main vision and goal of our project is to deliver the most engaging and fun gambling experience possible to all users.
 
+OR
+
+The main vision and goal of our project is to ensure that all of our users are gambling responsibly and are aware of the issues surrounding gambling addictions, while still delivering a fun and engaging gambling experience.
 
 ## Core Features
 ### 1. Card Games
