@@ -1,11 +1,8 @@
 # Full Stack Flush Project Proposal
 
 ## Project Summary and Vision
-The main vision and goal of our project is to deliver the most engaging and fun gambling experience possible to all users.
+Full Stack Flush is a gambling website that functions as a form of entertainment, allowing users the ability to play table games and gamble responsibly from anywhere they please. The purpose of Full Stack Flush is to improve good gambling habits of users, while still delivering a fun and engaging gambling experience. Users will be provided with safe and healthy gambling limits and information through regular reminders. Users will be forced to implement limits on their money and time.
 
-OR
-
-The main vision and goal of our project is to ensure that all of our users are gambling responsibly and are aware of the issues surrounding gambling addictions, while still delivering a fun and engaging gambling experience.
 
 ## Core Features
 ### 1. Card Games
@@ -26,22 +23,16 @@ Another feature that can complement our user accounts functionality is our leade
 ### 6. Roulette
 There will be a roulette table game on our website as an alternative option to playing card games. It will be a simple roulette table that follows typical roulette rules and standards.
 
-### 7. Time Limit Reminders ?
-*This is an extra feature I thought of in case we want to take be a more moral/ethical stance in our project overall. Could tie into our vision statement somewhere about how we're advocating for gambling addiction awareness ? idk like forcing reminders that tell people to take breaks or forcing pop-ups that remind people the dangers and risks of gambling and getting addicted. Could argue we're taking a stance of trying to force all gambling websites to follow some set of standards that warn people about the risks rather than trying to be as addictive as possible. Not really a realistic goal but could be interesting, or we could also just go the complete opposite route and say we want our site to be as addictive as possible LOL*
+### 7. Time Limit Reminders / Safe Gambling
+Users will be forced to set reminders and limits on their gambling, including money spend/bet limits along with time limits. Users will also be provided resources to better understand the risks of gambling.
+
 
 ## Technologies
-As a group we have not fully decided which technologies we will be using to build our project, but we discussed some potential options during our first meeting. We discussed using different languages like Java, Python, and JavaScript, or even using different frameworks for the frontend and backend. Some potential candidates we came up with:
-* Python
-    * Flask
-    * Django
-* Java
-    * Spring
-* JavaScript
-    * Angular
-    * React
-    * Node.js
-    * Vue.js
-    * next.js
+MERN Stack
+DB: MongoDB
+Back-end: Express.js and Node.js
+Front-end: Angular / React.js / Vue.js - Pick one
+
 
 ## User Stories
 Each user story will have a number at the end that indicates which feature it relates to.
