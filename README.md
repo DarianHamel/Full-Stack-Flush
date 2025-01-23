@@ -3,7 +3,6 @@
 ## Project Summary and Vision
 Full Stack Flush is a gambling website that functions as a form of entertainment, allowing users the ability to play table games and gamble responsibly from anywhere they please. The purpose of Full Stack Flush is to improve good gambling habits of users, while still delivering a fun and engaging gambling experience. Users will be provided with safe and healthy gambling limits and information through regular reminders. Users will be forced to implement limits on their money and time.
 
-
 ## Core Features
 ### 1. Card Games
 One of the main features of our project will be card games. We plan to have blackjack as the main card game of our project but would also like to add some sort of miniaturized version of poker, similar to the video game Balatro.
@@ -25,37 +24,40 @@ Users will be forced to set reminders and limits on their gambling, including mo
 
 ## Technologies
 MERN Stack
-DB: MongoDB
-Back-end: Express.js and Node.js
-Front-end: Angular / React.js / Vue.js - Pick one
 
+DB: MongoDB
+
+Back-end: Express.js and Node.js
+
+Front-end: Angular / React.js / Vue.js - Pick one
 
 ## User Stories
 Each user story will have a number at the end that indicates which feature it relates to.
 
 ### 1. Card Games
-* "As a logged-in user, I want to be able to play my favourite gambling card games so that I can have fun and enjoy my free time." Time Estimate: 
-* "As a logged-in user, I want to receive notifications if I need to input more money into my account before I place my bet." Time Estimate: 
+* "As a logged-in user, I want to be able to play Blackjack so that I can have fun and enjoy my free time."
+* "As a logged-in user, I want to be able to play a Poker-like game so that I can have fun and enjoy my free time."
+* "As a logged-in user, I want to receive notifications if I need to input more money into my account before I place my bet."
 
 ### 2. User Accounts
-* "As a new user, I want to be able to create a new account and access the whole web application." Time Estimate: 
-* "As a logged-out user, I want to be able to log in to my account so that I can access my user profile and find fun gambling games to play." Time Estimate: 
-* "As a logged-in user, I want to be able to log out of my account whenever I want to." Time Estimate: 
-* "As a logged-in user, I want to be able to access any games that are present anytime I want." Time Estimate:
-* "As a logged-in user, I want to be able to access put money into my account." Time Estimate: 
-* "As a logged-in user, I want to be able to see my basic personal information like username and email." Time Estimate:
-* "As a logged-in user, I want to be able to change my basic information like email and card information but not my username." Time estimate: 
+* "As a new user, I want to be able to create a new account and access the whole web application."
+* "As a logged-out user, I want to be able to log in to my account so that I can access my user profile and find fun gambling games to play."
+* "As a logged-in user, I want to be able to log out of my account whenever I want to."
+* "As a logged-in user, I want to be able to access any games that are present anytime I want."
+* "As a logged-in user, I want to be able to access put money into my account."
+* "As a logged-in user, I want to be able to see my basic personal information like username and email."
+* "As a logged-in user, I want to be able to change my basic information like email and card information but not my username."
 
 ### 3. User Stats
-* "As a logged-in user, I want to be able to view my win-to-loss ratio." Time Estimate:
-* "As a logged-in user, I want to be able to view my transaction history." Time Estiamte:
+* "As a logged-in user, I want to be able to view my win-to-loss ratio."
+* "As a logged-in user, I want to be able to view my transaction history."
 
 ### 4. Teaching Fundamentals
-* "As a user that is new to gambling, I want to be able to find tutorials or lessons related to the games on the website so that I can learn how to properly play them." Time Estimate:
+* "As a user that is new to gambling, I want to be able to find tutorials or lessons related to the games on the website so that I can learn how to properly play them."
 
 ### 5. Leaderboard
-* "As a logged-in user, I want to be able to view a leaderboard that compares my win/loss ratio against everyone else's so that I can see how well I am doing compared to others." Time Estimate: 
+* "As a logged-in user, I want to be able to view a leaderboard that compares my win/loss ratio against everyone else's so that I can see how well I am doing compared to others."
 
 
 ### 6. Time Limit Reminders / Safe Gambling
-* "As a user, I want to receive warnings, reminders, and useful facts about the dangers of online gambling so that I can be aware and educated about the issues surrounding gambling addictions, and also so that I can be sure I am gambling responsibly." Time Estimate: 
+* "As a user, I want to receive warnings, reminders, and useful facts about the dangers of online gambling so that I can be aware and educated about the issues surrounding gambling addictions, and also so that I can be sure I am gambling responsibly."
