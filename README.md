@@ -12,13 +12,13 @@
 
 * View our project proposal here: [Proposal](https://github.com/DarianHamel/Full-Stack-Flush/blob/main/Documents/proposal.md)
 
-## Architectural Diagrams
+## Architectural Diagram
 
 * View our architectural diagrams here: [Architecture Diagram](https://github.com/DarianHamel/Full-Stack-Flush/blob/main/Documents/architecture.md)
 
-## Branching Strategy 
+## Branching Strategy and Coding Conventions
 
-* View our branching strategy here: [Branching Strategy]()
+* View our branching strategy and coding conventions here: [Branching Strategy and Coding Conventions](https://github.com/DarianHamel/Full-Stack-Flush/blob/main/Documents/conventions.md)
 
 ## Meeting Minutes 
 
