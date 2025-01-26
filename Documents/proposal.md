@@ -4,14 +4,14 @@
 Full Stack Flush is a gambling website that functions as a form of entertainment, allowing users the ability to play table games and gamble responsibly from anywhere they please. The purpose of Full Stack Flush is to improve good gambling habits of users, while still delivering a fun and engaging gambling experience. Users will be provided with safe and healthy gambling limits and information through regular reminders. Users will be forced to implement limits on their money and time.
 
 ## Core Features
-### 1. Card Games
-One of the main features of our project will be card games. We plan to have blackjack as the main card game of our project but would also like to add some sort of miniaturized version of poker, similar to the video game Balatro.
+### 1. Blackjack Game
+One of the main features of our project will be card games. We plan to have blackjack as the main card game of our project but would also like to add some sort of miniaturized version of poker, similar to the video game Balatro. The blackjack card game will be our first feature and is our initial main priority, and we will consider adding the poker minigame as one of our final features once we have finished the other higher priority features listed below.
 
 ### 2. User Accounts
 There will be a user accounts feature in our project. User accounts can be created and then must be used to access the rest of the website. This feature will include functionality for registering an account, logging in or out of an account, and viewing some basic account information.
 
-### 3. User Stats
-To complement the user accounts feature, we will have a feature that allows users to track different statistics related to their own account. There will be a way for users to view their win/loss and profit/loss ratios, along with their transaction history showing their in/outflow of money.
+### 3. Safe Gambling
+Users will be forced to set reminders and limits on their gambling, including money spend/bet limits along with time limits. Users will also be provided resources to better understand the risks of gambling.
 
 ### 4. Teaching Fundamentals
 There will be a teaching/learning section on our website to teach users how to play the different games on our website. Things like basic blackjack strategy lessons or card counting lessons will be available here.
@@ -19,8 +19,11 @@ There will be a teaching/learning section on our website to teach users how to p
 ### 5. Leaderboard
 Another feature that can complement our user accounts functionality is our leaderboard feature. There will be a leaderboard that displays the biggest winners on the website, based on users' win/loss ratio.
 
-### 6. Time Limit Reminders / Safe Gambling
-Users will be forced to set reminders and limits on their gambling, including money spend/bet limits along with time limits. Users will also be provided resources to better understand the risks of gambling.
+### 6. User Stats
+To complement the user accounts feature, we will have a feature that allows users to track different statistics related to their own account. There will be a way for users to view their win/loss and profit/loss ratios, along with their transaction history showing their in/outflow of money.
+
+### 7. Poker Game
+There will be a poker minigame similar to Balatro as discussed in the description of our first core feature.
 
 ## Technologies
 MERN Stack
@@ -34,9 +37,8 @@ Front-end: Angular / React.js / Vue.js - Pick one
 ## User Stories
 Each user story will have a number at the end that indicates which feature it relates to.
 
-### 1. Card Games
+### 1. Blackjack Game
 * "As a logged-in user, I want to be able to play Blackjack so that I can have fun and enjoy my free time."
-* "As a logged-in user, I want to be able to play a Poker-like game so that I can have fun and enjoy my free time."
 * "As a logged-in user, I want to receive notifications if I need to input more money into my account before I place my bet."
 
 ### 2. User Accounts
@@ -48,16 +50,18 @@ Each user story will have a number at the end that indicates which feature it re
 * "As a logged-in user, I want to be able to see my basic personal information like username and email."
 * "As a logged-in user, I want to be able to change my basic information like email and card information but not my username."
 
-### 3. User Stats
+### 3. Safe Gambling
+* "As a user, I want to receive warnings, reminders, and useful facts about the dangers of online gambling so that I can be aware and educated about the issues surrounding gambling addictions, and also so that I can be sure I am gambling responsibly."
+
+### 4. Leaderboard
+* "As a logged-in user, I want to be able to view a leaderboard that compares my win/loss ratio against everyone else's so that I can see how well I am doing compared to others."
+
+### 5. Teaching Fundamentals
+* "As a user that is new to gambling, I want to be able to find tutorials or lessons related to the games on the website so that I can learn how to properly play them."
+
+### 6. User Stats
 * "As a logged-in user, I want to be able to view my win-to-loss ratio."
 * "As a logged-in user, I want to be able to view my transaction history."
 
-### 4. Teaching Fundamentals
-* "As a user that is new to gambling, I want to be able to find tutorials or lessons related to the games on the website so that I can learn how to properly play them."
-
-### 5. Leaderboard
-* "As a logged-in user, I want to be able to view a leaderboard that compares my win/loss ratio against everyone else's so that I can see how well I am doing compared to others."
-
-
-### 6. Time Limit Reminders / Safe Gambling
-* "As a user, I want to receive warnings, reminders, and useful facts about the dangers of online gambling so that I can be aware and educated about the issues surrounding gambling addictions, and also so that I can be sure I am gambling responsibly."
+### 7. Poker Game
+* "As a logged-in user, I want to be able to play a Poker-like game so that I can have fun and enjoy my free time."
