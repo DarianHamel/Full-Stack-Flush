@@ -57,7 +57,10 @@ Each user story will have a number at the end that indicates which feature it re
 * "As a logged-in user, I want to be able to view a leaderboard that compares my win/loss ratio against everyone else's so that I can see how well I am doing compared to others."
 
 ### 5. Teaching Fundamentals
-* "As a user that is new to gambling, I want to be able to find tutorials or lessons related to the games on the website so that I can learn how to properly play them."
+* "As a user that is new to gambling, I want to view a list of available games with tutorials so that I can choose the one I want to learn"
+* "As a user, I want to access the teaching/learning section from the main menu so that I can easily find tutorials"
+* "As a user, I want to read a tutorial about basic blackjack strategy so that I can improve my gameplay"
+* "As a user, I want a progress tracker so that I can see which tutorials I have completed"
 
 ### 6. User Stats
 * "As a logged-in user, I want to be able to view my win-to-loss ratio."
