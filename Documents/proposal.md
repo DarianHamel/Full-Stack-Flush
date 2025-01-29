@@ -35,7 +35,7 @@ DB: MongoDB
 
 Back-end: Express.js and Node.js
 
-Front-end: Angular / React.js / Vue.js - Pick one
+Front-end: React.js
 
 ## User Stories
 Each user story will have a number at the end that indicates which feature it relates to.
