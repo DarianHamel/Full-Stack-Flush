@@ -25,6 +25,9 @@ To complement the user accounts feature, we will have a feature that allows user
 ### 7. Poker Game
 There will be a poker minigame similar to Balatro as discussed in the description of our first core feature.
 
+### 8. Capacity Throughput
+Our web app will be able to handle 50 users playing games at a time with a total of 500 requests per minute.
+
 ## Technologies
 MERN Stack
 
@@ -68,3 +71,6 @@ Each user story will have a number at the end that indicates which feature it re
 
 ### 7. Poker Game
 * "As a logged-in user, I want to be able to play a Poker-like game so that I can have fun and enjoy my free time."
+
+### 8. Capacity Throughput
+* "As a logged-in user, I want to be able to play games while there are many other people playing games with me at the same time, so that my experience isn't interrupted."
