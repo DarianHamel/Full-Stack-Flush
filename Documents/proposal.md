@@ -61,17 +61,17 @@ Front-end: React.js
 * "As a logged-in user, I want to be unable to continue gambling after I have met my daily limits for time or money spent so that I am being held accountable for my gambling habits."
 * "As a logged-in user, I want the option to use fake currency or tokens so that I can practice and improve my skills without any financial risk."
 
-### 4. Leaderboard
-* "As a logged-in user, I want to be able to view a leaderboard that compares my win/loss ratio against everyone else's so that I can see how well I am doing compared to others."
-* "As a logged-in user, I want to be able to sort the leaderboard based on different criteria such as high to low for the win/loss ratio or vice versa so that I can compare my progress against other users in multiple ways."
-* "As a logged-in user, I want to be able to filter the leaderboard based on different criteria such as win/loss ratio, time spent, money spent, etc. so that I can compare my gambling habit progress against other users and stay motivated to improve my habits."
-
-### 5. Teaching Fundamentals
+### 4. Teaching Fundamentals
 * "As a user that is new to gambling, I want to view a list of available games with tutorials so that I can choose the one I want to learn."
 * "As a user, I want to access the teaching/learning section from the main menu so that I can easily find tutorials."
 * "As a user, I want to read a tutorial about basic blackjack strategy so that I can improve my gameplay."
 * "As a user, I want a progress tracker so that I can see which tutorials I have completed."
 * "As a user, I want access to information related to the odds of all the games so that I can be fully educated on my chances to win or lose."
+
+### 5. Leaderboard
+* "As a logged-in user, I want to be able to view a leaderboard that compares my win/loss ratio against everyone else's so that I can see how well I am doing compared to others."
+* "As a logged-in user, I want to be able to sort the leaderboard based on different criteria such as high to low for the win/loss ratio or vice versa so that I can compare my progress against other users in multiple ways."
+* "As a logged-in user, I want to be able to filter the leaderboard based on different criteria such as win/loss ratio, time spent, money spent, etc. so that I can compare my gambling habit progress against other users and stay motivated to improve my habits."
 
 ### 6. User Stats
 * "As a logged-in user, I want to be able to view my win-to-loss ratio so that I can see how well my performance is."
