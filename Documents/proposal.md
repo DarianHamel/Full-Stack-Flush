@@ -22,7 +22,7 @@ To complement the user accounts feature, we will have a leaderboard feature. The
 ### 6. User Stats
 Another feature that can complement our user accounts functionality is a feature that allows users to track different statistics related to their own account. There will be a way for users to view their win/loss and profit/loss ratios, along with their transaction history showing their in/outflow of money. This will also be the place that users can see their personal gambling habits and how frequently they are visitng and using the platform.
 
-### 7. Poker Game
+### 7. Poker Minigame
 There will be a poker minigame similar to Balatro as discussed in the description of our first core feature.
 
 ### 8. Capacity Throughput
@@ -59,6 +59,7 @@ Front-end: React.js
 * "As a logged-in user, I want to receive dynamic warnings about my current gambling habits so that I am fully aware of my current habits and can strive towards improving them."
 * "As a logged-in user, I want to receive notifications when I have met my time or money limit for the day so that I can stick to my limits."
 * "As a logged-in user, I want to be unable to continue gambling after I have met my daily limits for time or money spent so that I am being held accountable for my gambling habits."
+* "As a logged-in user, I want the option to use fake currency or tokens so that I can practice and improve my skills without any financial risk."
 
 ### 4. Leaderboard
 * "As a logged-in user, I want to be able to view a leaderboard that compares my win/loss ratio against everyone else's so that I can see how well I am doing compared to others."
@@ -78,8 +79,12 @@ Front-end: React.js
 * "As a logged-in user, I want to be able to view which days I visited the platform and how long I used the platform for each day so that I can track my gambling habits."
 * "As a logged-in user, I want my user stats to be used to provide safe gambling related warnings/information so that I am getting information tailored to me based on my habits."
 
-### 7. Poker Game
+### 7. Poker Minigame
 * "As a logged-in user, I want to be able to play a Poker-like game so that I can have fun and enjoy my free time."
+* "As a logged-in user, I want to be able to sort my poker hand by suit or rank so that I can better visualize which poker hand will be best for me to play."
+* "As a logged-in user, I want to be able to see my score for the current round along with my all time high score so that I know my current progress and can try to beat my high score."
+* "As a logged-in user, I want to be able to select 1-5 cards to play as my poker hand so that I have the freedom to play more or less cards for the current hand."
+* "As a logged-in user, I want to be able to discard 1-5 cards so that I can search for more cards in the deck and play a better poker hand."
 
 ### 8. Capacity Throughput
 * "As a logged-in user, I want to be able to play games while there are many other people playing games with me at the same time, so that my experience isn't interrupted."
