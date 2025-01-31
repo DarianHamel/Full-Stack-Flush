@@ -1,7 +1,7 @@
 # Full Stack Flush Project Proposal
 
 ## Project Summary and Vision
-Full Stack Flush is a gambling website that functions as a form of entertainment, allowing users the ability to play table games and gamble responsibly from anywhere they please. The purpose of Full Stack Flush is to improve good gambling habits of users, while still delivering a fun and engaging gambling experience. Users will be provided with safe and healthy gambling limits and information through regular reminders. Users will be forced to implement limits on their money and time.
+Full Stack Flush is a gambling web application that functions as a form of entertainment, allowing users the ability to play table games and gamble responsibly from anywhere they please. The purpose of Full Stack Flush is to improve the gambling habits of all users, while still delivering a fun and engaging gambling experience. Users will be provided with safe and healthy gambling limits and information related to safe gambling through regular reminders. Users will be forced to implement limits on their money and time. Our goal is to set a new standard for all gambling platforms through the integrated ethical features that we plan to implement.
 
 ## Core Features
 ### 1. Blackjack Game
@@ -11,22 +11,22 @@ One of the main features of our project will be card games. We plan to have blac
 There will be a user accounts feature in our project. User accounts can be created and then must be used to access the rest of the website. This feature will include functionality for registering an account, logging in or out of an account, and viewing some basic account information.
 
 ### 3. Safe Gambling
-Users will be forced to set reminders and limits on their gambling, including money spend/bet limits along with time limits. Users will also be provided resources to better understand the risks of gambling.
+Users will be forced to set reminders and limits on their gambling, including money spend/bet limits along with time limits. Users will also be provided resources to better understand the risks of gambling. The safe gambling feature will be implemented at every corner of the website. We will continue to improve this feature after every other new feature is added. The ultimate function of this feature is to educate users on the risks of gambling, and provide them with as much information as possible related to gambling problems, gambling odds, and even their own personal gambling habits.
 
 ### 4. Teaching Fundamentals
-There will be a teaching/learning section on our website to teach users how to play the different games on our website. Things like basic blackjack strategy lessons or card counting lessons will be available here.
+There will be a teaching/learning section on our website to teach users how to play the different games on our website. Things like basic blackjack strategy lessons or card counting lessons will be available here. We will also provide the odds for winning at each of the games, so our users are as educated as possible.
 
 ### 5. Leaderboard
-Another feature that can complement our user accounts functionality is our leaderboard feature. There will be a leaderboard that displays the biggest winners on the website, based on users' win/loss ratio.
+To complement the user accounts feature, we will have a leaderboard feature. There will be a leaderboard that displays the biggest winners on the website, based on users' win/loss ratio. This will help to keep the platform fun and engaging.
 
 ### 6. User Stats
-To complement the user accounts feature, we will have a feature that allows users to track different statistics related to their own account. There will be a way for users to view their win/loss and profit/loss ratios, along with their transaction history showing their in/outflow of money.
+Another feature that can complement our user accounts functionality is a feature that allows users to track different statistics related to their own account. There will be a way for users to view their win/loss and profit/loss ratios, along with their transaction history showing their in/outflow of money. This will also be the place that users can see their personal gambling habits and how frequently they are visitng and using the platform.
 
 ### 7. Poker Game
 There will be a poker minigame similar to Balatro as discussed in the description of our first core feature.
 
 ### 8. Capacity Throughput
-Our web app will be able to handle 50 users playing games at a time with a total of 500 requests per minute.
+Our web application will be able to handle 50 concurrent users playing games with a total of 500 requests per minute.
 
 ## Technologies
 MERN Stack
@@ -38,8 +38,6 @@ Back-end: Express.js and Node.js
 Front-end: React.js
 
 ## User Stories
-Each user story will have a number at the end that indicates which feature it relates to.
-
 ### 1. Blackjack Game
 * "As a logged-in user, I want to be able to play Blackjack so that I can have fun and enjoy my free time."
 * "As a logged-in user, I want to receive notifications if I need to input more money into my account before I place my bet."
