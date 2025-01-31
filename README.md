@@ -6,7 +6,7 @@
 
 ## Wiki Page
 
-* View our wiki page here: [Wiki Page]()
+* View our wiki page here: [Wiki Page](https://github.com/DarianHamel/Full-Stack-Flush/wiki)
 
 ## Project Proposal
 
