@@ -41,6 +41,9 @@ Front-end: React.js
 ### 1. Blackjack Game
 * "As a logged-in user, I want to be able to play Blackjack so that I can have fun and enjoy my free time."
 * "As a logged-in user, I want to receive notifications if I need to input more money into my account before I place my bet."
+* "As a logged-in user, I want to have the ability to stand, double down, hit, or split my blackjack hand so that I can make the best decision for my particular hand."
+* "As a logged-in user, I want to be able to see the amount of money or tokens that I bet for my current hand so that I can understand the risk of my current bet."
+* "As a logged-in user, I want to be able to place or remove a bet before each round of Blackjack begins so that I have free will to decide when to continue gambling or stop."
 
 ### 2. User Accounts
 * "As a new user, I want to be able to create a new account and access the whole web application."
@@ -52,20 +55,28 @@ Front-end: React.js
 * "As a logged-in user, I want to be able to change my basic information like email and card information but not my username."
 
 ### 3. Safe Gambling
-* "As a user, I want to receive warnings, reminders, and useful facts about the dangers of online gambling so that I can be aware and educated about the issues surrounding gambling addictions, and also so that I can be sure I am gambling responsibly."
+* "As a logged-in user, I want to receive warnings, reminders, and useful facts about the dangers of online gambling so that I can be aware and educated about the issues surrounding gambling addictions, and also so that I can be sure I am gambling responsibly."
+* "As a logged-in user, I want to receive dynamic warnings about my current gambling habits so that I am fully aware of my current habits and can strive towards improving them."
+* "As a logged-in user, I want to receive notifications when I have met my time or money limit for the day so that I can stick to my limits."
+* "As a logged-in user, I want to be unable to continue gambling after I have met my daily limits for time or money spent so that I am being held accountable for my gambling habits."
 
 ### 4. Leaderboard
 * "As a logged-in user, I want to be able to view a leaderboard that compares my win/loss ratio against everyone else's so that I can see how well I am doing compared to others."
+* "As a logged-in user, I want to be able to sort the leaderboard based on different criteria such as high to low for the win/loss ratio or vice versa so that I can compare my progress against other users in multiple ways."
+* "As a logged-in user, I want to be able to filter the leaderboard based on different criteria such as win/loss ratio, time spent, money spent, etc. so that I can compare my gambling habit progress against other users and stay motivated to improve my habits."
 
 ### 5. Teaching Fundamentals
-* "As a user that is new to gambling, I want to view a list of available games with tutorials so that I can choose the one I want to learn"
-* "As a user, I want to access the teaching/learning section from the main menu so that I can easily find tutorials"
-* "As a user, I want to read a tutorial about basic blackjack strategy so that I can improve my gameplay"
-* "As a user, I want a progress tracker so that I can see which tutorials I have completed"
+* "As a user that is new to gambling, I want to view a list of available games with tutorials so that I can choose the one I want to learn."
+* "As a user, I want to access the teaching/learning section from the main menu so that I can easily find tutorials."
+* "As a user, I want to read a tutorial about basic blackjack strategy so that I can improve my gameplay."
+* "As a user, I want a progress tracker so that I can see which tutorials I have completed."
+* "As a user, I want access to information related to the odds of all the games so that I can be fully educated on my chances to win or lose."
 
 ### 6. User Stats
-* "As a logged-in user, I want to be able to view my win-to-loss ratio."
-* "As a logged-in user, I want to be able to view my transaction history."
+* "As a logged-in user, I want to be able to view my win-to-loss ratio so that I can see how well my performance is."
+* "As a logged-in user, I want to be able to view my transaction history so that I can keep track of how much money I am gambling."
+* "As a logged-in user, I want to be able to view which days I visited the platform and how long I used the platform for each day so that I can track my gambling habits."
+* "As a logged-in user, I want my user stats to be used to provide safe gambling related warnings/information so that I am getting information tailored to me based on my habits."
 
 ### 7. Poker Game
 * "As a logged-in user, I want to be able to play a Poker-like game so that I can have fun and enjoy my free time."
