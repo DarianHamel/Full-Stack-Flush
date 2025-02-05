@@ -1,3 +1,11 @@
+# Class API Diagram
+
+This is an overview of our API. The technologies we used are:
+
+* **MongoDB** for our database
+* **Express.js** and **Node.js** for our back-end
+* **React.js** for our front-end
+
 ```mermaid
 %%{
   init: {
