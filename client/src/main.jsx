@@ -7,6 +7,7 @@ import {
 import App from "./App";
 import Record from "./components/Record";
 import RecordList from "./components/RecordList";
+import Blackjack from "./components/Blackjack";
 import "./index.css";
 
 const router = createBrowserRouter([
@@ -37,6 +38,16 @@ const router = createBrowserRouter([
       {
         path: "/edit/:id",
         element: <Record />,
+      },
+    ],
+  },
+  {
+    path: "/blackjack",
+    element: <App />,
+    children: [
+      {
+        path: "/blackjack",
+        element: <Blackjack />,
       },
     ],
   },
