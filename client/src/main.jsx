@@ -8,6 +8,7 @@ import App from "./App";
 import Record from "./components/Record";
 import RecordList from "./components/RecordList";
 import "./index.css";
+import Leaderboard from "./components/Leaderboard";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,16 @@ const router = createBrowserRouter([
       {
         path: "/edit/:id",
         element: <Record />,
+      },
+    ],
+  },
+  {
+    path: "/leaderboard",
+    element: <App />,
+    children: [
+      {
+        path: "/leaderboard",
+        element: <Leaderboard />,
       },
     ],
   },
