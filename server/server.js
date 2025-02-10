@@ -1,15 +1,28 @@
-import express from "express";
-import cors from "cors";
-import records from "./routes/record.js";
-
-const PORT = process.env.PORT || 5050;
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
 const app = express();
+require("dotenv").config();
+const cookieParser = require("cookie-parser"); // for managing cookie-based sessions and extracting data from cookies
+const authRoute = require("./Routes/AuthRoute");
+const { ATLAS_URI, PORT } = process.env;
 
-app.use(cors());
-app.use(express.json());
-app.use("/record", records);
+mongoose
+  .connect(ATLAS_URI)
+  .then(() => console.log("MongoDB is  connected successfully"))
+  .catch((err) => console.error(err));
 
-// start the Express server
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`Server is listening on port ${PORT}`);
 });
+
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+app.use(cookieParser());
+app.use("/", authRoute);
