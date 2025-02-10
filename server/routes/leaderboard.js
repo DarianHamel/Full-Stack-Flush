@@ -1,5 +1,5 @@
 import express from "express";
-import { leaderboardList } from "../db/Leaderboard.js";
+import { leaderboardList } from "../Models/LeaderboardModel.js";
 
 // This will help us connect to the database
 import db from "../db/connection.js";
