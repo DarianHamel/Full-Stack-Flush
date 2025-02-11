@@ -1,24 +1,25 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { MongoClient } from "mongodb";
 
 const URI = process.env.ATLAS_URI || "";
-const client = new MongoClient(URI, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
 
-try {
-  // Connect the client to the server
-  await client.connect();
-  // Send a ping to confirm a successful connection
-  await client.db("admin").command({ ping: 1 });
-  console.log("Pinged your deployment. You successfully connected to MongoDB!");
-} catch (err) {
-  console.error(err);
-}
+const client = new MongoClient(URI);
 
-let db = client.db("employees");
+let db;
 
-export default db;
+export const connectDB = async () => {
+  try {
+    await client.connect();
+    db = client.db("FullStackFlush"); 
+    console.log("✅ Successfully connected to MongoDB!");
+  } catch (error) {
+    console.error("❌ Error connecting to MongoDB:", error);
+    process.exit(1);
+  }
+};
+
+export const getDB = () => {
+  if (!db) {
+    throw new Error("❌ Database not initialized. Call connectDB() first.");
+  }
+  return db;
+};
