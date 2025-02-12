@@ -17,6 +17,7 @@ let currentGame;
 // This section will help start a game
 router.post("/start", async (req, res) => {
     currentGame = new Game();
+    res.send("Game started").status(200);
 });
 
 export default router;

@@ -4,14 +4,14 @@ class Deck{
     constructor(){
         this.cards = [];
         this.initialize_deck();
-        for (const card of this.cards){
+        /*for (const card of this.cards){
             console.log(card.getSuit() + " " + card.getRank());
         }
         this.shuffle();
         console.log("Shuffled");
         for (const card of this.cards){
             console.log(card.getSuit() + " " + card.getRank());
-        }
+        }*/
     }
 
     //Creates all the cards of the deck
