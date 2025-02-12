@@ -7,12 +7,19 @@ const bcrypt = require("bcryptjs");
 
 module.exports.Signup = async (req, res, next) => {
   try {
-    const { password, username, createdAt } = req.body;
+    const { password, username, createdAt, balance, wins, loss} = req.body;
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.json({ message: "User already exists" });
     }
-    const user = await User.create({ password, username, createdAt });
+    const user = await User.create({ 
+      password, 
+      username, 
+      createdAt, 
+      balance: req.body.balance ?? 0, 
+      wins: req.body.balance ?? 0, 
+      loss: req.body.balance ?? 0,
+    });
     const token = createSecretToken(user._id);
     res.cookie("token", token, {
       withCredentials: true,

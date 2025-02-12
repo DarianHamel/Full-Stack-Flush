@@ -17,6 +17,18 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
+  balance: {
+    type: Number, 
+    default: 0,
+  },
+  wins: {
+    type: Number,
+    default: 0,
+  },
+  loss: {
+    type: Number, 
+    default: 0,
+  },
   // insert user stats and other stuff we want to track here
 });
 
