@@ -6,9 +6,9 @@ class Deck{
         this.initialize_deck();
         /*for (const card of this.cards){
             console.log(card.getSuit() + " " + card.getRank());
-        }
+        }*/
         this.shuffle();
-        console.log("Shuffled");
+        /*console.log("Shuffled");
         for (const card of this.cards){
             console.log(card.getSuit() + " " + card.getRank());
         }*/

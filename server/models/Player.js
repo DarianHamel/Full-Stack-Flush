@@ -1,6 +1,7 @@
 class Player{
-    constructor(){
+    constructor(ws){
         this.hand = [];
+        this.ws = ws;
     }
 }
 
