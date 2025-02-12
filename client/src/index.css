@@ -23,9 +23,9 @@ body {
   align-items: center;
   background: linear-gradient(
     90deg,
-    rgba(2, 0, 36, 1) 0%,
-    rgba(143, 187, 204, 1) 35%,
-    rgba(0, 212, 255, 1) 100%
+    rgb(20, 7, 7) 0%,
+    rgb(77, 16, 16) 35%,
+    rgb(114, 11, 11) 100%
   );
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
@@ -42,7 +42,7 @@ body {
 .form_container > h2 {
   margin-block: 1rem;
   padding-block: 0.6rem;
-  color: rgba(0, 212, 255, 1);
+  color: rgb(153, 20, 20);
 }
 
 .form_container > form {
@@ -117,6 +117,30 @@ span a {
 .home_page button:hover {
   background-color: rgba(0, 212, 255, 1);
 }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal_content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
 
 
 @media only screen and (max-width: 1200px){

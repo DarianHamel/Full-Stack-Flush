@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-const Login = () => {
+const Login = ({ show, onClose, setShowSignup }) => {
+  if (!show) return null;
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     username: "",
@@ -41,8 +42,10 @@ const Login = () => {
       const { success, message } = data;
       if (success) {
         handleSuccess(message);
+        onClose();
         setTimeout(() => {
           navigate("/");
+          window.location.reload(); 
         }, 1000);
       } else {
         handleError(message);
@@ -58,35 +61,38 @@ const Login = () => {
   };
 
   return (
-    <div className="form_container">
-      <h2>Login Account</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="username">Username</label>
-          <input
-            type="username"
-            name="username"
-            value={username}
-            placeholder="Enter your username"
-            onChange={handleOnChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            value={password}
-            placeholder="Enter your password"
-            onChange={handleOnChange}
-          />
-        </div>
-        <button type="submit">Submit</button>
-        <span>
-          Already have an account? <Link to={"/signup"}>Signup</Link>
-        </span>
-      </form>
-      <ToastContainer />
+    <div className="modal">
+      <div className="modal_content">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="username">Username</label>
+            <input
+              type="username"
+              name="username"
+              value={username}
+              placeholder="Enter your username"
+              onChange={handleOnChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={password}
+              placeholder="Enter your password"
+              onChange={handleOnChange}
+            />
+          </div>
+          <button type="submit">Submit</button>
+          <button type="button" onClick={onClose}>Close</button>
+          <span>
+            Don't have an account yet? <button type="button" onClick={() => { onClose(); setShowSignup(true); }}>Register</button>
+          </span>
+        </form>
+        <ToastContainer />
+      </div>
     </div>
   );
 };
