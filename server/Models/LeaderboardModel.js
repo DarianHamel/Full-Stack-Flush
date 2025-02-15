@@ -1,9 +1,10 @@
 import db from '../db/connection.js';
 //will be deleted when user db is made
 const leaderboardSchema = {
-    name: String,
+    username: String,
     wins: Number,
     losses: Number,
+    moneySpent: Number,
 };
 
 const leaderboardList = db.collection("leaderboard");
