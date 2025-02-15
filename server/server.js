@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/record", records);
-app.use("/leaderboard", leaderboardRoutes);
+app.use("/api/leaderboard", leaderboardRoutes);
 
 // start the Express server
 app.listen(PORT, () => {

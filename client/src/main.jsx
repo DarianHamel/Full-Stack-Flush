@@ -42,11 +42,11 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/leaderboard",
+    path: "/api/leaderboard",
     element: <App />,
     children: [
       {
-        path: "/leaderboard",
+        path: "/api/leaderboard",
         element: <Leaderboard />,
       },
     ],

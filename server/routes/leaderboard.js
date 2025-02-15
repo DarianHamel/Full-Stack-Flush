@@ -13,17 +13,14 @@ import { ObjectId } from "mongodb";
 const router = express.Router();
 router.get("/", async(req, res) => {
     try{
-        const {sortBy} = req.query;
-        //const sortCriteria = sortBy || 'level';
-        let collection = await db.collection("leaderboard");
-        let results = await collection.find({}).toArray();//.sort({[sortCriteria]: 1}).toArray();
-        console.log("Leaderboard data: ", results);
-        res.send(results).status(200);
-        //let query = { _id: new ObjectId(req.params.id) };
-        //let result = await collection.findOne(query);
+        const {sortBy = "wins", order = "desc"} = req.query; //sort by wins as default
+        const sortFields = {name: 1, wins: -1, losses: -1}; // default sorting rules
+        const sortCriteria = sortFields[sortBy] || sortFields["wins"];
 
-        //if (!result) res.send("Not found").status(404);
-        //else res.send(result).status(200);
+        let collection = await db.collection("leaderboard");
+        let results = await collection.find({}).sort({[sortBy]: sortCriteria}).toArray();
+        console.log("Leaderboard data: ", results);
+        res.status(200).json(results);
     }
     catch(err){
         console.error(err);

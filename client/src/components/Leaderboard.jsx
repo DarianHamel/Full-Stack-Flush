@@ -2,30 +2,30 @@ import { useState, useEffect } from "react";
 
 export default function Leaderboard (){
     const[leaderboard, setLeaderboard] = useState([]);
-    //const[sortBy, setSortBy] = useState("level");
+    const[sortBy, setSortBy] = useState("wins");
 
     //gets the leaderboard data from the API
     useEffect(() =>{
         async function fetchLeaderboard() {
             try{
-                const response = await fetch('http://localhost:5050/leaderboard');
+                const response = await fetch(`http://localhost:5050/api/leaderboard`);
 
                 if(!response.ok){
-                    console.error(`An error has occured: ${response.statusText}`);
+                    console.error(`An error has occured with the API: ${response.statusText}`);
                     return;
                 }
 
                 const data = await response.json();
-                console.log("Got data: ", data);
+                console.log("Got the data: ", data);
                 setLeaderboard(data);
             }
             catch(error){
-                console.error("Network error: ", error);
+                console.error("An error occurred with the Network: ", error);
             }
         }
 
         fetchLeaderboard();
-    }, []);
+    }, [sortBy]);
 
     function LeaderboardRows(){
         return leaderboard.map((entry, index) => (
@@ -33,6 +33,7 @@ export default function Leaderboard (){
                 <td className="border border-gray-400 p-2">{index + 1}</td>
                 <td className="border border-gray-400 p-2">{entry.name}</td>
                 <td className="border border-gray-400 p-2">{entry.wins}</td>
+                <td className="border border-gray-400 p-2">{entry.losses}</td>
             </tr>
         ));
     }
@@ -40,6 +41,11 @@ export default function Leaderboard (){
     return(
         <div>
             <h3>Leaderboard</h3>
+            <select onChange={(newSort) => setSortBy(newSort.target.value)} value={sortBy} className="border p-2">
+                <option value="name">Name</option>
+                <option value="wins">Wins</option>
+                <option value="losses">Losses</option>
+            </select>
             {leaderboard.length === 0 ? (<p>No data available</p>): (
                 <div>
                     <table className="w-full border-collapse border border-gray-400">
