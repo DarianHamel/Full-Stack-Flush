@@ -8,7 +8,7 @@ export default function Leaderboard (){
     useEffect(() =>{
         async function fetchLeaderboard() {
             try{
-                const response = await fetch(`http://localhost:5050/api/leaderboard`);
+                const response = await fetch(`http://localhost:5050/api/leaderboard?sortBy=${sortBy}&order=desc`);
 
                 if(!response.ok){
                     console.error(`An error has occured with the API: ${response.statusText}`);
@@ -54,6 +54,7 @@ export default function Leaderboard (){
                                 <th className="border border-gray-400 p-2">Rank</th>
                                 <th className="border border-gray-400 p-2">Name</th>
                                 <th className="border border-gray-400 p-2">Wins</th>
+                                <th className="border border-gray-400 p-2">Losses</th>
                             </tr>
                         </thead>
 
