@@ -9,7 +9,9 @@ import Signup from "./Signup";
 const Home = ({ setUsername }) => {
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies(["token"]);
-  const [username, localSetUsername] = useState("");
+  const [username, localSetUsername] = useState(""); // Username should be fetched when logged in
+  const [amount, setAmount] = useState(""); // Amount for deposit or bet
+
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const hasCheckedCookie = useRef(false);
@@ -53,6 +55,23 @@ const Home = ({ setUsername }) => {
     setUsername("");
     window.location.reload();
   };
+    // Update balance (deposit or bet)
+    const updateBalance = async (username, change) => {
+      if (!amount || isNaN(amount) || amount <= 0) {
+        toast.error("Enter a valid amount!");
+        return;
+      }
+      try {
+        const { data } = await axios.post(
+          "http://localhost:5050/update-balance",
+          { username, amount: change }, // Pass username and amount
+          { withCredentials: true }
+        );
+        toast.success(`Balance updated: $${data.balance}`);
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Transaction failed");
+      }
+    };
   // next agenda for mateo: clean up the cookie verification stuff bc its duplicated in here and in app.jsx now
   // also fix refreshing stuff and when registering it doesnt close and auto-refresh when it should
   // fix this home.jsx and start connecting stuff to other features now
@@ -77,6 +96,17 @@ const Home = ({ setUsername }) => {
           <button onClick={() => setShowSignup(true)}>Register</button>
           </>
         )}
+        <h4>Welcome, <span>{username}</span></h4>
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="Enter amount"
+        />
+        <button onClick={() => updateBalance(username, -Number(amount))}>Bet</button>
+        <button onClick={() => updateBalance(username, Number(amount))}>Deposit</button>
+        <button onClick={() => { removeCookie("token"); navigate("/login"); }}>LOGOUT</button>
+        <button onClick={() => navigate("/balance")}>View Balance</button>
       </div>
 
       <Login show={showLogin} onClose={() => setShowLogin(false)} setShowSignup={setShowSignup}/>

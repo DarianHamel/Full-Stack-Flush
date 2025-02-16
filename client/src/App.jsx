@@ -1,6 +1,4 @@
-import { Outlet } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import { Route, Routes } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Home from "./components/Home";
@@ -8,6 +6,7 @@ import Profile from "./components/Profile";
 import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import Balance from "./components/Balance"
 
 const App = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
@@ -57,10 +56,12 @@ const App = () => {
         window.location.reload();
       }}/>
       <Routes>
-        <Route path="/" element={<Home username={username} setUsername={setUsername}/>} />
-        <Route path="/profile" element={<Profile username={username}/>} />
+        <Route path="/" element={<Home/>} />
+        <Route path="/login" element={<Login/>} />
+        <Route path="/signup" element={<Signup/>} />
       </Routes>
     </div>
   );
 };
+
 export default App;
