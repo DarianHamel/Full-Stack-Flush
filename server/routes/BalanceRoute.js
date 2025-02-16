@@ -1,7 +1,8 @@
-const router = require("express").Router();
-const balanceController = require("../Controllers/BalanceController");
+const express = require("express");
+const router = express.Router();
+const {GetBalance, UpdateBalance} = require("../Controllers/BalanceController");
 
-router.get("/balance", balanceController.GetBalance);
-route.patch("/balance", balanceController.UpdateBalance);
+router.post("/balance", GetBalance);
+router.post("/update-balance", UpdateBalance); 
 
 module.exports = router;
