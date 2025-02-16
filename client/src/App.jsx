@@ -56,9 +56,9 @@ const App = () => {
         window.location.reload();
       }}/>
       <Routes>
-        <Route path="/" element={<Home/>} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/signup" element={<Signup/>} />
+        <Route path="/" element={<Home username={username} setUsername={setUsername}/>} />
+        <Route path="/profile" element={<Profile username={username}/>} />
+        <Route path="/balance" element={<Balance />} />
       </Routes>
     </div>
   );
