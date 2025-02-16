@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import axios from "axios";
@@ -6,13 +6,20 @@ import { ToastContainer, toast } from "react-toastify";
 import Login from "./Login";
 import Signup from "./Signup";
 
-const Home = () => {
+const Home = ({ setUsername }) => {
   const navigate = useNavigate();
-  const [cookies, removeCookie] = useCookies([]);
-  const [username, setUsername] = useState("");
+  const [cookies, removeCookie] = useCookies(["token"]);
+  const [username, localSetUsername] = useState("");
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+  const hasCheckedCookie = useRef(false);
   useEffect(() => {
+    // only check the cookie once so it isnt spammed
+    if (hasCheckedCookie.current) return;
+    hasCheckedCookie.current = true;
+
+    if (username) setShowLogin(false);
+
     const verifyCookie = async () => {
       try {
         const { data } = await axios.post(
@@ -22,27 +29,34 @@ const Home = () => {
         );
         const { status, user } = data;
         if (status) {
-          setUsername(user);
-          toast(`Hello ${user}`, { position: "top-right" });
+          localSetUsername(data.user);
+          setUsername(data.user);
+          toast(`Hello ${user}`, { position: "bottom-right" });
         } else {
           removeCookie("token");
           // Optionally show a toast message or redirect
-          toast.error("Session expired. Please log in.");
+          toast.error("Session expired. Please log in.", { position: "bottom-right" });
         }
       } catch (error) {
         console.error("Verification failed:", error);
         removeCookie("token");
-        toast.error("An error occurred. Please log in.");
+        toast.error("An error occurred. Please log in.", { position: "bottom-right" });
       }
     };
   
     verifyCookie();
-  }, [cookies, navigate, removeCookie]);
+  }, [cookies, navigate, removeCookie, setUsername, username]);
   const Logout = () => {
     removeCookie("token");
+    removeCookie("username");
+    localSetUsername("");
     setUsername("");
     window.location.reload();
   };
+  // next agenda for mateo: clean up the cookie verification stuff bc its duplicated in here and in app.jsx now
+  // also fix refreshing stuff and when registering it doesnt close and auto-refresh when it should
+  // fix this home.jsx and start connecting stuff to other features now
+  // potentially connect to leaderboard now and start making sure user stats work too, display them on profile page too
   return (
     <>
       <div className="home_page">

@@ -1,17 +1,50 @@
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
+import Login from "./Login";
+import Signup from "./Signup";
+import "../navbar.css";
+import "../index.css"
 
-export default function Navbar() {
+const Navbar = ({ username, setUsername, onLogout }) => {
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
+  const navigate = useNavigate();
+
+  const profileClick = () => {
+    navigate("/profile");
+  }
+
+  const homeClick = () => {
+    navigate("/");
+  }
+
   return (
-    <div>
-      <nav className="flex justify-between items-center mb-6">
-        <NavLink to="/">
-          <img alt="MongoDB logo" className="h-10 inline" src="https://raw.githubusercontent.com/mongodb-developer/mern-stack-example/603144e25ba5549159d1962601337652a7bfa253/mern/client/src/assets/mongodb.svg"></img>
-        </NavLink>
+    <nav className="navbar">
 
-        <NavLink className="inline-flex items-center justify-center whitespace-nowrap text-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-slate-100 h-9 rounded-md px-3" to="/create">
-          Create Employee
-        </NavLink>
-      </nav>
-    </div>
+      <div className="nav-left">
+        <button className="home-btn" onClick={homeClick}>Home</button>
+      </div>
+
+      <div className="nav-right">
+        {username ? (
+          <div className="user-actions">
+            <span className="username">Hello, {username}</span>
+            <button className="profile-btn" onClick={profileClick}>Profile</button>
+            <button className="logout-btn" onClick={onLogout}>Logout</button>
+          </div>
+        ) : (
+          <div className="auth-buttons">
+            <button className="login-btn" onClick={() => setShowLogin(true)}>Login</button>
+            <button className="signup-btn" onClick={() => setShowSignup(true)}>Register</button>
+          </div>
+        )}
+      </div>
+      
+      <Login show={showLogin} onClose={() => setShowLogin(false)} setShowSignup={setShowSignup}/>
+      <Signup show={showSignup} onClose={() => setShowSignup(false)} setShowLogin={setShowLogin}/>
+    </nav>
   );
-}
+};
+
+export default Navbar;

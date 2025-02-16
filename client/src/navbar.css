@@ -1,0 +1,112 @@
+/* General body reset for overflow */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2000;
+    background-color: #2c1212;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .nav-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+  }
+  
+
+  .auth-buttons button, 
+  .logout-btn,
+  .profile-btn,
+  .home-btn {
+    font-size: 16px;
+    padding: 10px 18px;
+    margin-left: 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+
+  .login-btn {
+    background-color: #2d9cdb;
+    color: white;
+  }
+  
+  .signup-btn {
+    background-color: #27ae60; 
+    color: white;
+  }
+  
+  .logout-btn {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .home-btn {
+    background-color: pink;
+    color: black;
+  }
+
+  .profile-btn {
+    background-color: purple;
+    color: white;
+  }
+  
+ 
+  .auth-buttons button:hover,
+  .logout-btn:hover,
+  .profile-btn:hover,
+  .home-btn {
+    filter: brightness(1.2);
+  }
+  
+
+  .user-actions {
+    display: flex;
+    align-items: center;
+  }
+  
+  .username {
+    font-size: 18px;
+    margin-right: 15px;
+  }
+
+/* modal styling just testing with this here to try and keep it consistent */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal_content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }

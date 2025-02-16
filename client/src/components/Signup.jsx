@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import "../modal.css"
 
 
 const Signup = ({ show, onClose, setShowLogin }) => {
@@ -61,10 +62,10 @@ const Signup = ({ show, onClose, setShowLogin }) => {
   return (
     <div className="modal">
       <div className="modal_content">
-        <h2>Registration</h2>
+        <h2 className="modal_text">Registration</h2>
         <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="username">Username</label>
+          <div className="modal_text">
+            <label htmlFor="username">Username:</label>
             <input
               type="text"
               name="username"
@@ -73,8 +74,8 @@ const Signup = ({ show, onClose, setShowLogin }) => {
               onChange={handleOnChange}
             />
           </div>
-          <div>
-            <label htmlFor="password">Password</label>
+          <div className="modal_text">
+            <label htmlFor="password">Password:</label>
             <input
               type="password"
               name="password"
@@ -86,7 +87,7 @@ const Signup = ({ show, onClose, setShowLogin }) => {
           <button type="submit">Submit</button>
           <button type="button" onClick={onClose}>Close</button>
           <span>
-            Already have an account? <button type="button" onClick={() => { onClose(); setShowLogin(true); }}>Login</button>
+            <div className="modal_text">Already have an account?</div> <button type="button" onClick={() => { onClose(); setShowLogin(true); }}>Login</button>
           </span>
         </form>
         <ToastContainer />
