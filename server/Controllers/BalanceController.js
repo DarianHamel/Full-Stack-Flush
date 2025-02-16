@@ -2,7 +2,7 @@ const User = require("../Models/UserModel");
 
 // Get User Balance by username
 module.exports.GetBalance = async (req, res) => {
-    const { username } = req.body; 
+    const { username } = req.query; 
     try {
       const user = await User.findOne({ username }); 
       if (!user) {
