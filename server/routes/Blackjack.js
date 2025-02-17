@@ -2,10 +2,10 @@ import express from "express";
 import Game from "../models/Game.js";
 
 // This will help us connect to the database
-import db from "../db/connection.js";
+//import db from "../db/connection.js";
 
 // This help convert the id from string to ObjectId for the _id.
-import { ObjectId } from "mongodb";
+//import { ObjectId } from "mongodb";
 
 // router is an instance of the express router.
 // We use it to define our routes.
@@ -31,19 +31,19 @@ function handle_web_socket(ws){
     console.log("Client connected to game ", game.id);
 
     ws.on('message', (msg) => {
-        console.log('Received: ', msg);
-        //pass it to blackjack.js
+        console.log('Received: '+ msg + " from player in game " + game.id);
+        handle_message(JSON.parse(msg), ws);
     });
     
     ws.on('close', () => {
-        console.log('Client disconnected');
+        remove_player(ws);
     });
     
     ws.on('error', (error) => {
         console.error('Websocket error: ', error);
     })
 
-    ws.send('Hello client!');
+    
 }
 
 //Assign new players to a game, make a new one if none available
@@ -61,10 +61,29 @@ function assign_player(ws){
         gameIdCounter++;
         games.push(game);
     }
-    game.addPlayer(ws);    
+    game.add_player(ws);    
 
     return game;
 
+}
+
+//Remove players who leave from their game and close the game if it's empty
+function remove_player(ws){
+    for (let i=0; i<games.length; i++){
+        if (games[i].remove_player(ws) && games[i].players.length == 0){
+            console.log("Game " + games[i].id + " empty, removing");
+            games.splice(i,1);
+        }
+    }
+}
+
+//Pass this action to every game, it'll deal with it
+function handle_message(message, ws){
+    if (message.type === "ACTION"){
+        for (const g of games){
+            g.handle_action(message.action, ws);
+        }
+    }
 }
 
 //export default router;
