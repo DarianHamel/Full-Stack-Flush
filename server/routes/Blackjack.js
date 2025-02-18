@@ -43,10 +43,11 @@ function handle_web_socket(ws){
         console.error('Websocket error: ', error);
     })
 
-    
 }
 
-//Assign new players to a game, make a new one if none available
+/*
+Assign new players to a game, make a new one if none available
+*/
 function assign_player(ws){
     let game;
     //Search the games for a viable one to join
@@ -67,7 +68,9 @@ function assign_player(ws){
 
 }
 
-//Remove players who leave from their game and close the game if it's empty
+/*
+Remove players who leave from their game and close the game if it's empty
+*/
 function remove_player(ws){
     for (let i=0; i<games.length; i++){
         if (games[i].remove_player(ws) && games[i].players.length == 0){
@@ -77,7 +80,9 @@ function remove_player(ws){
     }
 }
 
-//Pass this action to every game, it'll deal with it
+/*
+Pass the action and websocket to every game, the game will deal with it if needed
+*/
 function handle_message(message, ws){
     if (message.type === "ACTION"){
         for (const g of games){

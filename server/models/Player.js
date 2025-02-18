@@ -4,6 +4,10 @@ class Player{
         this.ws = ws;
     }
 
+    /*
+    Returns the total value of the hand
+    Calculates the special case for a soft Ace
+    */
     get_total(){
         let large = 0;
         let small = 0;
