@@ -4,8 +4,10 @@ const cors = require("cors");
 const app = express();
 require("dotenv").config();
 const cookieParser = require("cookie-parser"); // for managing cookie-based sessions and extracting data from cookies
-const authRoute = require("./Routes/AuthRoute");
-const balanceRoute = require("./Routes/BalanceRoute");
+
+const authRoute = require("./routes/AuthRoute");
+const balanceRoute = require("./routes/BalanceRoute");
+const winloseRoute = require("./routes/WinLoseRoute")
 const { ATLAS_URI, PORT } = process.env;
 
 mongoose
@@ -28,3 +30,4 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/", authRoute);
 app.use("/", balanceRoute);
+app.use("/", winloseRoute);
