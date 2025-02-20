@@ -4,30 +4,65 @@ import Deck from "./Deck.js";
 class Game{
     constructor(id){
         this.players = [];
-        this.deck = new Deck();
-        this.dealer = new Player(null);
+        this.playerQueue = [];
+        this.deck;
+        this.dealer = new Player(null, null);
         this.maxPlayers = 4;
         this.id = id;
         this.started = false;
         this.playingPlayer = 0;
+        this.playerIdCounter = 0;
+        this.playersPlayingAgain = 0;
     }
 
     /*
-    Add a player to this game, start the game if it's not started yet
+    Add a player to this game if it's not started yet or stick them in the queue
     */
     add_player(ws){
-        this.players.push(new Player(ws));
+        
         //Now start the game or let the player know the current state
         if (!this.started){
-            ws.send(JSON.stringify({"type": "START"}));
-            this.deal();
-            this.started = true;
+            this.players.push(new Player(ws, this.playerIdCounter));
+            this.playerIdCounter++;
+            
+            this.start_game();
         }
+        else{
+            this.playerQueue.push(new Player(ws, this.playerIdCounter));
+            this.playerIdCounter++;
+        }
+        
+    }
+
+    /*
+    Start the game with the players in the queue 
+    */
+    start_game(){
+        //Setup the game
+        this.playingPlayer = 0;
+        this.playersPlayingAgain = 0;
+        this.deck = new Deck(); //Just create a new deck of cards for each game
+        this.dealer.hand = [];
+        for (const player of this.players){
+            player.hand = [];
+        }
+
+        //Add all the players from the queue to the game
+        while (this.playerQueue.length > 0){
+            this.players.push(this.playerQueue.pop());
+        }
+
+        //Let all the players know the game is starting
+        for (const player of this.players){
+            player.ws.send(JSON.stringify({"type": "START"}));
+        }
+
+        this.started = true;
+        this.deal();
     }
 
     /*
     Deal cards to each player in the game and message them their dealt cards
-    TODO: message all players all other players cards
     */
     deal(){
         for (let i = 0; i<2; i++){
@@ -50,8 +85,25 @@ class Game{
         }
 
         //Let the player know the dealer's first card
-        //TODO: Tell every player about every other player's card
         this.message_dealer_card(0);
+
+        //Then tell the player every other player's deal
+        for (const player of this.players){
+            for (const otherPlayer of this.players){
+                if (player !== otherPlayer){
+                    const message = {
+                        type: "OTHER_PLAYER_DEAL",
+                        id: otherPlayer.id,
+                        cards: [
+                            { suit: otherPlayer.hand[0].suit, rank: otherPlayer.hand[0].rank },
+                            { suit: otherPlayer.hand[1].suit, rank: otherPlayer.hand[1].rank },
+                        ]
+                    }
+                    player.ws.send(JSON.stringify(message));
+                }
+                
+            }
+        }
 
         //Check if dealer has 21, end match if so
         if (this.dealer.get_total() === 21){
@@ -152,6 +204,9 @@ class Game{
                     case "STAND":
                         this.stand(player);
                         break;
+                    case "PLAY_AGAIN":
+                        this.play_again();
+                        break;
                     default:
                         console.log("Unknown action");
                 }
@@ -171,6 +226,18 @@ class Game{
             card: {suit: dealtCard.suit, rank: dealtCard.rank}
         }
         player.ws.send(JSON.stringify(message));
+
+        //Then message every other player the new card
+        for (const otherPlayer of this.players){
+            if (player !== otherPlayer){
+                const message = {
+                    type: "OTHER_PLAYER_DEAL_SINGLE",
+                    id: player.id,
+                    card: { suit: dealtCard.suit, rank: dealtCard.rank }
+                }
+                otherPlayer.ws.send(JSON.stringify(message));
+            }
+        }
 
         //Check if they bust
         if (player.get_total() > 21){
@@ -193,11 +260,24 @@ class Game{
         this.playingPlayer++;
         this.next_turn();
     }
+
+    /*
+    Increment the counter for the number of players who want to play again
+    When all the players want to play again, restart the game
+    */
+    play_again(){
+        this.playersPlayingAgain++;
+
+        if (this.playersPlayingAgain >= this.players.length){
+            this.start_game();
+        }
+    }
     
     /*
     Remove the player with the matching websocket
     Returns a bool for whether a player was removed or not
     */
+   //TODO: Add a check for if it's currently the leaving player's turn
     remove_player(ws){
         let output = false;
 
@@ -205,6 +285,13 @@ class Game{
             if (this.players[i].ws === ws){
                 console.log("Player disconnected from game " + this.id);
                 this.players.splice(i, 1);
+                output = true;
+            }
+        }
+        for( let i=0; i<this.playerQueue.length; i++){
+            if (this.playerQueue[i].ws === ws){
+                console.log("Player disconnected from game " + this.id + "'s queue");
+                this.playerQueue.splice(i, 1);
                 output = true;
             }
         }

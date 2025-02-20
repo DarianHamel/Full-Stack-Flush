@@ -22,7 +22,7 @@ class Deck{
 
     /*
     Shuffles all the cards in this deck
-    For each card, randomly swap it with another one
+    For each index in the card array, randomly swap that card with another one
     */
     shuffle(){
         for (let i=0; i<this.cards.length; i++){

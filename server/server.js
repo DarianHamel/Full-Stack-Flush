@@ -17,24 +17,8 @@ app.use("/record", records);
 expressWs(app);
 
 app.ws('/', (ws, req) => {
-  //console.log("Client connected");
   //Pass the websocket to blackjack.js to deal with
   handle_web_socket(ws);
-
-  /*ws.on('message', (msg) => {
-    console.log('Received: ', msg);
-    //pass it to blackjack.js
-  });
-
-  ws.on('close', () => {
-    console.log('Client disconnected');
-  });
-
-  ws.on('error', (error) => {
-    console.error('Websocket error: ', error);
-  })
-
-  ws.send('Hello client!');*/
 });
 
 // start the Express server

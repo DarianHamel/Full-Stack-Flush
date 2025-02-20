@@ -4,29 +4,20 @@ export default function Blackjack() {
 
   const [socket, setSocket] = useState(null);
   const [gameState, setGameState] = useState({
-    otherPlayer: [],
+    otherPlayers: [],
     dealerHand: [],
     hand: [],
     status: "waiting",
+    inGame: false,
+    playing: false,
+    playerTurn: false,
     bust: false,
+    gameOver: false,
     result: null,
   });
 
   async function startGame(){
     try{
-      /*let response;
-      // send a POST to /api/blackjack
-      response = await fetch("http://localhost:5050/api/blackjack/start", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }*/
-
       const newSocket = new WebSocket('ws://localhost:5050/')
 
       newSocket.onopen = () => {
@@ -40,6 +31,7 @@ export default function Blackjack() {
 
       newSocket.onclose = () => {
         console.log('Disconnected from websocket server');
+        reset_state();
       }
 
       newSocket.onerror = (error) => {
@@ -55,40 +47,56 @@ export default function Blackjack() {
 
   function handle_message(message){
     switch (message.type){
+      case "JOIN":
+        setGameState((prevState) => ({
+          ...prevState,
+          inGame: true
+        }));
+        break;
       case "START":
-        change_state("inProgress");
+        setGameState((prevState) => ({
+          ...prevState,
+          playing: true
+        }));
         break;
       case "DEAL":
         handle_deal(message);
         break;
       case "PLAYER_TURN":
-        change_state("playerTurn");
+        setGameState((prevState) => ({
+          ...prevState,
+          playerTurn: true
+        }));
         break;
       case "DEAL_SINGLE":
         handle_deal_single(message);
         break;
       case "BUST":
-        handle_bust();
+        setGameState((prevState) => ({
+          ...prevState,
+          playerTurn: false,
+          bust: true
+        }));
         break;
       case "DEALER_CARD":
         handle_dealer_card(message);
         break;
       case "GAME_OVER":
-        game_over(message);
+        setGameState((prevState) => ({
+          ...prevState,
+          gameOver: true,
+          result: message.result
+        }));
+        break;
+      case "OTHER_PLAYER_DEAL":
+        handle_other_deal(message);
+        break;
+      case "OTHER_PLAYER_DEAL_SINGLE":
+        handle_other_deal_single(message);
         break;
       default:
         console.log("Unknown message type");
     }
-  }
-
-  /*
-  Changes the gamestate to the new specified state
-  */
-  function change_state(newState){
-    setGameState((prevState) => ({
-      ...prevState,
-      status: newState
-    }));
   }
 
   /*
@@ -101,6 +109,7 @@ export default function Blackjack() {
     }
     setGameState((prevState) => ({
       ...prevState,
+      playing: true,
       hand: message.cards
     }));
   }
@@ -118,16 +127,6 @@ export default function Blackjack() {
   }
 
   /*
-  Set's the game state to bust
-  */
-  function handle_bust(){
-    setGameState((prevState) => ({
-      ...prevState,
-      bust: true
-    }));
-  }
-
-  /*
   Adds the single card to the dealer's hand
   */
   function handle_dealer_card(message){
@@ -140,14 +139,32 @@ export default function Blackjack() {
   }
 
   /*
-  Changes the state to game over and changes the result
+  Adds the other player's hand to the gamestate to display
   */
-  function game_over(message){
-    
-    change_state("gameOver");
+  function handle_other_deal(message){
+
+    for (const card of message.cards){
+      change_card(card);
+    }
     setGameState((prevState) => ({
       ...prevState,
-      result: message.result
+      otherPlayers: [...prevState.otherPlayers, {id: message.id, hand: message.cards}]
+    }));
+  }
+
+  /*
+  Adds the new card to the player with the given id
+  */
+  function handle_other_deal_single(message){
+    change_card(message.card);
+
+    setGameState((prevState) => ({
+      ...prevState,
+      otherPlayers: prevState.otherPlayers.map(player =>
+        player.id === message.id
+          ? {...player, hand: [...player.hand, message.card]}
+          : player
+        )
     }));
   }
 
@@ -175,25 +192,77 @@ export default function Blackjack() {
   function send_message(type){
     socket.send(JSON.stringify({"type": "ACTION", "action": type}));
 
-    //If we're standing, just set the state back to inProgress
+    //If we're standing, set playerTurn back to false
     if (type === "STAND"){
-      change_state("inProgress");
+      //change_state("inProgress");
+      setGameState((prevState) => ({
+        ...prevState,
+        playerTurn: false
+      }));
     }
+  }
+
+  /*
+  Tell the server we wish to play again and reset the state of the game
+  */
+  function play_again(){
+    send_message("PLAY_AGAIN");
+    setGameState({
+      otherPlayers: [],
+      dealerHand: [],
+      hand: [],
+      status: "waiting",
+      inGame: true,
+      playing: false,
+      playerTurn: false,
+      bust: false,
+      gameOver: false,
+      result: null,
+    });
+  }
+
+  /*
+  Close the websocket and reset the game state
+  */
+  function quit(){
+    socket.close()
+    reset_state();
+  }
+
+  /*
+  Reset the game state
+  */
+  function reset_state(){
+    setGameState({
+      otherPlayers: [],
+      dealerHand: [],
+      hand: [],
+      status: "waiting",
+      inGame: false,
+      playing: false,
+      playerTurn: false,
+      bust: false,
+      gameOver: false,
+      result: null,
+    });
   }
 
   return (
     <div>
-      {gameState.status === "waiting" && (
+      {!gameState.inGame && (
         <button onClick={startGame}>Start Game</button>
       )}
-      {(gameState.status === "inProgress" || gameState.status === "playerTurn" || gameState.status === "bust" || gameState.status === "gameOver") && (
+      {(gameState.inGame && !gameState.playing && (
+        <p>Waiting for other players...</p>
+      ))}
+      {(gameState.playing) && (
         <div>
           <h2>Your hand</h2>
           {gameState.hand.map((card, index) => (
             <p key={index}>{card.rank} of {card.suit}</p>
           ))}
         
-          {gameState.status === "playerTurn" && (
+          {gameState.playerTurn && (
             <div>
               <br />
               <button onClick={() => send_message("HIT")}>Hit</button>
@@ -215,11 +284,30 @@ export default function Blackjack() {
             <p key={index}>{card.rank} of {card.suit}</p>
           ))}
 
-          {gameState.status === "gameOver" && (
+          {gameState.otherPlayers.length > 0 && (
+            <div>
+              <br />
+              <h2>Other player's hands</h2>
+              {gameState.otherPlayers.map((otherPlayer, index) => (
+                <div key={index}>
+                  {otherPlayer.hand.map((card, index) => (
+                    <p key={index}>{card.rank} of {card.suit}</p>
+                  ))}
+                <br />
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {gameState.gameOver && (
             <div>
               <br />
               <p>Game Over!</p>
               <p>Game result: {gameState.result}</p>
+              <br />
+              <button onClick={play_again}>Play Again</button>
+              <br />
+              <button onClick={quit}>Quit</button>
             </div>
           )}
         </div>

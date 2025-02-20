@@ -1,7 +1,8 @@
 class Player{
-    constructor(ws){
+    constructor(ws, id){
         this.hand = [];
         this.ws = ws;
+        this.id = id;
     }
 
     /*
