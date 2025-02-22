@@ -54,6 +54,10 @@ module.exports.UpdateStats = async (req, res) => {
       if (wins !== undefined) user.wins += wins;   
       if (losses !== undefined) user.losses += losses;
 
+      // so password isnt rehashed
+      user.markModified('wins');
+      user.markModified('losses');
+
       await user.save();
       res.json({ success: true, wins: user.wins, losses: user.losses }); // Fix: Send updated stats
   } catch (error) {
