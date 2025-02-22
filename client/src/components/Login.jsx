@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import "../modal.css";
+import "../design/Login.css";
 
 const Login = ({ show, onClose, setShowSignup }) => {
   if (!show) return null;
@@ -64,6 +64,7 @@ const Login = ({ show, onClose, setShowSignup }) => {
   return (
     <div className="modal">
       <div className="modal_content">
+        <h1 className="app_name">Full Stack Flush</h1>
         <h2 className="modal_text">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="modal_text">

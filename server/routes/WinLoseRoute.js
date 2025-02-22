@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { UpdateStats, GetWins, GetLosses } = require("../Controllers/WinLoseController");
-const verifyToken = require("../Middleware/WinLoseMiddleware");
+const { GetWins, GetLosses, UpdateStats } = require("../Controllers/WinLoseController");
 
 router.get("/getWins", GetWins);
 router.get("/getLosses", GetLosses);
-router.post("/updateStats", verifyToken, UpdateStats);
+router.post("/updateStats", UpdateStats);
 
 module.exports = router;

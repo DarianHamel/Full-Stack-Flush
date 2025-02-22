@@ -3,15 +3,16 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 
 const Profile = ({ username }) => {
-  const [cookies] = useCookies(["username"]);
+  const [cookies] = useCookies(["username", "token"]);
   const [balance, setBalance] = useState(0);
   const [wins, setWins] = useState(0);
   const [loses, setLoses] = useState(0);
   const [winLossRatio, setWinLossRatio] = useState(0);
 
   useEffect(() => {
+    if (!cookies.username) return;
+
     const fetchBalance = async () => {
-      if (!cookies.username) return;
       try {
         const { data } = await axios.get(
           `http://localhost:5050/balance?username=${cookies.username}`,
@@ -24,28 +25,26 @@ const Profile = ({ username }) => {
     };
 
     const fetchWins = async () => {
-      if (!cookies.username) return;
       try {
         const { data } = await axios.get(
           `http://localhost:5050/getWins?username=${cookies.username}`,
           { withCredentials: true }
         );
-        setWins(data.balance);
+        setWins(data.wins); // Fix: Ensure data is properly extracted
       } catch (error) {
         console.error("Error fetching user wins: ", error);
       }
     };
 
     const fetchLose = async () => {
-      if (!cookies.username) return;
       try {
         const { data } = await axios.get(
           `http://localhost:5050/getLosses?username=${cookies.username}`,
           { withCredentials: true }
         );
-        setLoses(data.balance);
+        setLoses(data.losses); // Fix: Ensure correct field
       } catch (error) {
-        console.error("Error fetching user loses: ", error);
+        console.error("Error fetching user losses: ", error);
       }
     };
 
@@ -57,12 +56,12 @@ const Profile = ({ username }) => {
   const handleWin = async () => {
     if (!cookies.username) return;
     try {
-      await axios.post(
-        `http://localhost:5050/updateStats`,
-        { wins: 1, losses: 0 },
-        { withCredentials: true }
+      const { data } = await axios.post(
+        "http://localhost:5050/updateStats",
+        { username: cookies.username, wins: 1, losses: 0 },
+        { withCredentials: true}
       );
-      setWins(wins + 1);
+      setWins(data.wins); // Fix: Update state correctly
     } catch (error) {
       console.error("Error updating wins: ", error);
     }
@@ -71,12 +70,12 @@ const Profile = ({ username }) => {
   const handleLose = async () => {
     if (!cookies.username) return;
     try {
-      await axios.post(
-        `http://localhost:5050/updateStats`,
-        { wins: 0, losses: 1 },
-        { withCredentials: true }
+      const { data } = await axios.post(
+        "http://localhost:5050/updateStats",
+        { username: cookies.username, wins: 0, losses: 1 },
+        { withCredentials: true}
       );
-      setLoses(loses + 1);
+      setLoses(data.losses); // Fix: Update state correctly
     } catch (error) {
       console.error("Error updating losses: ", error);
     }
@@ -84,7 +83,7 @@ const Profile = ({ username }) => {
 
   useEffect(() => {
     if (wins + loses > 0) {
-      setWinLossRatio((wins / (wins + loses)).toFixed(2)); // Calculate win/loss ratio
+      setWinLossRatio((wins / (wins + loses)).toFixed(2));
     }
   }, [wins, loses]);
 

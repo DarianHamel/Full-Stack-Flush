@@ -15,6 +15,7 @@ const Home = ({ setUsername }) => {
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const hasCheckedCookie = useRef(false);
+
   useEffect(() => {
     // only check the cookie once so it isnt spammed
     if (hasCheckedCookie.current) return;
@@ -48,6 +49,7 @@ const Home = ({ setUsername }) => {
   
     verifyCookie();
   }, [cookies, navigate, removeCookie, setUsername, username]);
+
   const Logout = () => {
     removeCookie("token");
     removeCookie("username");

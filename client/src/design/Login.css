@@ -1,0 +1,66 @@
+/* Overall Modal Styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1000px;
+  height: 600px;
+  background-color: rgba(0, 0, 0, 0.5); /* Dark background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Content Styling */
+/* Modal Content Styling */
+.modal_content {
+    background-color: #fff;
+    padding: 40px; /* Adjust padding if needed */
+    border-radius: 8px;
+    width: 700px; /* Change this to adjust the width */
+    height: 600px; /* Adjust the height */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: clip; /* Ensures content scrolls if it's too large */
+  }
+  
+
+/* App Name Styling */
+.app_name {
+  font-size: 60px; /* Increase font size */
+  font-weight: bold;
+  margin-bottom: 30px; /* Adjust margin for better spacing */
+  text-align: center; /* Ensure text is centered */
+  white-space: nowrap; /* Prevent text from breaking into multiple lines */
+}
+
+/* Modal Text Styling */
+.modal_text {
+  margin: 15px 0; /* Increase margin for more space */
+}
+
+/* Form Styling */
+input {
+  width: 100%;
+  padding: 10px; /* Increase padding for larger inputs */
+  margin: 15px 0; /* Increase margin for better spacing */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px; /* Increase font size for better readability */
+}
+
+button {
+  width: 100%;
+  padding: 12px; /* Increase padding for larger buttons */
+  background-color: #4CAF50; /* Green background */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 18px; /* Increase font size for better readability */
+  cursor: pointer;
+  margin-bottom: 15px; /* Increase margin between */
+}

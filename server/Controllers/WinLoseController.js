@@ -11,7 +11,7 @@ module.exports.GetWins = async (req, res) => {
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      res.status(200).json({ balance: user.wins });
+      res.status(200).json({ wins: user.wins });
     } catch (error) {
       res.status(500).json({ message: "Server error" });
     }
@@ -27,7 +27,7 @@ module.exports.GetLosses = async (req, res) => {
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      res.status(200).json({ balance: user.losses });
+      res.status(200).json({ losses: user.losses });
     } catch (error) {
       res.status(500).json({ message: "Server error" });
     }
@@ -37,23 +37,28 @@ module.exports.GetLosses = async (req, res) => {
 // Update Stats
 
 module.exports.UpdateStats = async (req, res) => {
-    try {
-        const {wins, losses} = req.body;
+  try {
+      const { username, wins, losses } = req.body;
 
-        if (wins < 0 || losses < 0) {
-            return res.status(400).json({ success: false, message: "Invalid values" });
-        }
+      if (!username) {
+        return res.status(400).json({ message: "Invalid request. Provide a username." })
+      }
 
-        const user = await User.findById(req.user.id);
-        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+      if (wins < 0 || losses < 0) {
+          return res.status(400).json({ success: false, message: "Invalid values" });
+      }
 
-        if (wins !== undefined) user.wins += wins;
-        if (losses !== undefined) user.losses += losses;
+      const user = await User.findOne({ username }); // This will search by username field
+      if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-        await user.save();
-        res.json({ success: true, wins: user.wins, losses: user.losses });
+      if (wins !== undefined) user.wins += wins;   
+      if (losses !== undefined) user.losses += losses;
 
-    } catch (error) {
-        res.status(500).json({ success: false, message: "Sever error" });
-    }
+      await user.save();
+      res.json({ success: true, wins: user.wins, losses: user.losses }); // Fix: Send updated stats
+  } catch (error) {
+      res.status(500).json({ success: false, message: "Server error" });
+  }
 };
+
+
