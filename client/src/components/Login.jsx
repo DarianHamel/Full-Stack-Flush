@@ -65,9 +65,9 @@ const Login = ({ show, onClose, setShowSignup }) => {
     <div className="modal">
       <div className="modal_content">
         <h1 className="app_name">Full Stack Flush</h1>
-        <h2 className="modal_text">Login</h2>
+        <h2 className="modal_text">Login to your account</h2>
         <form onSubmit={handleSubmit}>
-          <div className="modal_text">
+          <div className="modal_information">
             <label htmlFor="username">Username:</label>
             <input
               type="username"
@@ -77,7 +77,7 @@ const Login = ({ show, onClose, setShowSignup }) => {
               onChange={handleOnChange}
             />
           </div>
-          <div className="modal_text">
+          <div className="modal_information">
             <label htmlFor="password">Password:</label>
             <input
               type="password"
@@ -87,11 +87,13 @@ const Login = ({ show, onClose, setShowSignup }) => {
               onChange={handleOnChange}
             />
           </div>
-          <button type="submit">Submit</button>
-          <button type="button" onClick={onClose}>Close</button>
-          <span>
-            <div className="modal_text">Don't have an account yet?</div> <button type="button" onClick={() => { onClose(); setShowSignup(true); }}>Register</button>
-          </span>
+          <div className="button-container">
+            <button type="submit" className="submit-button">Submit</button>
+            <button type="button" className="close-button" onClick={onClose}>Close</button>
+          </div>
+            <div className="modal_end">Don't have an account yet?
+            <button type="button" className="regis-button" onClick={() => { onClose(); setShowSignup(true); }}>Register</button>
+          </div> 
         </form>
         <ToastContainer />
       </div>
