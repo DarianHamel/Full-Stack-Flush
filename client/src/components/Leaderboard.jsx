@@ -39,6 +39,7 @@ export default function Leaderboard (){
                 <td className="border border-gray-400 p-2">{entry.losses}</td>
                 <td className="border border-gray-400 p-2">{entry.winLossRatio}</td>
                 <td className="border border-gray-400 p-2">{entry.moneySpent}</td>
+                <td className="border border-gray-400 p-2">{entry.timeSpent}</td>
             </tr>
         ));
     }
@@ -55,6 +56,7 @@ export default function Leaderboard (){
                     <option value="losses">Losses</option>
                     <option value="winLossRatio">Win/Loss Ratio</option>
                     <option value="moneySpent">Money Spent</option>
+                    <option value="timeSpent">Time Spent</option>
                 </select>
 
                 {/*Order dropdown */}
@@ -67,6 +69,7 @@ export default function Leaderboard (){
                 <select onChange={(newFilter) => setFilter(newFilter.target.value)} value={filter} className="border p-2">
                     <option value="">All Users</option>
                     <option value="highSpenders">High Spenders ($1500+)</option>
+                    <option value="longestPlayers">Longest Playtime (100+ hrs)</option>
                 </select>
             </div>
 
@@ -82,6 +85,7 @@ export default function Leaderboard (){
                                 <th className="border border-gray-400 p-2">Losses</th>
                                 <th className="border border-gray-400 p-2">Win/Loss Ratio</th>
                                 <th className="border border-gray-400 p-2">Money Spent</th>
+                                <th className="border border-gray-400 p-2">Time Spent</th>
                             </tr>
                         </thead>
 

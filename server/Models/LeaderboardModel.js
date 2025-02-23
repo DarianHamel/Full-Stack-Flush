@@ -5,6 +5,7 @@ const leaderboardSchema = {
     wins: Number,
     losses: Number,
     moneySpent: Number,
+    timeSpent: Number,
 };
 
 const leaderboardList = db.collection("leaderboard");

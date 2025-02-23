@@ -15,7 +15,7 @@ const router = express.Router();
 router.get("/", async(req, res) => {
     try{
         const {sortBy = "wins", order = "desc", filter = ""} = req.query; //sort by wins as default
-        const sortFields = ["username", "winLossRatio", "wins", "losses", "moneySpent"]; // sorting options
+        const sortFields = ["username", "winLossRatio", "wins", "losses", "moneySpent", "timeSpent"]; // sorting options
 
         if(!sortFields.includes(sortBy)){
             console.log(`Leaderboard data sorted by ${sortBy}`);
@@ -28,6 +28,9 @@ router.get("/", async(req, res) => {
         let filterCriteria = {};
         if(filter === "highSpenders"){
             filterCriteria = {moneySpent: {$gte: 1500}} //users that have spent exactly or over $1500 are considered high spenders
+        }
+        else if(filter === "longestPlayers"){
+            filterCriteria = {timeSpent: {$gte: 100}} //users that have spent exactly or over 100hrs are considered the longest players
         }
 
         let results = await collection.find(filterCriteria).toArray();
