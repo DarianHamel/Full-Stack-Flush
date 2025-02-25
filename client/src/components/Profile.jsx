@@ -83,7 +83,10 @@ const Profile = ({ username }) => {
 
   useEffect(() => {
     if (wins + loses > 0) {
-      setWinLossRatio((wins / (wins + loses)).toFixed(2));
+      if (loses > 0) {
+        setWinLossRatio((wins / loses).toFixed(2));
+      }
+      else setWinLossRatio(wins);
     }
   }, [wins, loses]);
 

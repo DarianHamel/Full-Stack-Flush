@@ -2,7 +2,7 @@ const User = require("../Models/UserModel");
 
 module.exports.GetLeaderboard = async(req, res) => {
     try {
-        /*console.log("test");
+        console.log("test");
         const {sortBy = "wins", order = "desc", filter = ""} = req.query; //sort by wins as default
         const sortFields = ["username", "winLossRatio", "wins", "losses", "moneySpent", "timeSpent"]; // sorting options
 
@@ -20,15 +20,16 @@ module.exports.GetLeaderboard = async(req, res) => {
         }
         else if(filter === "longestPlayers"){
             filterCriteria = {timeSpent: {$gte: 100}} //users that have spent exactly or over 100hrs are considered the longest players
-        }*/
+        }
 
-        let results = await User.find().toArray();
+        let results = await User.find();
         console.log(results);
-        return res.status(200);
+        //res.status(200).json(results);
+        results = JSON.parse(JSON.stringify(results));
 
         //im not sure if the win/loss ratio would be part of the db but for now just calculate it based on the wins and losses
         //add the calculated win/loss ratio to the results sent
-        /*results = results.map(user => ({
+        results = results.map(user => ({
             ...user,
             winLossRatio: user.losses > 0 ? (user.wins/user.losses).toFixed(2): user.wins
         }));
@@ -44,7 +45,7 @@ module.exports.GetLeaderboard = async(req, res) => {
 
         console.log(`Leaderboard data sorted by ${sortBy}, in order ${order} with filter ${filter}: `, results);
         res.status(200).json(results);
-    */}
+    }
     catch(err){
         console.error(err);
         res.status(500).send("Error occured when fetching the leaderboard");

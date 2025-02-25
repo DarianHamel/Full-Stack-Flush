@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import LeaderboardModel from "../../../server/Models/LeaderboardModel";
 
 const Leaderboard = () => {
     const[leaderboard, setLeaderboard] = useState([]);
@@ -12,15 +11,8 @@ const Leaderboard = () => {
     useEffect(() =>{
         const fetchLeaderboard = async () => {
             try{
-                const response = await axios.get(`http://localhost:5050/leaderboard?sortBy=${sortBy}&order=${order}&filter=${filter}`);
-
-                if(!response.ok){
-                    console.error(`An error has occured with the API: ${response.statusText}`);
-                    return;
-                }
-
-                const data = await response.json();
-                console.log("Got the data: ", data);
+                const { data } = await axios.get(`http://localhost:5050/leaderboard?sortBy=${sortBy}&order=${order}&filter=${filter}`,
+                );
                 setLeaderboard(data);
             }
             catch(error){
