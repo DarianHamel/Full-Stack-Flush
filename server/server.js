@@ -32,7 +32,7 @@ app.ws('/', (ws, req) => {
   console.log(match[1]);
 
   //Pass the websocket to blackjack.js to deal with
-  handle_web_socket(ws);
+  handle_web_socket(ws, match[1]);
 });
 
 // start the Express server

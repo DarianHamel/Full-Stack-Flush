@@ -4,10 +4,10 @@ const Game = require("../models/Game.js");
 let games = [];
 let gameIdCounter = 0;
 
-function handle_web_socket(ws){
+function handle_web_socket(ws, username){
     console.log("Hello");
 
-    const game = assign_player(ws);
+    const game = assign_player(ws, username);
     console.log("Client connected to game ", game.id);
     ws.send(JSON.stringify({type: "JOIN"}));
 
@@ -29,7 +29,7 @@ function handle_web_socket(ws){
 /*
 Assign new players to a game, make a new one if none available
 */
-function assign_player(ws, user){
+function assign_player(ws, username){
     let game;
     //Search the games for a viable one to join
     for (const g of games){
@@ -44,7 +44,7 @@ function assign_player(ws, user){
         gameIdCounter++;
         games.push(game);
     }
-    game.add_player(ws);    
+    game.add_player(ws, username);    
 
     return game;
 

@@ -1,5 +1,6 @@
 const Player = require ("./Player.js");
 const Deck = require("./Deck.js");
+const { handleLose, handleWin } = require("../util/HandleWinLoss.js");
 
 class Game{
     constructor(id){
@@ -18,17 +19,17 @@ class Game{
     /*
     Add a player to this game if it's not started yet or stick them in the queue
     */
-    add_player(ws){
+    add_player(ws, username){
         
         //Now start the game or let the player know the current state
         if (!this.started){
-            this.players.push(new Player(ws, this.playerIdCounter));
+            this.players.push(new Player(ws, this.playerIdCounter, username));
             this.playerIdCounter++;
             
             this.start_game();
         }
         else{
-            this.playerQueue.push(new Player(ws, this.playerIdCounter));
+            this.playerQueue.push(new Player(ws, this.playerIdCounter, username));
             this.playerIdCounter++;
         }
         
@@ -165,12 +166,14 @@ class Game{
         for (const player of this.players){
             const playerHand = player.get_total();
             if (playerHand <= 21 && (dealerHand > 21 || playerHand > dealerHand)){
+                handleWin(player.username);
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
                     result: "WIN"
                 }));
             }
             else if (playerHand < dealerHand || playerHand > 21){
+                handleLose(player.username);
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
                     result: "LOSE"

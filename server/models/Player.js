@@ -1,9 +1,9 @@
 class Player{
-    constructor(ws, id, user){
+    constructor(ws, id, username){
         this.hand = [];
         this.ws = ws;
         this.id = id;
-        this.user = user;
+        this.username = username;
     }
 
     /*
