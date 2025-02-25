@@ -7,7 +7,8 @@ const cookieParser = require("cookie-parser"); // for managing cookie-based sess
 
 const authRoute = require("./routes/AuthRoute");
 const balanceRoute = require("./routes/BalanceRoute");
-const winloseRoute = require("./routes/WinLoseRoute")
+const winloseRoute = require("./routes/WinLoseRoute");
+const leaderboardRoute = require("./routes/leaderboard");
 const { ATLAS_URI, PORT } = process.env;
 
 mongoose
@@ -16,10 +17,6 @@ mongoose
   .catch((err) => console.error(err));
 
 
-app.use(cors());
-app.use(express.json());
-app.use("/record", records);
-app.use("/api/leaderboard", leaderboardRoutes);
 
 // start the Express server
 app.listen(PORT, () => {
@@ -38,3 +35,6 @@ app.use(cookieParser());
 app.use("/", authRoute);
 app.use("/", balanceRoute);
 app.use("/", winloseRoute);
+app.use(cors());
+app.use(express.json());
+app.use("/", leaderboardRoute);

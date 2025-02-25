@@ -6,7 +6,9 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   balance: { type: Number, default: 100 }, 
   wins: { type: Number, default: 0 },
-  losses: { type: Number, default: 0 }
+  losses: { type: Number, default: 0 },
+  moneySpent: { type: Number, default: 0},
+  timeSpent: { type: Number, default: 0}
 });
 
 userSchema.pre("save", async function () {
