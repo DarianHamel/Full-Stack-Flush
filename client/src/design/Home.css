@@ -85,3 +85,37 @@ body {
     font-size: 1.5rem;
   }
 }
+
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns, each taking 1/2th of the available space */
+  gap: 20px;
+  margin-top: 20px;
+  justify-items: center;
+}
+
+.card {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  color: #333;
+  width: 100%; /* Take 90% width of the grid column */
+  height: 150px; /* Ensure consistent height */
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.0rem;
+  word-wrap: break-word; /* Break long words */
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card h3 {
+  margin: 0%;
+}

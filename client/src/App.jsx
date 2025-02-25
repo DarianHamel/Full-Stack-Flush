@@ -6,6 +6,9 @@ import Profile from "./components/Profile";
 import Leaderboard from "./components/Leaderboard";
 import Blackjack from "./components/Blackjack";
 import Navbar from "./components/Navbar";
+import Resources from "./components/Resources";
+import AboutUs from "./components/AboutUs";
+import Poker from "./components/Poker";
 import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
@@ -62,6 +65,9 @@ const App = () => {
         <Route path="/profile" element={<Profile username={username}/>} />
         <Route path="/leaderboard" element={<Leaderboard username={username}/>} />
         <Route path="/blackjack" element={<Blackjack username ={username}/>} />
+        <Route path="/poker" element={<Poker />} />
+        <Route path="resources" element={<Resources />} />
+        <Route path="about-us" element={<AboutUs />} />
       </Routes>
     </div>
   );
