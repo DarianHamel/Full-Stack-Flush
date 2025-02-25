@@ -1,0 +1,70 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #222;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  .nav-left, .nav-right {
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav-center {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .app-title {
+    cursor: pointer;
+    font-size: 40px;
+    color: white;
+  }
+  
+  .leaderboard-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+    padding-left: 50px;
+  }
+
+  .profile-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+    padding-right: 50px;
+  }
+  
+  .profile-menu {
+    position: relative;
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    right: 0;
+    transform: translateX(-40%);
+    background: white;
+    color: black;
+    border-radius: 5px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .dropdown-menu button {
+    background: none;
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 20px;
+  }
+  
