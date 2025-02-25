@@ -1,8 +1,9 @@
 class Player{
-    constructor(ws, id){
+    constructor(ws, id, user){
         this.hand = [];
         this.ws = ws;
         this.id = id;
+        this.user = user;
     }
 
     /*
@@ -38,4 +39,4 @@ class Player{
     }
 }
 
-export default Player;
+module.exports = Player;

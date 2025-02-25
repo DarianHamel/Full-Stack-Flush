@@ -1,10 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-import records from "./routes/record.js";
-//import blackjack from "./routes/Blackjack.js";
-import { handle_web_socket } from "./routes/Blackjack.js"; //Should probably move it out of ./routes now
-import expressWs from "express-ws";
+const { handle_web_socket } = require("./routes/Blackjack.js"); //Should probably move it out of ./routes now
+const expressWs = require("express-ws");
 
 const app = express();
 require("dotenv").config();
@@ -28,6 +26,11 @@ mongoose
 expressWs(app);
 
 app.ws('/', (ws, req) => {
+  console.log(req.headers.cookie);
+  let cookie = req.headers.cookie;
+  let match = cookie.match(/username=\s*([\w\d_]+)/);
+  console.log(match[1]);
+
   //Pass the websocket to blackjack.js to deal with
   handle_web_socket(ws);
 });

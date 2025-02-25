@@ -4,6 +4,7 @@ import Signup from "./components/Signup";
 import Home from "./components/Home";
 import Profile from "./components/Profile";
 import Leaderboard from "./components/Leaderboard";
+import Blackjack from "./components/Blackjack";
 import Navbar from "./components/Navbar";
 import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
@@ -60,6 +61,7 @@ const App = () => {
         <Route path="/" element={<Home username={username} setUsername={setUsername}/>} />
         <Route path="/profile" element={<Profile username={username}/>} />
         <Route path="/leaderboard" element={<Leaderboard username={username}/>} />
+        <Route path="/blackjack" element={<Blackjack username ={username}/>} />
       </Routes>
     </div>
   );

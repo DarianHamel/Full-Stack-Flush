@@ -1,9 +1,11 @@
-import Game from "../models/Game.js";
+const Game = require("../models/Game.js");
+
 
 let games = [];
 let gameIdCounter = 0;
 
 function handle_web_socket(ws){
+    console.log("Hello");
 
     const game = assign_player(ws);
     console.log("Client connected to game ", game.id);
@@ -27,7 +29,7 @@ function handle_web_socket(ws){
 /*
 Assign new players to a game, make a new one if none available
 */
-function assign_player(ws){
+function assign_player(ws, user){
     let game;
     //Search the games for a viable one to join
     for (const g of games){
@@ -37,6 +39,7 @@ function assign_player(ws){
     }
     //If there's no viable games, make a new one
     if (!game) {
+        console.log("game");
         game = new Game(gameIdCounter);
         gameIdCounter++;
         games.push(game);
@@ -71,4 +74,5 @@ function handle_message(message, ws){
 }
 
 //export default router;
-export { handle_web_socket };
+//export { handle_web_socket };
+module.exports = { handle_web_socket };
