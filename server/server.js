@@ -1,6 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+import records from "./routes/record.js";
+//import blackjack from "./routes/Blackjack.js";
+import { handle_web_socket } from "./routes/Blackjack.js"; //Should probably move it out of ./routes now
+import expressWs from "express-ws";
+
 const app = express();
 require("dotenv").config();
 const cookieParser = require("cookie-parser"); // for managing cookie-based sessions and extracting data from cookies
@@ -17,6 +22,15 @@ mongoose
   .catch((err) => console.error(err));
 
 
+//app.use("/api/blackjack", blackjack);
+
+
+expressWs(app);
+
+app.ws('/', (ws, req) => {
+  //Pass the websocket to blackjack.js to deal with
+  handle_web_socket(ws);
+});
 
 // start the Express server
 app.listen(PORT, () => {
