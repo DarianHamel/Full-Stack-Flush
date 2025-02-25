@@ -15,6 +15,13 @@ mongoose
   .then(() => console.log("MongoDB is  connected successfully"))
   .catch((err) => console.error(err));
 
+
+app.use(cors());
+app.use(express.json());
+app.use("/record", records);
+app.use("/api/leaderboard", leaderboardRoutes);
+
+// start the Express server
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
