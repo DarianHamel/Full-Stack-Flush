@@ -1,0 +1,56 @@
+name: Test Project
+
+on:
+  workflow_run:
+    workflows: [ Build Project ]
+    types:
+      - completed
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set Up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Install dependencies (Server)
+      run: |
+        cd server
+        npm ci
+
+    - name: Install dependencies (Client)
+      run: |
+        cd client
+        npm ci
+
+    - name: Download Build Artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: build-artifacts
+        path: client/dist
+        
+   #- name: Run Server Tests
+    #  run: |
+    #    cd server
+    #    npm test //change if we use a different test command
+    
+    #- name: Run Client Tests
+    #  run: |
+    #    cd client
+    #    npm test
+
+
+  
