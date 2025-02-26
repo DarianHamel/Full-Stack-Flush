@@ -321,13 +321,13 @@ export default function Blackjack() {
           
           {gameState.gameOver && (
             <div>
-              <div class="game-outcome">
+              <div className="game-outcome">
               <br />
               <p>Game Over!</p>
               <p>Game result: {gameState.result}</p>
               <br />
               </div>
-              <div class="game-buttons">
+              <div className="game-buttons">
                 <button onClick={play_again}>Play Again</button>
                 <button onClick={quit}>Quit</button>
               </div>
