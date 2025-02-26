@@ -1,36 +1,26 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchTutorialById, deleteTutorialById } from "../api"; // Import delete function
+import axios from "axios";
 
 const TutorialDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [tutorial, setTutorial] = useState(null);
+  const API_BASE_URL = "http://localhost:5050/api/tutorials"; 
 
   useEffect(() => {
+
     const loadTutorial = async () => {
       try {
-        const data = await fetchTutorialById(id);
-        setTutorial(data);
+        console.log(id);
+        const response = await axios.get(`${API_BASE_URL}?id=${id}`);
+        setTutorial(response.data.tutorials);
       } catch (error) {
         console.error("Error fetching tutorial:", error);
       }
     };
     loadTutorial();
   }, [id]);
-
-  // Function to handle deletion
-  const handleDelete = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this tutorial?");
-    if (confirmDelete) {
-      try {
-        await deleteTutorialById(id);
-        navigate("/tutorials"); // Redirect to tutorial list after deleting
-      } catch (error) {
-        console.error("Error deleting tutorial:", error);
-      }
-    }
-  };
 
   if (!tutorial) return <p className="text-center mt-6">Loading tutorial...</p>;
 
@@ -47,9 +37,6 @@ const TutorialDetails = () => {
         >
           Watch Video
         </a>
-        <button onClick={handleDelete} className="tutorial-delete-button">
-          Delete Tutorial
-        </button>
       </div>
     </div>
   );

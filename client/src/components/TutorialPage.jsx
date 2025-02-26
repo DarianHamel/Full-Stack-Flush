@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { fetchTutorials } from "../api";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import axios from "axios";
 
 const TutorialPage = () => {
   const [tutorials, setTutorials] = useState([]);
   const navigate = useNavigate(); // Initialize navigation
+  const API_BASE_URL = "http://localhost:5050/api/tutorials"; 
 
   useEffect(() => {
     loadTutorials();
@@ -12,8 +13,8 @@ const TutorialPage = () => {
 
   const loadTutorials = async () => {
     try {
-      const data = await fetchTutorials();
-      setTutorials(data);
+      const response = await axios.get(API_BASE_URL);
+      setTutorials(response.data.tutorials);
     } catch (error) {
       console.error("Error fetching tutorials:", error);
     }
@@ -28,12 +29,6 @@ const TutorialPage = () => {
             {tutorial.title}
           </Link>
         ))}
-      </div>
-      <div className="add-tutorial-button-container">
-        {/* Fix: Navigate instead of opening a modal */}
-        <button onClick={() => navigate("/tutorials/add")} className="add-tutorial-button">
-          Add New Tutorial
-        </button>
       </div>
     </div>
   );

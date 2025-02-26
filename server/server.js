@@ -10,47 +10,49 @@ const authRoute = require("./routes/AuthRoute");
 const balanceRoute = require("./routes/BalanceRoute");
 const winloseRoute = require("./routes/WinLoseRoute");
 const leaderboardRoute = require("./routes/LeaderboardRoute");
-const tutorialRoutes = require("./routes/tutorial.routes.js");
-const { connectDB } = require("./db/connection.js");
+const tutorialRoutes = require("./routes/TutorialRoute.js");
 
 const { ATLAS_URI, PORT } = process.env;
 const app = express();
 expressWs(app);
 
-// Connect to MongoDB
-connectDB().then(() => {
-  console.log("MongoDB connected successfully");
+mongoose
+  .connect(ATLAS_URI)
+  .then(() => console.log("MongoDB is  connected successfully"))
+  .catch((err) => console.error(err));
 
-  // Middleware
-  app.use(
-    cors({
-      origin: ["http://localhost:5173"],
-      credentials: true,
-    })
-  );
-  app.use(express.json());
-  app.use(cookieParser());
 
-  // Routes
-  app.use("/", authRoute);
-  app.use("/", balanceRoute);
-  app.use("/", winloseRoute);
-  app.use("/", leaderboardRoute);
-  app.use("/api/tutorials", tutorialRoutes); // Integrate tutorial routes
+//app.use("/api/blackjack", blackjack);
 
-  // WebSocket handling
-  app.ws("/", (ws, req) => {
-    console.log(req.headers.cookie);
-    let cookie = req.headers.cookie;
-    let match = cookie.match(/username=\s*([\w\d_]+)/);
-    console.log(match[1]);
-    handle_web_socket(ws);
-  });
 
-  // Start the server
-  app.listen(PORT, () => {
-    console.log(`🚀 Server listening on port ${PORT}`);
-  });
-}).catch((err) => {
-  console.error("❌ Failed to connect to DB:", err);
+expressWs(app);
+
+app.ws('/', (ws, req) => {
+  console.log(req.headers.cookie);
+  let cookie = req.headers.cookie;
+  let match = cookie.match(/username=\s*([\w\d_]+)/);
+  console.log(match[1]);
+
+  //Pass the websocket to blackjack.js to deal with
+  handle_web_socket(ws, match[1]);
 });
+
+// start the Express server
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
+});
+
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+app.use(cookieParser());
+app.use("/", authRoute);
+app.use("/", balanceRoute);
+app.use("/", winloseRoute);
+app.use("/", leaderboardRoute);
+app.use("/", tutorialRoutes);

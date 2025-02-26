@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import AddTutorial from "./components/AddTutorial"; 
 import Home from "./components/Home";
 import Profile from "./components/Profile";
 import Leaderboard from "./components/Leaderboard";
@@ -70,7 +69,6 @@ const App = () => {
           
           {/* Tutorial Routes */}
           <Route path="/tutorials" element={<TutorialPage />} />
-          <Route path="/tutorials/add" element={<AddTutorial />} />
           <Route path="/tutorial/:id" element={<TutorialDetails />} />
         </Routes>
       </div>
