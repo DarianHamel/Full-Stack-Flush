@@ -43,7 +43,9 @@ jobs:
         npm ci
 
     - name: Build Project
-      run: npm run build --if-present
+      run: |
+        cd client
+        npm run build --if-present
 
     - name: Start Server
       run: |
