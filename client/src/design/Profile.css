@@ -32,5 +32,9 @@
 
 .right-panel {
     flex: 1;
-    padding: 20px;
+    margin-left: 50px;
+    padding: 50px;
+    background-color: white;
+    width: 700px;
+    height: 600px;
 }

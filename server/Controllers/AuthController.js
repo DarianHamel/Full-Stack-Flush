@@ -44,7 +44,7 @@ module.exports.Login = async (req, res, next) => {
       if(!user){
         return res.json({message:'Incorrect password or username' }) 
       }
-      const auth = await bcrypt.compare(password,user.password)
+      const auth = await bcrypt.compare(password,user.password);
       if (!auth) {
         return res.json({message:'Incorrect password or username' }) 
       }

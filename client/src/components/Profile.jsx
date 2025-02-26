@@ -1,49 +1,61 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
 import "../design/Profile.css";
 
 // icons
-import { FaUser, FaWallet, FaCog, FaChartBar, FaHeadset, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaWallet, FaChartBar, FaHeadset } from "react-icons/fa";
+
+// import Panel Components
+import ProfilePanel from "./profile/MyProfile";
+import BalancePanel from "./profile/Balance";
+import StatsPanel from "./profile/Stats";
+import SupportPanel from "./profile/Support";
 
 const Profile = ({ username }) => {
-  const [currentPanel, setCurrentPanel] = useState('');
+  const [currentPanel, setCurrentPanel] = useState("");
 
-  // load right panel based on panel
+  const panelComponents = {
+    profile: <ProfilePanel />,
+    balance: <BalancePanel />,
+    stats: <StatsPanel />,
+    support: <SupportPanel />,
+  };
+
   const loadPanelData = (panel) => {
-    axios.get(`/api/${panel}`)
-      .then(response => {
-        console.log(response.data);
-        setCurrentPanel(panel);
-      })
-      .catch(error => console.error('Error fetching data', error));
+    if (panel === "logout") {
+      console.log("Logging out..."); 
+      return;
+    }
+    if (panelComponents[panel]) {
+      setCurrentPanel(panel);
+    } else {
+      console.error(`Invalid panel: ${panel}`);
+    }
   };
 
   return (
     <div className="left-panel">
-      {/* Left Panel -- username and panel options */}
+      {/* Left Panel */}
       <div>
         <h2>@{username}</h2>
         <div>
-          <button onClick={() => loadPanelData('profile')}><FaUser /> My Profile</button>
-          <button onClick={() => loadPanelData('balance')}><FaWallet /> Balance</button>
-          <button onClick={() => loadPanelData('settings')}><FaCog /> Settings</button>
-          <button onClick={() => loadPanelData('stats')}><FaChartBar /> Stats</button>
-          <button onClick={() => loadPanelData('support')}><FaHeadset /> Support</button>
-          <button onClick={() => loadPanelData('logout')}><FaSignOutAlt /> Logout</button>
+          <button onClick={() => loadPanelData("profile")}>
+            <FaUser /> My Profile
+          </button>
+          <button onClick={() => loadPanelData("balance")}>
+            <FaWallet /> Balance
+          </button>
+          <button onClick={() => loadPanelData("stats")}>
+            <FaChartBar /> Stats
+          </button>
+          <button onClick={() => loadPanelData("support")}>
+            <FaHeadset /> Support
+          </button>
         </div>
       </div>
 
-      {/* Right Panel -- options */}
+      {/* Right Panel */}
       <div className="right-panel">
-        <h3>{currentPanel ? `Showing ${currentPanel} panel` : 'Select a panel'}</h3>
-        <div>
-          {currentPanel === 'profile' && <p>Your profile details here</p>}
-          {currentPanel === 'balance' && <p>Your balance details here</p>}
-          {currentPanel === 'settings' && <p>Settings panel</p>}
-          {currentPanel === 'stats' && <p>Stats panel</p>}
-          {currentPanel === 'support' && <p>Support panel</p>}
-          {currentPanel === 'logout' && <p>Logout panel</p>}
-        </div>
+        <div>{panelComponents[currentPanel]}</div>
       </div>
     </div>
   );
