@@ -248,7 +248,7 @@ export default function Blackjack() {
     });
   }
 
-    function check_21(){
+    function check_21(){ //This function will fail sometimes as it doesn't account for multiple aces
       let total = 0;
       for (const card of gameState.hand){
         if (card.rank === "Ace"){
