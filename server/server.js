@@ -1,18 +1,20 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const { handle_web_socket } = require("./routes/Blackjack.js"); //Should probably move it out of ./routes now
+const { handle_web_socket } = require("./routes/Blackjack.js");
 const expressWs = require("express-ws");
-
-const app = express();
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
-const cookieParser = require("cookie-parser"); // for managing cookie-based sessions and extracting data from cookies
 
 const authRoute = require("./routes/AuthRoute");
 const balanceRoute = require("./routes/BalanceRoute");
 const winloseRoute = require("./routes/WinLoseRoute");
 const leaderboardRoute = require("./routes/LeaderboardRoute");
+const tutorialRoutes = require("./routes/TutorialRoute.js");
+
 const { ATLAS_URI, PORT } = process.env;
+const app = express();
+expressWs(app);
 
 mongoose
   .connect(ATLAS_URI)
@@ -53,3 +55,4 @@ app.use("/", authRoute);
 app.use("/", balanceRoute);
 app.use("/", winloseRoute);
 app.use("/", leaderboardRoute);
+app.use("/", tutorialRoutes);

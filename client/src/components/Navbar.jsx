@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUser, FaTrophy } from "react-icons/fa"; // icons
+import { FaUser, FaTrophy, FaBook } from "react-icons/fa"; // Added FaBook icon for tutorials
 import Login from "./Login";
 import Signup from "./Signup";
 import "../design/Navbar.css";
@@ -30,14 +30,17 @@ const Navbar = ({ username, setUsername, onLogout }) => {
 
   return (
     <nav className="navbar">
-      {/* left: leaderboard button */}
+      {/* left: leaderboard & tutorials buttons */}
       <div className="nav-left">
         <button className="leaderboard-button" onClick={() => navigate("/leaderboard")}>
           <FaTrophy size={40} />
         </button>
+        <button className="tutorials-button" onClick={() => navigate("/tutorials")}>
+          <FaBook size={40} />
+        </button>
       </div>
 
-      {/* center: title where it will direct home */}
+      {/* center: title that navigates to home */}
       <div className="nav-center" onClick={() => navigate("/")}>
         <h1 className="app-title">FULL STACK FLUSH</h1>
       </div>
