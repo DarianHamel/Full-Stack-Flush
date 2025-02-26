@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import Card from "./Card.jsx";
+import "../design/Blackjack.css";
 
 export default function Blackjack() {
 
@@ -130,7 +132,6 @@ export default function Blackjack() {
   Adds the single card to the dealer's hand
   */
   function handle_dealer_card(message){
-
     change_card(message.card);
     setGameState((prevState) => ({
       ...prevState,
@@ -247,8 +248,24 @@ export default function Blackjack() {
     });
   }
 
+    function check_21(){
+      let total = 0;
+      for (const card of gameState.hand){
+        if (card.rank === "Ace"){
+          total += 11;
+        }
+        else if (card.rank === "Jack" || card.rank === "Queen" || card.rank === "King"){
+          total += 10;
+        }
+        else {
+          total += card.rank;
+        }
+      }
+      return total == 21;
+    }
+
   return (
-    <div>
+    <div className="blackjack-container">
       {!gameState.inGame && (
         <button onClick={startGame}>Start Game</button>
       )}
@@ -258,12 +275,14 @@ export default function Blackjack() {
       {(gameState.playing) && (
         <div>
           <h2>Your hand</h2>
-          {gameState.hand.map((card, index) => (
-            <p key={index}>{card.rank} of {card.suit}</p>
-          ))}
+          <div className="card-row">
+              {gameState.hand.map((card, index) => (
+                <Card key={index} rank={card.rank} suit={card.suit} delay={index * 0.3} />
+              ))}
+            </div>
         
-          {gameState.playerTurn && (
-            <div>
+          {gameState.playerTurn && !check_21() &&(
+            <div className= "action-buttons">
               <br />
               <button onClick={() => send_message("HIT")}>Hit</button>
               <br />
@@ -280,34 +299,38 @@ export default function Blackjack() {
 
           <br />
           <h2>Dealer hand</h2>
-          {gameState.dealerHand.map((card, index) => (
-            <p key={index}>{card.rank} of {card.suit}</p>
-          ))}
+          <div className="card-row">
+            {gameState.dealerHand.map((card, index) => (
+              <Card key={index} rank={card.rank} suit={card.suit} delay={index * 0.3} />
+            ))}
+          </div>
 
           {gameState.otherPlayers.length > 0 && (
             <div>
               <br />
               <h2>Other player's hands</h2>
               {gameState.otherPlayers.map((otherPlayer, index) => (
-                <div key={index}>
-                  {otherPlayer.hand.map((card, index) => (
-                    <p key={index}>{card.rank} of {card.suit}</p>
-                  ))}
-                <br />
-                </div>
+                <div key={i} className="card-row">
+                {otherPlayer.hand.map((card, j) => (
+                  <Card key={j} rank={card.rank} suit={card.suit} delay={j * 0.3} />
+                ))}
+              </div>
               ))}
             </div>
           )}
           
           {gameState.gameOver && (
             <div>
+              <div class="game-outcome">
               <br />
               <p>Game Over!</p>
               <p>Game result: {gameState.result}</p>
               <br />
-              <button onClick={play_again}>Play Again</button>
-              <br />
-              <button onClick={quit}>Quit</button>
+              </div>
+              <div class="game-buttons">
+                <button onClick={play_again}>Play Again</button>
+                <button onClick={quit}>Quit</button>
+              </div>
             </div>
           )}
         </div>
