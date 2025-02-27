@@ -250,6 +250,8 @@ class Game{
         }
         //Check if they have 21, skip them if so
         else if (player.get_total() == 21){
+            //Let them know that they have 21
+            player.ws.send(JSON.stringify({type: "TWENTY_ONE"}));
             this.playingPlayer++;
             this.next_turn();
         }
@@ -280,7 +282,6 @@ class Game{
     Remove the player with the matching websocket
     Returns a bool for whether a player was removed or not
     */
-   //TODO: Add a check for if it's currently the leaving player's turn
     remove_player(ws){
         let output = false;
 
@@ -289,6 +290,16 @@ class Game{
                 console.log("Player disconnected from game " + this.id);
                 this.players.splice(i, 1);
                 output = true;
+
+                //If the currently-playing player left, start the next turn to prevent locking up
+                if (i==this.playingPlayer){
+                    this.next_turn();
+                }
+
+                //Start the next game if enough players want to
+                if (this.playersPlayingAgain >= this.players.length){
+                    this.start_game();
+                }
             }
         }
         for( let i=0; i<this.playerQueue.length; i++){
