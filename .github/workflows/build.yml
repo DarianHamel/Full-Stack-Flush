@@ -64,12 +64,6 @@ jobs:
         npm run dev > client.log 2>&1 &
         sleep 5 # ensure the client has time to start
         echo "Client started"
-
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifacts
-        path: client/dist 
         
   test:
     runs-on: ubuntu-latest
@@ -99,12 +93,6 @@ jobs:
       run: |
         cd client
         npm ci
-
-    - name: Download Build Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
-        path: client/dist
 
     - name: Run Server Tests
       run: |
