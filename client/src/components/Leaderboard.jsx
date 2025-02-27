@@ -1,6 +1,8 @@
+import React from "react";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
-export default function Leaderboard (){
+const Leaderboard = () => {
     const[leaderboard, setLeaderboard] = useState([]);
     const[sortBy, setSortBy] = useState("wins");
     const[order, setOrderBy] = useState("desc");
@@ -8,17 +10,10 @@ export default function Leaderboard (){
 
     //gets the leaderboard data from the API
     useEffect(() =>{
-        async function fetchLeaderboard() {
+        const fetchLeaderboard = async () => {
             try{
-                const response = await fetch(`http://localhost:5050/api/leaderboard?sortBy=${sortBy}&order=${order}&filter=${filter}`);
-
-                if(!response.ok){
-                    console.error(`An error has occured with the API: ${response.statusText}`);
-                    return;
-                }
-
-                const data = await response.json();
-                console.log("Got the data: ", data);
+                const { data } = await axios.get(`http://localhost:5050/leaderboard?sortBy=${sortBy}&order=${order}&filter=${filter}`,
+                );
                 setLeaderboard(data);
             }
             catch(error){
@@ -98,3 +93,5 @@ export default function Leaderboard (){
         </div>    
     );
 }
+
+export default Leaderboard;

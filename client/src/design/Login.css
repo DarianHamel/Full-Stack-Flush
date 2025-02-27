@@ -1,0 +1,123 @@
+/* Modal styling */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh; 
+    background: rgba(0, 0, 0, 0.5); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  /* Modal Content Styling */
+  .modal_content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%; 
+    max-width: 1000px; 
+    min-width: 300px; 
+    height: auto; 
+    max-height: 80vh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow-y: auto; 
+  }
+  
+  /* Modal text styles */
+  .modal_text {
+    color: black;
+    font-size: 20px;
+    text-align: center;
+    padding-bottom: 20px;
+  }
+  
+  /* App Name Styling */
+  .app_name {
+    font-size: 35px;
+    text-align: center; 
+  }
+  
+  .modal_information {
+    font-size: 17px;
+    text-align: left;
+    padding-left: 20px;
+  }
+  
+  input[type="username"] {
+    display: block;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: 17px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+
+  input[type="password"] {
+    display: block;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: 17px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 90px; 
+    
+  }
+
+  .submit-button {
+    padding: 13px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3;
+    background-color: #008a20;
+    color: white;
+    margin-top: 30px;
+    border-radius: 8px;
+    width: 30%
+  }
+
+  .close-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    background-color: #d63638;
+    color: white;
+    margin-top: 30px;
+    border-radius: 8px;
+    width: 30%
+  }
+
+  .modal_end {
+    display: flex; 
+    align-items: center;
+    margin-top: 40px;
+    font-weight: bold;
+    font-size: 17px;
+  }
+  
+  .regis-button {
+    font-size: 17px;
+    padding: 0; 
+    margin: 0; 
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    background-color: white;
+    color: blue;
+    margin-left: 10px;
+  }
+  
+  

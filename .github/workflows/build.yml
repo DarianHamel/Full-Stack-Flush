@@ -1,0 +1,106 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Build Project
+
+on:
+  push:
+    branches: [ ci-cd-pipeline ]
+    #branches: [ "main" ]
+  pull_request:
+    branches: [ ci-cd-pipeline ]
+  #  branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set Up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Install dependencies (Server)
+      run: |
+        cd server
+        npm ci
+
+    - name: Install dependencies (Client)
+      run: |
+        cd client
+        npm ci
+
+    - name: Build Project
+      run: |
+        cd client
+        npm run build --if-present
+
+    - name: Start Server
+      run: |
+        cd server
+        if [ -f config.env ]; then
+          node --env-file=config.env server.js > server.log 2>&1 &
+          echo "Server started"
+        else
+          echo "config.env not found! Skipping server startup."
+          exit 1
+        fi
+
+    - name: Start Client
+      run: |
+        cd client
+        npm run dev > client.log 2>&1 &
+        sleep 5 # ensure the client has time to start
+        echo "Client started"
+        
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set Up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Install dependencies (Server)
+      run: |
+        cd server
+        npm ci
+
+    - name: Install dependencies (Client)
+      run: |
+        cd client
+        npm ci
+
+    - name: Run Server Tests
+      run: |
+        cd server
+        npm test //change if we use a different test command
+    
+    - name: Run Client Tests
+      run: |
+        cd client
+        npm test
+  

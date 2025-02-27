@@ -1,4 +1,4 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const URI = process.env.ATLAS_URI || "";
 const client = new MongoClient(URI, {
@@ -9,16 +9,27 @@ const client = new MongoClient(URI, {
   },
 });
 
-try {
-  // Connect the client to the server
-  await client.connect();
-  // Send a ping to confirm a successful connection
-  await client.db("admin").command({ ping: 1 });
-  console.log("Pinged your deployment. You successfully connected to MongoDB!");
-} catch (err) {
-  console.error(err);
-}
+let db; // Store database instance
 
-let db = client.db("employees");
+const connectDB = async () => {
+  try {
+    // Connect to MongoDB
+    await client.connect();
+    await client.db("admin").command({ ping: 1 });
+    console.log("✅ Connected to MongoDB successfully!");
 
-export default db;
+    db = client.db("employees"); // Assign the database instance
+  } catch (err) {
+    console.error("❌ Error connecting to MongoDB:", err);
+  }
+};
+
+// Function to get the database instance
+const getDB = () => {
+  if (!db) {
+    throw new Error("❌ Database not initialized. Call connectDB first.");
+  }
+  return db;
+};
+
+module.exports = { connectDB, getDB };
