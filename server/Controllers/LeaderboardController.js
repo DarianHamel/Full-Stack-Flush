@@ -55,7 +55,7 @@ module.exports.calculateWinLossRatio = (users) => {
 
 // sorting and ordering the leaderboard 
 module.exports.sortLeaderboard = (users, sortBy, order) => {
-    return users.sort((user1, user2) => {
+    return [...users].sort((user1, user2) => {
         if(sortBy === "username"){
             return order === "asc" 
             ? user1.username.toLowerCase().localeCompare(user2.username.toLowerCase()) 
@@ -63,7 +63,7 @@ module.exports.sortLeaderboard = (users, sortBy, order) => {
         }
 
         return order === "asc" 
-        ? user1[sortBy] - user2[sortBy] 
-        : user2[sortBy] - user1[sortBy];
+        ? (user1[sortBy] || 0) - (user2[sortBy] || 0)
+        : (user2[sortBy] || 0) - (user1[sortBy] || 0);
     });
   };
