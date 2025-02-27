@@ -34,8 +34,16 @@ const Balance = () => {
 
   const handleDeposit = async () => {
     setError(""); 
+
+    const amount = parseFloat(depositAmount);
+
     if (!depositAmount || !cardNumber || !expirationDate || !confirmationNumber || !password) {
       setError("All fields are required.");
+      return;
+    }
+
+    if (isNaN(amount) || amount <= 0) {
+      setError("Deposit amount must be a positive number.");
       return;
     }
 

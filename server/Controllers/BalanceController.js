@@ -37,7 +37,7 @@ module.exports.UpdateBalance = async (req, res) => {
 
     const auth = await bcrypt.compare(password, user.password);
     if (!auth) {
-      return res.json({ message: "Incorrect password", success: false }) 
+      return res.status(400).json({ message: "Incorrect password", success: false }) 
     }
 
     const newBalance = user.balance + amount; 
