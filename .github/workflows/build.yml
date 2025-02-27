@@ -5,10 +5,8 @@ name: Build Project
 
 on:
   push:
-    branches: [ ci-cd-pipeline ]
     branches: [ dev ]
   pull_request:
-    branches: [ ci-cd-pipeline ]
     branches: [ dev ]
 
 jobs:
