@@ -240,3 +240,24 @@ body {
     font-size: 1.5rem;
   }
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 5px solid black;
+  padding: 8px;
+  text-align: center;
+}
+
+.leaderboard-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.leaderboard-container {
+  margin-top: 20px;
+}
