@@ -9,6 +9,8 @@
     left: 0;
     width: 100%;
     z-index: 1000;
+    padding-left: 50px;
+    padding-right: 50px;
   }
   
   .nav-left, .nav-right {
@@ -26,13 +28,17 @@
     font-size: 40px;
     color: white;
   }
-  
+
   .leaderboard-button {
     background: none;
     border: none;
     cursor: pointer;
     color: white;
-    padding-left: 50px;
+  }
+
+  .leaderboard-button:hover, .profile-icon:hover, .tutorials-button:hover {
+    color: darkred;
+    transform: scale(1.2);
   }
 
   .profile-icon {
@@ -40,7 +46,6 @@
     border: none;
     cursor: pointer;
     color: white;
-    padding-right: 50px;
   }
   
   .profile-menu {
@@ -50,11 +55,10 @@
   .dropdown-menu {
     position: absolute;
     right: 0;
-    transform: translateX(-40%);
+    transform: translateX(-10%);
     background: white;
     color: black;
     border-radius: 5px;
-    padding: 15px;
     display: flex;
     flex-direction: column;
   }
@@ -62,9 +66,15 @@
   .dropdown-menu button {
     background: none;
     border: none;
-    padding: 15px;
+    padding: 20px;
     cursor: pointer;
     width: 100%;
     font-size: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .dropdown-menu button:hover {
+    background-color: #DCDCDC;
   }
   

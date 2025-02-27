@@ -1,0 +1,14 @@
+.support-container {
+    flex-direction: column;
+    text-align: center; 
+    margin-top: 100px;
+  }
+
+.support-container p {
+    font-size: 25px;
+}
+
+.support-container h1 {
+    font-size: 40px;
+}
+  
