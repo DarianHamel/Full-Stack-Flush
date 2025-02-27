@@ -28,6 +28,8 @@ const mockResponse = () => {
   return res;
 };
 
+// ========================================================================
+
 describe("User Balance API Tests", () => {
 
   // 1 -- test GetBalance with an existing user

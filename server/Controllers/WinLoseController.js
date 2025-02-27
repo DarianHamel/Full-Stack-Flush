@@ -51,7 +51,7 @@ module.exports.UpdateStats = async (req, res) => {
       const user = await User.findOne({ username }); // This will search by username field
       if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-      if (wins !== undefined) user.wins += wins;   
+      if (wins !== undefined) user.wins += wins;
       if (losses !== undefined) user.losses += losses;
 
       // so password isnt rehashed
@@ -59,7 +59,7 @@ module.exports.UpdateStats = async (req, res) => {
       user.markModified('losses');
 
       await user.save();
-      res.json({ success: true, wins: user.wins, losses: user.losses }); // Fix: Send updated stats
+      res.status(200).json({ success: true, wins: user.wins, losses: user.losses }); // Fix: Send updated stats
   } catch (error) {
       res.status(500).json({ success: false, message: "Server error" });
   }
