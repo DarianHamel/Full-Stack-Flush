@@ -11,17 +11,26 @@ const GamblingReminders = () => {
       "Gambling should be fun, not a way to make money."
     ];
 
-    const showGamblingFact = () => {
-      const randomFact = gamblingFacts[Math.floor(Math.random() * gamblingFacts.length)];
-      toast.info(randomFact, { position: "top-center" });
+    let lastFact = "";
+    const getRandomFact = () => {
+      let newFact;
+      do {
+        newFact = gamblingFacts[Math.floor(Math.random() * gamblingFacts.length)];
+      } while (newFact === lastFact);
+      lastFact = newFact;
+      return newFact;
     };
 
-    const intervalId = setInterval(showGamblingFact, 60000); // Show a fact every 60 seconds
+    const showGamblingFact = () => {
+      toast.info(getRandomFact(), { position: "top-center" });
+    };
+
+    const intervalId = setInterval(showGamblingFact, 60000); 
 
     return () => clearInterval(intervalId);
   }, []);
 
-  return null; // This component does not render anything
+  return null; 
 };
 
 export default GamblingReminders;
