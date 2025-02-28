@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 
+const remindTimer = 60000; // 60 seconds
+
 const GamblingReminders = () => {
   useEffect(() => {
     const gamblingFacts = [
@@ -24,8 +26,9 @@ const GamblingReminders = () => {
     const showGamblingFact = () => {
       toast.info(getRandomFact(), { position: "top-center" });
     };
+    
+    const intervalId = setInterval(showGamblingFact, remindTimer); // Show a fact every 60 seconds
 
-    const intervalId = setInterval(showGamblingFact, 60000); 
 
     return () => clearInterval(intervalId);
   }, []);

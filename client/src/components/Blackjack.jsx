@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import Card from "./Card.jsx";
 import "../design/Blackjack.css";
+import AuthRedirect from "./AuthRedirect";
 
-export default function Blackjack() {
+export default function Blackjack({username}) {
 
   const [socket, setSocket] = useState(null);
   const [gameState, setGameState] = useState({
@@ -271,6 +272,7 @@ export default function Blackjack() {
   }, [socket]); //Make sure we do this to the latest websocket
 
   return (
+    <AuthRedirect username={username}>
     <div className="blackjack-container">
       {!gameState.inGame && (
         <button onClick={startGame}>Start Game</button>
@@ -342,5 +344,6 @@ export default function Blackjack() {
         </div>
       )}
     </div>
+    </AuthRedirect>
   );
 }
