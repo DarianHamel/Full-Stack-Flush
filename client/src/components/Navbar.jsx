@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaTrophy, FaBook } from "react-icons/fa"; // Added FaBook icon for tutorials
