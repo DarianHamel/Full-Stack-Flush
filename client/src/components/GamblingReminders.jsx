@@ -11,9 +11,18 @@ const GamblingReminders = () => {
       "Gambling should be fun, not a way to make money."
     ];
 
+    let lastFact = "";
+    const getRandomFact = () => {
+      let newFact;
+      do {
+        newFact = gamblingFacts[Math.floor(Math.random() * gamblingFacts.length)];
+      } while (newFact === lastFact);
+      lastFact = newFact;
+      return newFact;
+    };
+
     const showGamblingFact = () => {
-      const randomFact = gamblingFacts[Math.floor(Math.random() * gamblingFacts.length)];
-      toast.info(randomFact, { position: "top-center" });
+      toast.info(getRandomFact(), { position: "top-center" });
     };
 
     const intervalId = setInterval(showGamblingFact, 60000); // Show a fact every 60 seconds
