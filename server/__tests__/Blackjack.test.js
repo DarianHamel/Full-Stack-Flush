@@ -81,7 +81,8 @@ describe("Game Tests", () => {
     test("Game should correctly add players to the game and queue", async () => {
         game.add_player(client, "TestUsername");
         game.add_player(null, "TestUsername2");
-        expect(game.players.length === 1 && game.playerQueue.length === 1);
+        expect(game.players.length).toBe(1);
+        expect(game.playerQueue.length).toBe(1);
     });
 
     test("Game should correctly tell playing and queued players that game has started", async () => {
@@ -99,16 +100,27 @@ describe("Game Tests", () => {
         game.players.push(new Player(client, 2, "TestUsername2"));
 
         game.deal();
-        const deal1 = await server.nextMessage;
-        expect(deal1.type === "DEAL" && deal1.cards.length === 2);
-        const deal2 = await server.nextMessage;
-        expect(deal2.type === "DEAL" && deal2.cards.length === 2);
-        const deal3 = await server.nextMessage;
-        expect(deal3.type === "DEALER_CARD" && deal3.cards.length === 1);
-        const deal4 = await server.nextMessage;
-        expect(deal4.type === "OTHER_PLAYER_DEAL" && deal4.cards.length === 2);
-        const deal5 = await server.nextMessage;
-        expect(deal5.type === "OTHER_PLAYER_DEAL" && deal5.cards.length === 2);
+        const deal1 = JSON.parse(await server.nextMessage);
+        expect(deal1.type).toBe("DEAL")
+        expect(deal1.cards.length).toBe(2);
+
+        const deal2 = JSON.parse(await server.nextMessage);
+        expect(deal2.type).toBe("DEAL")
+        expect(deal2.cards.length).toBe(2);
+
+        const deal3 = JSON.parse(await server.nextMessage);
+        expect(deal3.type).toBe("DEALER_CARD")
+
+        const deal4 = JSON.parse(await server.nextMessage);
+        expect(deal4.type).toBe("DEALER_CARD")
+
+        const deal5 = JSON.parse(await server.nextMessage);
+        expect(deal5.type).toBe("OTHER_PLAYER_DEAL")
+        expect(deal5.cards.length).toBe(2);
+
+        const deal6 = JSON.parse(await server.nextMessage);
+        expect(deal6.type).toBe("OTHER_PLAYER_DEAL")
+        expect(deal6.cards.length).toBe(2);
     });
 
     test("Game should end if dealer has natural", async () => {
@@ -117,17 +129,18 @@ describe("Game Tests", () => {
         game.players.push(new Player(client, 1, "TestUsername"));
 
         game.deal();
-        const deal1 = await server.nextMessage;
-        console.log(game.deck);
-        const deal2 = await server.nextMessage;
-        console.log(game.deck);
-        expect(deal2.type === "DEALER_CARD" && deal2.cards.length === 1);
-        const deal3 = await server.nextMessage;
-        console.log(game.deck);
-        expect(deal3.type === "DEALER_CARD" && deal3.cards.length === 2);
-        const deal4 = await server.nextMessage;
-        console.log(game.deck);
-        expect(deal4.type === "GAME_OVER" && deal4.cards.length === 2);
+        const deal1 = JSON.parse(await server.nextMessage);
+        expect(deal1.type).toBe("DEAL")
+        expect(deal1.cards.length).toBe(2);
+
+        const deal2 = JSON.parse(await server.nextMessage);
+        expect(deal2.type).toBe("DEALER_CARD")
+
+        const deal3 = JSON.parse(await server.nextMessage);
+        expect(deal3.type).toBe("DEALER_CARD")
+
+        const gameOver = JSON.parse(await server.nextMessage);
+        expect(gameOver.type).toBe("GAME_OVER")
     });
 
     
