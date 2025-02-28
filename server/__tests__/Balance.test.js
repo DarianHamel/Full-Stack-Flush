@@ -60,6 +60,23 @@ describe("User Balance API Tests", () => {
     expect(jsonParseResponse).toEqual({ message: "User not found" });
   });
 
+  // 3 -- test GetBalance with a server error on User.findOne()
+
+  test("GetBalance returns server error if User.findOne() fails", async () => {
+    jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database error"));
+
+    const req = { query: { username: "baduser" } };
+    const res = mockResponse();
+
+    await GetBalance(req, res);
+    const jsonParseResponse = res.json.mock.calls[0][0];
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(jsonParseResponse).toEqual({ message: "Server error" });
+
+    User.findOne.mockRestore();
+  });
+
 });
 
 describe("Update Balance API Tests", () => {

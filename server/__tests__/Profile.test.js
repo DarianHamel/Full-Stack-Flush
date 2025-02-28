@@ -135,7 +135,7 @@ describe("GetMoneySpent API Tests", () => {
         const req = { query: { username: "badUser" }};
         const res = mockResponse();
 
-        await GetUserInfo(req, res);
+        await GetMoneySpent(req, res);
         const jsonParseResponse = res.json.mock.calls[0][0];
 
         expect(res.status).toHaveBeenCalledWith(500);
