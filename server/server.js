@@ -10,6 +10,7 @@ const authRoute = require("./routes/AuthRoute");
 const balanceRoute = require("./routes/BalanceRoute");
 const winloseRoute = require("./routes/WinLoseRoute");
 const leaderboardRoute = require("./routes/LeaderboardRoute");
+const userInfoRoute = require("./routes/ProfileRoute");
 const tutorialRoutes = require("./routes/TutorialRoute.js");
 
 const { ATLAS_URI, PORT } = process.env;
@@ -55,4 +56,5 @@ app.use("/", authRoute);
 app.use("/", balanceRoute);
 app.use("/", winloseRoute);
 app.use("/", leaderboardRoute);
+app.use("/", userInfoRoute);
 app.use("/", tutorialRoutes);

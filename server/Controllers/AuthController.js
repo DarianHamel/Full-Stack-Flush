@@ -7,7 +7,7 @@ const bcrypt = require("bcryptjs");
 
 module.exports.Signup = async (req, res, next) => {
   try {
-    const { password, username, createdAt, balance} = req.body;
+    const { password, username, createdAt, balance, wins, losses } = req.body;
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.json({ message: "User already exists" });
@@ -16,7 +16,9 @@ module.exports.Signup = async (req, res, next) => {
       password, 
       username, 
       createdAt, 
-      balance: req.body.balance ?? 100, 
+      balance: balance ?? 100, 
+      wins: wins ?? 0,
+      losses: losses ?? 0
     });
     const token = createSecretToken(user._id);
     res.cookie("token", token, {
@@ -44,7 +46,7 @@ module.exports.Login = async (req, res, next) => {
       if(!user){
         return res.json({message:'Incorrect password or username' }) 
       }
-      const auth = await bcrypt.compare(password,user.password)
+      const auth = await bcrypt.compare(password,user.password);
       if (!auth) {
         return res.json({message:'Incorrect password or username' }) 
       }

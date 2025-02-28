@@ -39,12 +39,14 @@
   .app_name {
     font-size: 35px;
     text-align: center; 
+    color: black;
   }
   
   .modal_information {
     font-size: 17px;
     text-align: left;
     padding-left: 20px;
+    color: black;
   }
   
   input[type="username"] {
@@ -87,6 +89,10 @@
     width: 30%
   }
 
+  .submit-button:hover {
+    background-color: darkgreen;
+  }
+
   .close-button {
     padding: 10px 20px;
     font-size: 16px;
@@ -100,12 +106,17 @@
     width: 30%
   }
 
+  .close-button:hover {
+    background-color: darkred;
+  }
+
   .modal_end {
     display: flex; 
     align-items: center;
     margin-top: 40px;
     font-weight: bold;
     font-size: 17px;
+    color: black;
   }
   
   .regis-button {
@@ -116,8 +127,12 @@
     cursor: pointer;
     transition: background-color 0.3s;
     background-color: white;
-    color: blue;
+    color: rgb(61, 76, 128);
     margin-left: 10px;
+  }
+
+  .regis-button:hover {
+    color: rgb(98, 121, 204);
   }
   
   

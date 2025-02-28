@@ -1,0 +1,40 @@
+.left-panel {
+    display: flex;
+    align-items: 20px;
+}
+
+.left-panel h2 {
+    margin-bottom: 20px;
+    color: white;
+    font-size: 35px;
+}
+
+.left-panel button {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding: 15px;
+    background-color: #f0f0f0;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    font-size: 20px;
+    width: 200px;
+}
+
+.left-panel button:hover {
+    background-color: #ddd;
+}
+
+.left-panel button svg {
+    margin-right: 10px;
+}
+
+.right-panel {
+    flex: 1;
+    margin-left: 50px;
+    padding: 50px;
+    background-color: white;
+    width: 700px;
+    height: 600px;
+}
