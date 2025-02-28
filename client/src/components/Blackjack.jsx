@@ -18,12 +18,16 @@ export default function Blackjack() {
     result: null,
   });
 
+  /*
+  Create the websocket to start the game
+  */
   async function startGame(){
     try{
       const newSocket = new WebSocket('ws://localhost:5050/')
 
       newSocket.onopen = () => {
         console.log('Connected to websocket server');
+        newSocket.send(JSON.stringify({type: "JOIN"}));
       };
 
       newSocket.onmessage = (event) => {
@@ -47,6 +51,9 @@ export default function Blackjack() {
     }
   }
 
+  /*
+  Handle all of the messages the server could send to the player
+  */
   function handle_message(message){
     switch (message.type){
       case "JOIN":
@@ -95,6 +102,12 @@ export default function Blackjack() {
         break;
       case "OTHER_PLAYER_DEAL_SINGLE":
         handle_other_deal_single(message);
+        break;
+      case "TWENTY_ONE":
+        setGameState((prevState) => ({
+          ...prevState,
+          playerTurn: false
+        }));
         break;
       default:
         console.log("Unknown message type");
@@ -248,21 +261,14 @@ export default function Blackjack() {
     });
   }
 
-    function check_21(){ //This function will fail sometimes as it doesn't account for multiple aces
-      let total = 0;
-      for (const card of gameState.hand){
-        if (card.rank === "Ace"){
-          total += 11;
-        }
-        else if (card.rank === "Jack" || card.rank === "Queen" || card.rank === "King"){
-          total += 10;
-        }
-        else {
-          total += card.rank;
-        }
+  useEffect(() => {
+    //close the socket when the page is closed
+    return () => {
+      if (socket && socket.readyState === WebSocket.OPEN){
+        socket.close();
       }
-      return total == 21;
     }
+  }, [socket]); //Make sure we do this to the latest websocket
 
   return (
     <div className="blackjack-container">
@@ -281,7 +287,7 @@ export default function Blackjack() {
               ))}
             </div>
         
-          {gameState.playerTurn && !check_21() &&(
+          {gameState.playerTurn && (
             <div className= "action-buttons">
               <br />
               <button onClick={() => send_message("HIT")}>Hit</button>
@@ -310,7 +316,7 @@ export default function Blackjack() {
               <br />
               <h2>Other player's hands</h2>
               {gameState.otherPlayers.map((otherPlayer, index) => (
-                <div key={i} className="card-row">
+                <div key={index} className="card-row">
                 {otherPlayer.hand.map((card, j) => (
                   <Card key={j} rank={card.rank} suit={card.suit} delay={j * 0.3} />
                 ))}
