@@ -1,0 +1,70 @@
+.poker-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #fff;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .poker-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    width: 100%;
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  .poker-card h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #1e3c72;
+  }
+  
+  .poker-card p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .back-to-home {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #1e3c72;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .back-to-home:hover {
+    background-color: #2a5298;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(200px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @media (max-width: 80%) {
+    .poker-card h1 {
+      font-size: 2.2rem;
+    }
+  
+    .poker-card p {
+      font-size: 1rem;
+    }
+  }
+  

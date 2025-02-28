@@ -1,0 +1,91 @@
+.about-container {
+    margin-top: 50%;
+    padding: 1.5rem;
+    max-width: 1200px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  body {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .about-header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  
+  .vision-statement {
+    font-size: 1.2rem;
+    color: #34495e;
+    line-height: 1.8;
+  }
+  
+  .team-section {
+    margin-top: 2rem;
+  }
+  
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  
+  .team-card {
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+  }
+  
+  .team-card:hover {
+    transform: translateY(-8px);
+  }
+  
+  .team-photo {
+    width: 120px;
+    height: 120px;
+    background-color: #bdc3c7;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+  }
+  
+  .team-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  
+  .team-role {
+    font-size: 1rem;
+    color: #7f8c8d;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(200px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @media (max-width: 80%) {
+    .about-header h1 {
+      font-size: 2.2rem;
+    }
+  
+    .vision-statement {
+      font-size: 1rem;
+    }
+  }
+  
