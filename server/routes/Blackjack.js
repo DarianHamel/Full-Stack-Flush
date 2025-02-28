@@ -5,15 +5,25 @@ let games = [];
 let gameIdCounter = 0;
 
 function handle_web_socket(ws, username){
-    console.log("Hello");
 
-    const game = assign_player(ws, username);
-    console.log("Client connected to game ", game.id);
-    ws.send(JSON.stringify({type: "JOIN"}));
-
+    console.log(username + " websocket connected");
+    
     ws.on('message', (msg) => {
-        console.log('Received: '+ msg + " from player in game " + game.id);
-        handle_message(JSON.parse(msg), ws);
+        console.log('Received: '+ msg + " from " + username);
+        try{
+            if (JSON.parse(msg).type == "JOIN"){
+                assign_player(ws, username);
+                ws.send(JSON.stringify({type: "JOIN"}));
+            }
+            else{
+                handle_message(JSON.parse(msg), ws);
+            }
+        }
+        catch (error){
+            //Just close the socket and remove the player who sent the bad JSON
+            console.log("Failed to parse JSON");
+            ws.close();
+        }
     });
     
     ws.on('close', () => {
@@ -21,7 +31,8 @@ function handle_web_socket(ws, username){
     });
     
     ws.on('error', (error) => {
-        console.error('Websocket error: ', error);
+        console.log('Websocket error: ', error);
+        remove_player(ws);
     })
 
 }
@@ -39,7 +50,6 @@ function assign_player(ws, username){
     }
     //If there's no viable games, make a new one
     if (!game) {
-        console.log("game");
         game = new Game(gameIdCounter);
         gameIdCounter++;
         games.push(game);
@@ -70,6 +80,10 @@ function handle_message(message, ws){
         for (const g of games){
             g.handle_action(message.action, ws);
         }
+    }
+    else{
+        console.log("Unkown message");
+        ws.close();
     }
 }
 

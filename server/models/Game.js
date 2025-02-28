@@ -14,6 +14,7 @@ class Game{
         this.playingPlayer = 0;
         this.playerIdCounter = 0;
         this.playersPlayingAgain = 0;
+        this.gameOver = false;
     }
 
     /*
@@ -47,6 +48,7 @@ class Game{
         for (const player of this.players){
             player.hand = [];
         }
+        this.gameOver = false;
 
         //Add all the players from the queue to the game
         while (this.playerQueue.length > 0){
@@ -189,33 +191,67 @@ class Game{
                 console.log("Unknown result");
             }
         }
+
+        this.gameOver = true;
     }
 
     /*
     Handle player actions
     Deal a new card for HIT
     Go to the next person on STAND
+    Mark the player as wanting to play again on PLAY_AGAIN
     */
     handle_action(action, ws){
         for (const player of this.players){
             if (player.ws === ws){
-                console.log("Player called " + action + " in game " + this.id);
+                console.log(player.username + " called " + action + " in game " + this.id);
                 switch (action){
                     case "HIT":
-                        this.hit(player);
+                        //Check if this player is supposed to be calling HIT
+                        if (this.players[this.playingPlayer] === player){
+                            this.hit(player);
+                        }
+                        //Just kick them if they're out of sync
+                        else{
+                            this.kick_player(player.ws);
+                        }
                         break;
                     case "STAND":
-                        this.stand(player);
+                        //Check if this player is supposed to be calling STAND
+                        if (this.players[this.playingPlayer] === player){
+                            this.stand(player);
+                        }
+                        //Just kick them if they're out of sync
+                        else{
+                            this.kick_player(player.ws);
+                        }
                         break;
                     case "PLAY_AGAIN":
-                        this.play_again();
+                        //Check if the game is over
+                        if (this.gameOver){
+                            this.play_again();
+                        }
+                        //Just kick them if they're out of sync
+                        else{
+                            this.kick_player(player.ws);
+                        }
                         break;
                     default:
+                        //Kick the player if they send an unknown action
                         console.log("Unknown action");
+                        this.kick_player(player.ws);
                 }
             }
         }
     }
+
+    /*
+    Kicks the player with the specified websocket
+    */
+   kick_player(ws){
+        this.remove_player(ws);
+        ws.close();
+   }
 
     /*
     Deals with the logic for when a player calls HIT
@@ -287,7 +323,7 @@ class Game{
 
         for( let i=0; i<this.players.length; i++){
             if (this.players[i].ws === ws){
-                console.log("Player disconnected from game " + this.id);
+                console.log(this.players[i].username + " disconnected from game " + this.id);
                 this.players.splice(i, 1);
                 output = true;
 
@@ -304,7 +340,7 @@ class Game{
         }
         for( let i=0; i<this.playerQueue.length; i++){
             if (this.playerQueue[i].ws === ws){
-                console.log("Player disconnected from game " + this.id + "'s queue");
+                console.log(this.playerQueue[i].username + " disconnected from game " + this.id + "'s queue");
                 this.playerQueue.splice(i, 1);
                 output = true;
             }

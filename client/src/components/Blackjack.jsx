@@ -27,6 +27,7 @@ export default function Blackjack() {
 
       newSocket.onopen = () => {
         console.log('Connected to websocket server');
+        newSocket.send(JSON.stringify({type: "JOIN"}));
       };
 
       newSocket.onmessage = (event) => {
