@@ -55,7 +55,7 @@ flowchart LR
 ![](Images/poker_minigame_sequence.png)
 
 ### Safe Gambling - Notifications
-![](Images/safe_gambling_notifications_sequence.png)
+![](Images/safe_gambling_notifications.png)
 
 ### Teaching Fundamentals
 ![](Images/teaching_sequence.png)
