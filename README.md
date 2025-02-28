@@ -20,6 +20,78 @@
 
 * View our branching strategy and coding conventions here: [Branching Strategy and Coding Conventions](https://github.com/DarianHamel/Full-Stack-Flush/blob/main/Documents/conventions.md)
 
+
+## How to Run
+
+### Installation & Setup
+
+1. **Clone or Download the Repository**  
+
+   **Option 1:** Clone the repository using:
+    ```bash
+    git clone https://github.com/DarianHamel/Full-Stack-Flush.git
+    ```
+   **Option 2:** Download as ZIP from GitHub, extract the contents to your desired location.
+
+2. **Navigate to the Project Directory**  
+
+    ```bash
+    cd Full-Stack-Flush
+    ```
+
+3. **Install Dependencies**  
+
+   Our project has two parts: the **server** (backend) and the **client** (frontend). Install dependencies for both (navigating from the root folder(Full-Stack-Flush)):
+
+   * **Server Dependencies:**
+        ```bash
+        cd server
+        npm install
+        ```
+   * **Client Dependencies:**
+        ```bash
+        cd client
+        npm install
+        ```
+
+4. **Run the Tests**
+
+    You should run the tests before starting the project to ensure that everything is functioning as intended. Navigating from the root folder again, the commands would be:
+    * **Server Dependencies:**
+        ```bash
+        cd server
+        npm test
+        ```
+
+    * **Client Dependencies:**
+        ```bash
+        cd client
+        npm test
+        ```
+
+
+5. **Run the Project**  
+
+   You need to start both the **server** and **client** in separate terminals:
+
+   * **Start the Server:**
+        ```bash
+        cd server
+        npm start
+        ```
+   * **Start the Client:** *(open a new terminal)*
+        ```bash
+        cd client
+        npm run dev
+        ```
+
+5. **Access the Website**  
+
+   Once both the server and client are running, open your browser and go to:
+   ```
+   http://localhost:5173
+   ```
+
 ## Meeting Minutes 
 
 * View our meeting minutes here: [Meeting Minutes](https://github.com/DarianHamel/Full-Stack-Flush/tree/main/Documents/Meeting%20Minutes)
