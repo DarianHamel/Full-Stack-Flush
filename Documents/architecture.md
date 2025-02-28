@@ -71,5 +71,7 @@ Everything in this sequence diagram is working as described in our system up unt
 ### User Stats - Safe Gambling
 ![](Images/user_stats_safe_gambling_sequence.png)
 
+This section of the Safe Gambling feature is not yet implemented. This is something we will implement in the future of the project.
+
 ### User Stats
 ![](Images/user_stats_sequence.png)
