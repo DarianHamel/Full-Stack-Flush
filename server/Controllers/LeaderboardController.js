@@ -2,30 +2,26 @@ const User = require("../Models/UserModel");
 
 module.exports.GetLeaderboard = async(req, res) => {
     try {
-        console.log("test");
         const {sortBy = "wins", order = "desc", filter = ""} = req.query; //sort by wins as default
+
         const sortFields = ["username", "winLossRatio", "wins", "losses", "moneySpent", "timeSpent"]; // sorting options
 
         if(!sortFields.includes(sortBy)){
-            console.log(`Leaderboard data sorted by ${sortBy}`);
             return res.status(400).json({error: "Invalid sorting option"});
         }
 
         let filterCriteria = module.exports.applyFilters(filter);
 
         let results = await User.find(filterCriteria);
-        console.log(results);
 
         results = JSON.parse(JSON.stringify(results));
         results = module.exports.calculateWinLossRatio(results);
         results = module.exports.sortLeaderboard(results, sortBy, order);
 
-        console.log(`Leaderboard data sorted by ${sortBy}, in order ${order} with filter ${filter}: `, results);
         res.status(200).json(results);
     }
     catch(err){
-        console.error(err);
-        res.status(500).send("Error occured when fetching the leaderboard");
+        res.status(500).json({ error: "Error occured when fetching the leaderboard" });
     }
 };
 

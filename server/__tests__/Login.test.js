@@ -88,10 +88,24 @@ describe("Login API Tests", () => {
 
     // 10 -- Fail login if username/password is missing 
 
-    test("Login fails if either the username or password is missing", async () => {
+    test("Login fails if either the password is missing", async () => {
         await User.create({ username: "testUser", password: "gr12-fff" });
     
         const req = { body: { username: "testUser" } };
+        const res = mockResponse();
+        const next = jest.fn();
+    
+        await Login(req, res, next);
+        const jsonParseResponse = res.json.mock.calls[0][0];
+    
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(jsonParseResponse.message).toEqual("All fields are required");
+    });
+
+    test("Login fails if either the username is missing", async () => {
+        await User.create({ username: "testUser", password: "gr12-fff" });
+    
+        const req = { body: { password: "gr12-fff" } };
         const res = mockResponse();
         const next = jest.fn();
     

@@ -256,4 +256,19 @@ describe("UpdateStats API Tests", () => {
         expect(jsonParseResponse).toEqual({ success: true, wins: 10, losses: 7 });
     });
 
+    // 15 -- Returns 400 if username is missing
+
+    test("UpdateStats will not work if a username is missing", async () => {
+        await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
+
+        const req = { body: { wins: 1, losses: 2 } };
+        const res = mockResponse();
+
+        await UpdateStats(req, res);
+        const jsonParseResponse = res.json.mock.calls[0][0];
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(jsonParseResponse).toEqual({ message: "Invalid request. Provide a username." });
+    });
+
 });

@@ -30,7 +30,6 @@ module.exports.Signup = async (req, res, next) => {
     });
 
     const token = createSecretToken(user._id);
-    if (!token) { return res.status(500).json({ message: "Problem with token creation" })};
 
     res.cookie("token", token, {
       withCredentials: true, 
