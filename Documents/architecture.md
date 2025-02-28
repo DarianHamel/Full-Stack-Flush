@@ -61,6 +61,8 @@ This sequence diagaram is for a future feature. This diagram represents how we p
 ### Safe Gambling - Notifications
 ![](Images/safe_gambling_notifications.png)
 
+Currently there is no calls to the database for this feature. The safe gambling warnings are just simply on a timer at the Express layer of this diagram. In the future we plan to implement the database interaction to send users warnings that relate to their user info/stats. For the current state of the project, the reminders are simply on a timer.
+
 ### Teaching Fundamentals
 ![](Images/teaching_sequence.png)
 
