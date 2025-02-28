@@ -56,6 +56,8 @@ Currently the betting feature for blackjack is not yet implemented. The top port
 ### Poker Minigame
 ![](Images/poker_minigame_sequence.png)
 
+This sequence diagaram is for a future feature. This diagram represents how we plan to implement this feature but may change when we actually implement it.
+
 ### Safe Gambling - Notifications
 ![](Images/safe_gambling_notifications.png)
 
