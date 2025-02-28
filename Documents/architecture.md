@@ -42,6 +42,8 @@ flowchart LR
 ### Blackjack
 ![](Images/blackjack_sequence.png)
 
+Currently the betting feature for blackjack is not yet implemented. The top portion of the sequence diagram that shows bets being placed and checks being made on the users balance will *eventually* be implemented exactly like this so it will reflect our working system in the future. Also the very last interaction in the diagram shows the balance being updated which doesn't happen yet but the user's stats are currently being updated based on a win or a loss.
+
 ### Create Account
 ![](Images/create_account_sequence.png)
 
