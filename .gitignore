@@ -1,4 +1,3 @@
 config.env
 *.env
 *.docx
-node_modules/
