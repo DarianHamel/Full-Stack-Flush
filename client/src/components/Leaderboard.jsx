@@ -41,7 +41,7 @@ const Leaderboard = () => {
 
     return(
         <div>
-            <h3 className="text-center text-3xl font-bold my-4">Leaderboard</h3>
+            <h3 className="leaderboard-title">Leaderboard</h3>
 
             <div className="flex gap-4 mb-4">
                 {/*Sort dropdown */}
@@ -69,28 +69,30 @@ const Leaderboard = () => {
             </div>
 
             {/*Leaderboard table*/}
-            {leaderboard.length === 0 ? (<p>No data available</p>): (
-                <div>
-                    <table className="w-full border-collapse border border-gray-400">
-                        <thead className="bg-grey-200">
-                            <tr>
-                                <th className="border border-gray-400 p-2">Rank</th>
-                                <th className="border border-gray-400 p-2">Username</th>
-                                <th className="border border-gray-400 p-2">Wins</th>
-                                <th className="border border-gray-400 p-2">Losses</th>
-                                <th className="border border-gray-400 p-2">Win/Loss Ratio</th>
-                                <th className="border border-gray-400 p-2">Money Spent</th>
-                                <th className="border border-gray-400 p-2">Time Spent</th>
-                            </tr>
-                        </thead>
+            <div className="leaderboard-container">
+                {leaderboard.length === 0 ? (<p>No data available</p>): (
+                    <div>
+                        <table className="w-full border-collapse border border-gray-400">
+                            <thead className="bg-grey-200">
+                                <tr>
+                                    <th className="border border-gray-400 p-2">Rank</th>
+                                    <th className="border border-gray-400 p-2">Username</th>
+                                    <th className="border border-gray-400 p-2">Wins</th>
+                                    <th className="border border-gray-400 p-2">Losses</th>
+                                    <th className="border border-gray-400 p-2">Win/Loss Ratio</th>
+                                    <th className="border border-gray-400 p-2">Money Spent</th>
+                                    <th className="border border-gray-400 p-2">Time Spent</th>
+                                </tr>
+                            </thead>
 
-                        <tbody>
-                            {LeaderboardRows()}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-        </div>    
+                            <tbody>
+                                {LeaderboardRows()}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>    
+        </div>
     );
 }
 
