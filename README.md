@@ -44,30 +44,30 @@
    Our project has two parts: the **server** (backend) and the **client** (frontend). Install dependencies for both (navigating from the root folder(Full-Stack-Flush)):
 
    * **Server Dependencies:**
-        ```bash
-        cd server
-        npm install
-        ```
+      ```bash
+      cd server
+      npm install
+      ```
    * **Client Dependencies:**
-        ```bash
-        cd client
-        npm install
-        ```
+      ```bash
+      cd client
+      npm install
+      ```
 
 4. **Run the Tests**
 
     You should run the tests before starting the project to ensure that everything is functioning as intended. Navigating from the root folder again, the commands would be:
     * **Server Dependencies:**
-        ```bash
-        cd server
-        npm test
-        ```
+      ```bash
+      cd server
+      npm test
+      ```
 
     * **Client Dependencies:**
-        ```bash
-        cd client
-        npm test
-        ```
+      ```bash
+      cd client
+      npm test
+      ```
 
 
 5. **Run the Project**  
@@ -75,15 +75,15 @@
    You need to start both the **server** and **client** in separate terminals:
 
    * **Start the Server:**
-        ```bash
-        cd server
-        npm start
-        ```
+      ```bash
+      cd server
+      npm start
+      ```
    * **Start the Client:** *(open a new terminal)*
-        ```bash
-        cd client
-        npm run dev
-        ```
+      ```bash
+      cd client
+      npm run dev
+      ```
 
 5. **Access the Website**  
 
