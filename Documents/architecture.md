@@ -66,6 +66,8 @@ Currently there is no calls to the database for this feature. The safe gambling 
 ### Teaching Fundamentals
 ![](Images/teaching_sequence.png)
 
+Everything in this sequence diagram is working as described in our system up until the point where a user interacts with a tutorial. They are able to view it and see any information it displays and interact with it, but nothing is logged in the database yet in terms of marking a tutorial as completed. This will be something we add in the future.
+
 ### User Stats - Safe Gambling
 ![](Images/user_stats_safe_gambling_sequence.png)
 
