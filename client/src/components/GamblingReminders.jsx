@@ -25,12 +25,12 @@ const GamblingReminders = () => {
       toast.info(getRandomFact(), { position: "top-center" });
     };
 
-    const intervalId = setInterval(showGamblingFact, 60000); // Show a fact every 60 seconds
+    const intervalId = setInterval(showGamblingFact, 60000); 
 
     return () => clearInterval(intervalId);
   }, []);
 
-  return null; // This component does not render anything
+  return null; 
 };
 
 export default GamblingReminders;

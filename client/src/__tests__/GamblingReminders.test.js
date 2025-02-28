@@ -23,10 +23,10 @@ describe("GamblingReminders Component", () => {
   test("displays gambling facts at intervals", () => {
     render(<GamblingReminders />);
 
-    jest.advanceTimersByTime(60000); // Move forward 1 minute
+    jest.advanceTimersByTime(60000);
     expect(toast.info).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(60000); // Move forward another minute
+    jest.advanceTimersByTime(60000); 
     expect(toast.info).toHaveBeenCalledTimes(2);
   });
 
