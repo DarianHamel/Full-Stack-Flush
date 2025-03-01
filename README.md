@@ -100,9 +100,9 @@
 
 | Name | Username | Role |
 |---|---|---|
-| Mateo DeSousa | @mateod812 | Back-end (Leader) |
-| Kaye Ruwe Mendoza | @kayerm | Front-end |
-| Darian Hamel | @DarianHamel | Back-end |
-| Prashant Nigam | @real-prash | Back-end |
-| Scott Barrett | @ScottLBarrett | Front-end |
-| Chineze Obi | @Chineze-prog | Back-end |
+| Mateo DeSousa | @mateod812 | Full Stack Developer (Leader) |
+| Kaye Ruwe Mendoza | @kayerm | Full Stack Developer |
+| Darian Hamel | @DarianHamel | Full Stack Developer |
+| Prashant Nigam | @real-prash | Full Stack Developer |
+| Scott Barrett | @ScottLBarrett | Full Stack Developer |
+| Chineze Obi | @Chineze-prog | Full Stack Developer |
