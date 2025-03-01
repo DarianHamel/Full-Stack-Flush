@@ -21,9 +21,6 @@ module.exports.GetBalance = async (req, res) => {
 // Update balance for deposit or bet (POST request)
 module.exports.UpdateBalance = async (req, res) => {
   const { username, amount, password } = req.body;
-  console.log(username);
-  console.log(amount);
-  console.log(password);
   
   if (!username || typeof amount !== 'number') {
     return res.status(400).json({ message: "Invalid request. Provide username and amount as a number.", success: false });

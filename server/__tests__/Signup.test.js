@@ -74,7 +74,6 @@ describe("Signup API Tests", () => {
         const jsonParseResponse = res.json.mock.calls[0][0];
 
         const check = await User.findOne({ username: "testUser" });
-        console.log("Hellothere2: ", check);
 
         expect(res.status).toHaveBeenCalledWith(400);
         expect(jsonParseResponse).toEqual({ message: "User already exists" });
