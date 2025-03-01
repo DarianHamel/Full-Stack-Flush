@@ -355,7 +355,7 @@ describe("Blackjack Routes Tests", () => {
         msg = JSON.parse(await server.nextMessage);
 
         //Change which message is sent based on the state of the game
-        if (game4.dealer.get_total() === 21 || game4.players[0].get_total() === 21){
+        if (game1.dealer.get_total() === 21 || game1.players[0].get_total() === 21){
             while (msg.type === "DEALER_CARD"){
                 expect(msg.type).toBe("DEALER_CARD");
                 msg = JSON.parse(await server.nextMessage);
