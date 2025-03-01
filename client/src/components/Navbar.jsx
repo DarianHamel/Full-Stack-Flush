@@ -2,6 +2,8 @@ import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaTrophy, FaBook } from "react-icons/fa"; // Added FaBook icon for tutorials
+import { ToastContainer, toast } from "react-toastify";
+import GamblingReminders from "./GamblingReminders";
 import Login from "./Login";
 import Signup from "./Signup";
 import "../design/Navbar.css";
@@ -37,6 +39,9 @@ const Navbar = ({ username, setUsername, onLogout }) => {
   };
 
   return (
+    <>
+    <GamblingReminders />
+    <ToastContainer /> 
     <nav className="navbar">
       {/* left: leaderboard & tutorials buttons */}
       <div className="nav-left">
@@ -83,6 +88,7 @@ const Navbar = ({ username, setUsername, onLogout }) => {
       <Login show={showLogin} onClose={() => setShowLogin(false)} setShowSignup={setShowSignup} />
       <Signup show={showSignup} onClose={() => setShowSignup(false)} setShowLogin={setShowLogin} />
     </nav>
+    </>
   );
 };
 

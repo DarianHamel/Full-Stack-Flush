@@ -1,8 +1,16 @@
+import { useEffect, useState, useRef } from "react";
+import { useNavigate , Link} from "react-router-dom";
+import { useCookies } from "react-cookie";
+import axios from "axios";
+//import { ToastContainer, toast } from "react-toastify";
+import Login from "./Login";
+import Signup from "./Signup";
+import "../design/Home.css";
+//import GamblingReminders from "./GamblingReminders";
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import '../design/Home.css';
 import GamblingReminders from './GamblingReminders';
+
 
 const Home = () => {
   return (
@@ -28,9 +36,7 @@ const Home = () => {
             <h3>About Us</h3>
           </Link>
         </div>
-      </div>
-      <GamblingReminders />
-      <ToastContainer />
+      </div>  
     </>
   );
 };
