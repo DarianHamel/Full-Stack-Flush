@@ -1,3 +1,5 @@
 config.env
 *.env
+node_modules
 *.docx
+coverage
