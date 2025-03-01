@@ -1,11 +1,5 @@
-//const mongoose = require("mongoose");
-//const bcrypt = require("bcryptjs");
-//const { MongoMemoryServer } = require("mongodb-memory-server");
-//const User = require("../Models/UserModel");
-//const { GetWins, GetLosses, UpdateStats } = require("../Controllers/WinLoseController");
-//const WebSocket = require('ws');
 const { WS } = require("jest-websocket-mock");
-const { handle_web_socket } = require("../routes/Blackjack.js");
+const { handle_web_socket, blackjackState, assign_player, remove_player, handle_message } = require("../routes/Blackjack.js");
 const Card = require("../models/Card.js");
 const Deck = require("../models/Deck");
 const Player = require("../models/Player");
@@ -18,13 +12,12 @@ let game;
 
 beforeEach(async () => {
   server = new WS('ws://localhost:5050');
-  /*server.on("connection", (socket) => {
-    handle_web_socket(socket, "TestUser");
-  });*/
   client = new WebSocket('ws://localhost:5050');
   await server.connected;
 
   game = new Game();
+  blackjackState.games = [];
+  blackjackState.gameIdCounter = 0;
 });
 
 afterEach(async () => {
@@ -47,7 +40,7 @@ describe("Deck, Card, and Player Tests", () => {
         expect(testCard.rank).toBe(8);
     });
 
-    test("Deck should be created with 52 unique cards", async () => {
+    test("Deck should be created with 52 unique and valid cards", async () => {
         const testDeck = new Deck();
         expect(testDeck.cards.length).toBe(52);
 
@@ -55,6 +48,9 @@ describe("Deck, Card, and Player Tests", () => {
             for (let j=0; j<52; j++){
                 expect(i != j && testDeck.cards[i] === testDeck.cards[j]).toBe(false);
             }
+
+            expect(testDeck.cards[i].rank >= 2 && testDeck.cards[i].rank <= 14).toBe(true);
+            expect(testDeck.cards[i].suit === 'hearts' || testDeck.cards[i].suit === 'diamonds' || testDeck.cards[i].suit === 'clubs' || testDeck.cards[i].suit === 'spades').toBe(true);
         }
     });
 
@@ -83,6 +79,19 @@ describe("Game Tests", () => {
         game.add_player(null, "TestUsername2");
         expect(game.players.length).toBe(1);
         expect(game.playerQueue.length).toBe(1);
+    });
+
+    test("Game should correctly remove players to the game and queue", async () => {
+        const testWebsocket = new WebSocket('ws://localhost:5050');
+        game.add_player(client, "TestUsername");
+        game.add_player(testWebsocket, "TestUsername2");
+        expect(game.players.length).toBe(1);
+        expect(game.playerQueue.length).toBe(1);
+
+        game.remove_player(testWebsocket);
+        game.remove_player(client);
+        expect(game.players.length).toBe(0);
+        expect(game.playerQueue.length).toBe(0);
     });
 
     test("Game should correctly tell playing and queued players that game has started", async () => {
@@ -143,6 +152,246 @@ describe("Game Tests", () => {
         expect(gameOver.type).toBe("GAME_OVER")
     });
 
+
+    test("Game should calculate winners correctly", async () => {
+        const testWinner = new Player(client, 0, "TestWinner");
+        testWinner.hand = [new Card('Hearts', 14), new Card('Hearts', 10)]; //has 21, should win
+
+        const testLoser = new Player(client, 0, "TestLoser");
+        testLoser.hand = [new Card('Hearts', 2), new Card('Hearts', 10), new Card('Hearts', 11)]; //has 22, should lose
+
+        const testLoser2 = new Player(client, 0, "TestLoser2");
+        testLoser2.hand = [new Card('Hearts', 10), new Card('Hearts', 6)]; //has 16, should lose
+
+        const testNeutral = new Player(client, 0, "TestNeutral");
+        testNeutral.hand = [new Card('Hearts', 7), new Card('Hearts', 10)]; //has 17, should be neutral
+
+        game.dealer.hand = [new Card('Hearts', 7), new Card('Hearts', 10)]; //Dealer has 17
+        game.players.push(testWinner);
+        game.players.push(testLoser);
+        game.players.push(testLoser2);
+        game.players.push(testNeutral);
+
+        game.end_game();
+        await expect(server).toReceiveMessage(JSON.stringify({type: "GAME_OVER", result: "WIN"}));
+        await expect(server).toReceiveMessage(JSON.stringify({type: "GAME_OVER", result: "LOSE"}));
+        await expect(server).toReceiveMessage(JSON.stringify({type: "GAME_OVER", result: "LOSE"}));
+        await expect(server).toReceiveMessage(JSON.stringify({type: "GAME_OVER", result: "NEUTRAL"}));
+    });
     
+    test("Game should tell player if they hit 21 on a HIT", async () => {
+
+        //mock next_turn so it doesn't get called
+        const nextTurnSpy = jest.spyOn(game, 'next_turn').mockImplementation(() => {});
+
+        const testPlayer = new Player(client, 0, "TestPlayer");
+        testPlayer.hand = [new Card('Hearts', 10)]
+        game.players.push(testPlayer);
+        game.deck = new Deck();
+        game.deck.cards = [new Card('Hearts', 14)];
+
+        game.handle_action("HIT", client);
+        
+        let msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("DEAL_SINGLE");
+        msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("TWENTY_ONE");
+
+        nextTurnSpy.mockRestore();
+    });
+
+    test("Game should tell player if they bust on a HIT", async () => {
+
+        //mock next_turn so it doesn't get called
+        const nextTurnSpy = jest.spyOn(game, 'next_turn').mockImplementation(() => {});
+
+        const testPlayer = new Player(client, 0, "TestPlayer");
+        testPlayer.hand = [new Card('Hearts', 10), new Card('Hearts', 10)];
+        game.players.push(testPlayer);
+        game.deck = new Deck();
+        game.deck.cards = [new Card('Hearts', 10)];
+
+        game.handle_action("HIT", client);
+        
+        let msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("DEAL_SINGLE");
+        msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("BUST");
+
+        nextTurnSpy.mockRestore();
+    });
+
+    test("Game should tell player other player's new card on a HIT", async () => {
+
+        const testPlayer = new Player(client, 0, "TestPlayer");
+        const testPlayer2 = new Player(client, 0, "TestPlayer2");
+        testPlayer.hand = [new Card('Hearts', 2), new Card('Hearts', 2)];
+        game.players.push(testPlayer);
+        game.players.push(testPlayer2);
+        game.deck = new Deck();
+        game.deck.cards = [new Card('Hearts', 10)];
+
+        game.handle_action("HIT", client);
+        
+        let msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("DEAL_SINGLE");
+        msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("OTHER_PLAYER_DEAL_SINGLE");
+        expect(msg.card.suit).toBe("Hearts");
+        expect(msg.card.rank).toBe(10);
+
+    });
+
+    test("Game should accurately tell players which cards the dealer gets", async () => {
+
+        //mock end_game so it doesn't get called
+        const endGameSpy = jest.spyOn(game, 'end_game').mockImplementation(() => {});
+
+        const testPlayer = new Player(client, 0, "TestPlayer");
+        game.players.push(testPlayer);
+        game.deck = new Deck();
+        game.deck.cards = [new Card('Hearts', 2), new Card('Hearts', 5)];
+        game.dealer.hand = [new Card('Hearts', 2), new Card('Hearts', 8)]; //Dealer has 10
+
+        game.dealer_turn();
+        
+        let msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("DEALER_CARD");
+        expect(msg.card.suit).toBe("Hearts");
+        expect(msg.card.rank).toBe(8);
+
+        msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("DEALER_CARD");
+        expect(msg.card.suit).toBe("Hearts");
+        expect(msg.card.rank).toBe(5);
+
+        msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("DEALER_CARD");
+        expect(msg.card.suit).toBe("Hearts");
+        expect(msg.card.rank).toBe(2);
+
+        endGameSpy.mockRestore();
+    });
+
+    test("Game should tell the next player it's their turn when a player calls STAND", async () => {
+
+        const testWebsocket = new WebSocket('ws://localhost:5050');
+        const testPlayer = new Player(testWebsocket, 0, "TestPlayer");
+        const testPlayer2 = new Player(client, 0, "TestPlayer2");
+        game.players.push(testPlayer);
+        game.players.push(testPlayer2);
+
+        game.handle_action("STAND", testWebsocket);
+        
+        let msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("PLAYER_TURN");
+    });
+
+    test("Game should restart the game when PLAY_AGAIN is called", async () => {
+
+        const testPlayer = new Player(client, 0, "TestPlayer");
+        game.players.push(testPlayer);
+        game.gameOver = true;
+
+        game.handle_action("PLAY_AGAIN", client);
+        
+        let msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("START");
+    });
+
+    test("Game should close the socket when a player is kicked", async () => {
+        game.deck = new Deck();
+
+        const testPlayer = new Player(client, 0, "TestPlayer");
+        game.players.push(testPlayer);
+
+        game.kick_player(client);
+        
+        await server.closed;
+        expect(client.readyState).toBe(WebSocket.CLOSED);
+    });
+});
+
+describe("Blackjack Routes Tests", () => {
+
+    test("Game should be created and started when the first player joins", async () => {
+
+        assign_player(client, "TestPlayer");
+        let msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("START");
+    });
+
+    test("A new game should be created and started when the first one is full", async () => {
+
+        const game1 = assign_player(client, "TestPlayer");
+        assign_player(client, "TestPlayer2");
+        assign_player(client, "TestPlayer3");
+        assign_player(client, "TestPlayer4");
+        const game2 = assign_player(client, "TestPlayer5");
+
+        expect(game1 === game2).toBe(false);
+
+    });
+
+    test("Blackjack should remove players successfully", async () => {
+
+        const game1 = assign_player(client, "TestPlayer");
+        remove_player(client);
+
+        expect(game1.players.length).toBe(0);
+
+    });
+
+    test("Blackjack should send messages correctly", async () => {
+        //This is quite a finicky test
+        const game1 = assign_player(client, "TestPlayer");
+        
+        let msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("START");
+        msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("DEAL");
+        msg = JSON.parse(await server.nextMessage);
+        expect(msg.type).toBe("DEALER_CARD");
+        msg = JSON.parse(await server.nextMessage);
+
+        //Change which message is sent based on the state of the game
+        if (game1.dealer.get_total() === 21 || game1.players[0].get_total() === 21){
+            expect(msg.type).toBe("DEALER_CARD");            
+            msg = JSON.parse(await server.nextMessage);
+            expect(msg.type).toBe("GAME_OVER");
+
+            const message = {
+                type: "ACTION",
+                action: "PLAY_AGAIN",
+            };
+            handle_message(message, client);
+    
+            msg = JSON.parse(await server.nextMessage);
+            expect(msg.type).toBe("START");
+        }
+        else{
+            expect(msg.type).toBe("PLAYER_TURN");
+
+            const message = {
+                type: "ACTION",
+                action: "HIT",
+            };
+            handle_message(message, client);
+    
+            msg = JSON.parse(await server.nextMessage);
+            expect(msg.type).toBe("DEAL_SINGLE");
+        }
+    });
+
+    test("Blackjack should handle bad messages correctly", async () => {
+
+        assign_player(client, "TestPlayer");
+        
+        handle_message("BAD MESSAGE", client);
+
+        await server.closed;
+        expect(client.readyState).toBe(WebSocket.CLOSED);
+    });
+
 });
 

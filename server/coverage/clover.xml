@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1740795293299" clover="3.2.0">
+  <project timestamp="1740795293299" name="All files">
+    <metrics statements="311" coveredstatements="285" conditionals="117" coveredconditionals="102" methods="39" coveredmethods="35" elements="467" coveredelements="422" complexity="0" loc="311" ncloc="311" packages="4" files="9" classes="9"/>
+    <package name="Controllers">
+      <metrics statements="97" coveredstatements="91" conditionals="45" coveredconditionals="40" methods="11" coveredmethods="11"/>
+      <file name="BalanceController.js" path="/home/scott/Documents/1University/Year 5/4350/Full-Stack-Flush/server/Controllers/BalanceController.js">
+        <metrics statements="31" coveredstatements="30" conditionals="12" coveredconditionals="12" methods="2" coveredmethods="2"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="8" count="3" type="stmt"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="10" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="23" count="8" type="stmt"/>
+        <line num="24" count="8" type="stmt"/>
+        <line num="25" count="8" type="stmt"/>
+        <line num="26" count="8" type="stmt"/>
+        <line num="28" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="32" count="7" type="stmt"/>
+        <line num="33" count="7" type="stmt"/>
+        <line num="34" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="38" count="5" type="stmt"/>
+        <line num="39" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="43" count="4" type="stmt"/>
+        <line num="44" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="48" count="3" type="stmt"/>
+        <line num="49" count="3" type="stmt"/>
+        <line num="50" count="2" type="stmt"/>
+        <line num="53" count="2" type="stmt"/>
+      </file>
+      <file name="LeaderboardController.js" path="/home/scott/Documents/1University/Year 5/4350/Full-Stack-Flush/server/Controllers/LeaderboardController.js">
+        <metrics statements="33" coveredstatements="29" conditionals="17" coveredconditionals="13" methods="6" coveredmethods="6"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="cond" truecount="1" falsecount="2"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="9" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="34" count="4" type="stmt"/>
+        <line num="36" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="39" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="43" count="4" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="48" count="5" type="stmt"/>
+        <line num="57" count="1" type="stmt"/>
+        <line num="58" count="9" type="stmt"/>
+        <line num="59" count="30" type="cond" truecount="2" falsecount="0"/>
+        <line num="60" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="65" count="26" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="WinLoseController.js" path="/home/scott/Documents/1University/Year 5/4350/Full-Stack-Flush/server/Controllers/WinLoseController.js">
+        <metrics statements="33" coveredstatements="32" conditionals="16" coveredconditionals="15" methods="3" coveredmethods="3"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="8" count="3" type="stmt"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="11" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="24" count="3" type="stmt"/>
+        <line num="25" count="3" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="27" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="40" count="8" type="stmt"/>
+        <line num="41" count="8" type="stmt"/>
+        <line num="43" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="47" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="48" count="2" type="stmt"/>
+        <line num="51" count="6" type="stmt"/>
+        <line num="52" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="58" count="4" type="stmt"/>
+        <line num="59" count="4" type="stmt"/>
+        <line num="61" count="4" type="stmt"/>
+        <line num="62" count="3" type="stmt"/>
+        <line num="64" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="Models">
+      <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+      <file name="UserModel.js" path="/home/scott/Documents/1University/Year 5/4350/Full-Stack-Flush/server/Models/UserModel.js">
+        <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="2" count="4" type="stmt"/>
+        <line num="4" count="4" type="stmt"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="16" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="18" type="stmt"/>
+        <line num="21" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="models">
+      <metrics statements="171" coveredstatements="166" conditionals="58" coveredconditionals="51" methods="20" coveredmethods="20"/>
+      <file name="Card.js" path="/home/scott/Documents/1University/Year 5/4350/Full-Stack-Flush/server/models/Card.js">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="3" count="1129" type="stmt"/>
+        <line num="4" count="1129" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+      </file>
+      <file name="Deck.js" path="/home/scott/Documents/1University/Year 5/4350/Full-Stack-Flush/server/models/Deck.js">
+        <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="5" count="21" type="stmt"/>
+        <line num="6" count="21" type="stmt"/>
+        <line num="7" count="21" type="stmt"/>
+        <line num="14" count="21" type="stmt"/>
+        <line num="16" count="21" type="stmt"/>
+        <line num="17" count="84" type="stmt"/>
+        <line num="18" count="1092" type="stmt"/>
+        <line num="28" count="21" type="stmt"/>
+        <line num="29" count="1092" type="stmt"/>
+        <line num="30" count="1092" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+      </file>
+      <file name="Game.js" path="/home/scott/Documents/1University/Year 5/4350/Full-Stack-Flush/server/models/Game.js">
+        <metrics statements="136" coveredstatements="131" conditionals="49" coveredconditionals="42" methods="14" coveredmethods="14"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="7" count="27" type="stmt"/>
+        <line num="8" count="27" type="stmt"/>
+        <line num="9" count="27" type="stmt"/>
+        <line num="10" count="27" type="stmt"/>
+        <line num="11" count="27" type="stmt"/>
+        <line num="12" count="27" type="stmt"/>
+        <line num="13" count="27" type="stmt"/>
+        <line num="14" count="27" type="stmt"/>
+        <line num="15" count="27" type="stmt"/>
+        <line num="16" count="27" type="stmt"/>
+        <line num="17" count="27" type="stmt"/>
+        <line num="26" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="8" type="stmt"/>
+        <line num="28" count="8" type="stmt"/>
+        <line num="30" count="8" type="stmt"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="34" count="5" type="stmt"/>
+        <line num="44" count="13" type="stmt"/>
+        <line num="45" count="13" type="stmt"/>
+        <line num="46" count="13" type="stmt"/>
+        <line num="47" count="13" type="stmt"/>
+        <line num="48" count="13" type="stmt"/>
+        <line num="49" count="10" type="stmt"/>
+        <line num="51" count="13" type="stmt"/>
+        <line num="54" count="13" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="59" count="13" type="stmt"/>
+        <line num="60" count="11" type="stmt"/>
+        <line num="63" count="13" type="stmt"/>
+        <line num="64" count="13" type="stmt"/>
+        <line num="71" count="15" type="stmt"/>
+        <line num="73" count="30" type="stmt"/>
+        <line num="74" count="28" type="stmt"/>
+        <line num="75" count="28" type="stmt"/>
+        <line num="77" count="30" type="stmt"/>
+        <line num="79" count="15" type="stmt"/>
+        <line num="80" count="14" type="stmt"/>
+        <line num="87" count="14" type="stmt"/>
+        <line num="91" count="15" type="stmt"/>
+        <line num="94" count="15" type="stmt"/>
+        <line num="95" count="14" type="stmt"/>
+        <line num="96" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="97" count="4" type="stmt"/>
+        <line num="105" count="4" type="stmt"/>
+        <line num="112" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="113" count="2" type="stmt"/>
+        <line num="115" count="2" type="stmt"/>
+        <line num="117" count="2" type="stmt"/>
+        <line num="121" count="13" type="stmt"/>
+        <line num="131" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="132" count="1" type="stmt"/>
+        <line num="135" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="136" count="13" type="stmt"/>
+        <line num="140" count="5" type="stmt"/>
+        <line num="141" count="5" type="stmt"/>
+        <line num="150" count="6" type="stmt"/>
+        <line num="153" count="6" type="stmt"/>
+        <line num="154" count="8" type="stmt"/>
+        <line num="156" count="8" type="stmt"/>
+        <line num="159" count="6" type="stmt"/>
+        <line num="166" count="8" type="stmt"/>
+        <line num="168" count="8" type="stmt"/>
+        <line num="169" count="5" type="stmt"/>
+        <line num="170" count="5" type="cond" truecount="5" falsecount="0"/>
+        <line num="171" count="1" type="stmt"/>
+        <line num="172" count="1" type="stmt"/>
+        <line num="177" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="178" count="3" type="stmt"/>
+        <line num="179" count="3" type="stmt"/>
+        <line num="184" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="185" count="1" type="stmt"/>
+        <line num="191" count="0" type="stmt"/>
+        <line num="195" count="8" type="stmt"/>
+        <line num="205" count="6" type="stmt"/>
+        <line num="206" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="207" count="7" type="stmt"/>
+        <line num="208" count="7" type="cond" truecount="3" falsecount="1"/>
+        <line num="211" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="212" count="4" type="stmt"/>
+        <line num="216" count="1" type="stmt"/>
+        <line num="218" count="5" type="stmt"/>
+        <line num="221" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="222" count="1" type="stmt"/>
+        <line num="226" count="0" type="stmt"/>
+        <line num="228" count="1" type="stmt"/>
+        <line num="231" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="232" count="1" type="stmt"/>
+        <line num="236" count="0" type="stmt"/>
+        <line num="238" count="1" type="stmt"/>
+        <line num="241" count="0" type="stmt"/>
+        <line num="242" count="0" type="stmt"/>
+        <line num="252" count="2" type="stmt"/>
+        <line num="253" count="2" type="stmt"/>
+        <line num="260" count="4" type="stmt"/>
+        <line num="261" count="4" type="stmt"/>
+        <line num="263" count="4" type="stmt"/>
+        <line num="267" count="4" type="stmt"/>
+        <line num="270" count="4" type="stmt"/>
+        <line num="271" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="272" count="1" type="stmt"/>
+        <line num="277" count="1" type="stmt"/>
+        <line num="282" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="283" count="1" type="stmt"/>
+        <line num="284" count="1" type="stmt"/>
+        <line num="285" count="1" type="stmt"/>
+        <line num="288" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="290" count="1" type="stmt"/>
+        <line num="291" count="1" type="stmt"/>
+        <line num="292" count="1" type="stmt"/>
+        <line num="301" count="1" type="stmt"/>
+        <line num="302" count="1" type="stmt"/>
+        <line num="310" count="1" type="stmt"/>
+        <line num="312" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="313" count="1" type="stmt"/>
+        <line num="322" count="5" type="stmt"/>
+        <line num="324" count="5" type="stmt"/>
+        <line num="325" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="326" count="4" type="stmt"/>
+        <line num="327" count="4" type="stmt"/>
+        <line num="328" count="4" type="stmt"/>
+        <line num="331" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="332" count="4" type="stmt"/>
+        <line num="336" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="337" count="3" type="stmt"/>
+        <line num="341" count="5" type="stmt"/>
+        <line num="342" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="343" count="1" type="stmt"/>
+        <line num="344" count="1" type="stmt"/>
+        <line num="345" count="1" type="stmt"/>
+        <line num="349" count="5" type="stmt"/>
+        <line num="356" count="31" type="stmt"/>
+        <line num="357" count="18" type="stmt"/>
+        <line num="365" count="1" type="stmt"/>
+      </file>
+      <file name="Player.js" path="/home/scott/Documents/1University/Year 5/4350/Full-Stack-Flush/server/models/Player.js">
+        <metrics statements="20" coveredstatements="20" conditionals="9" coveredconditionals="9" methods="2" coveredmethods="2"/>
+        <line num="3" count="59" type="stmt"/>
+        <line num="4" count="59" type="stmt"/>
+        <line num="5" count="59" type="stmt"/>
+        <line num="6" count="59" type="stmt"/>
+        <line num="14" count="68" type="stmt"/>
+        <line num="15" count="68" type="stmt"/>
+        <line num="17" count="68" type="stmt"/>
+        <line num="18" count="146" type="cond" truecount="5" falsecount="0"/>
+        <line num="19" count="22" type="stmt"/>
+        <line num="20" count="22" type="stmt"/>
+        <line num="22" count="124" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="113" type="stmt"/>
+        <line num="24" count="113" type="stmt"/>
+        <line num="28" count="11" type="stmt"/>
+        <line num="29" count="11" type="stmt"/>
+        <line num="32" count="68" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="36" count="63" type="stmt"/>
+        <line num="38" count="68" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="routes">
+      <metrics statements="36" coveredstatements="21" conditionals="12" coveredconditionals="9" methods="7" coveredmethods="3"/>
+      <file name="Blackjack.js" path="/home/scott/Documents/1University/Year 5/4350/Full-Stack-Flush/server/routes/Blackjack.js">
+        <metrics statements="36" coveredstatements="21" conditionals="12" coveredconditionals="9" methods="7" coveredmethods="3"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="47" count="9" type="stmt"/>
+        <line num="48" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="3" type="stmt"/>
+        <line num="53" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="6" type="stmt"/>
+        <line num="55" count="6" type="stmt"/>
+        <line num="56" count="6" type="stmt"/>
+        <line num="58" count="9" type="stmt"/>
+        <line num="60" count="9" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="69" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="70" count="1" type="stmt"/>
+        <line num="71" count="1" type="stmt"/>
+        <line num="80" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="82" count="1" type="stmt"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+        <line num="93" count="1" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
