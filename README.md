@@ -46,12 +46,12 @@
    * **Server Dependencies:**
       ```bash
       cd server
-      npm install
+      npm ci
       ```
    * **Client Dependencies:**
       ```bash
       cd client
-      npm install
+      npm ci
       ```
 
 4. **Run the Tests**
