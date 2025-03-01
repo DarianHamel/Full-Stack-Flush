@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../design/Profile.css";
+import AuthRedirect from "./AuthRedirect";
 
 // icons
 import { FaUser, FaWallet, FaChartBar, FaHeadset } from "react-icons/fa";
@@ -33,31 +34,33 @@ const Profile = ({ username }) => {
   };
 
   return (
-    <div className="left-panel">
-      {/* Left Panel */}
-      <div>
-        <h2>@{username}</h2>
+    <AuthRedirect username={username}>
+      <div className="left-panel">
+        {/* Left Panel */}
         <div>
-          <button onClick={() => loadPanelData("profile")}>
-            <FaUser /> My Profile
-          </button>
-          <button onClick={() => loadPanelData("balance")}>
-            <FaWallet /> Balance
-          </button>
-          <button onClick={() => loadPanelData("stats")}>
-            <FaChartBar /> Stats
-          </button>
-          <button onClick={() => loadPanelData("support")}>
-            <FaHeadset /> Support
-          </button>
+          <h2>@{username}</h2>
+          <div>
+            <button onClick={() => loadPanelData("profile")}>
+              <FaUser /> My Profile
+            </button>
+            <button onClick={() => loadPanelData("balance")}>
+              <FaWallet /> Balance
+            </button>
+            <button onClick={() => loadPanelData("stats")}>
+              <FaChartBar /> Stats
+            </button>
+            <button onClick={() => loadPanelData("support")}>
+              <FaHeadset /> Support
+            </button>
+          </div>
+        </div>
+
+        {/* Right Panel */}
+        <div className="right-panel">
+          <div>{panelComponents[currentPanel]}</div>
         </div>
       </div>
-
-      {/* Right Panel */}
-      <div className="right-panel">
-        <div>{panelComponents[currentPanel]}</div>
-      </div>
-    </div>
+    </AuthRedirect>
   );
 };
 
