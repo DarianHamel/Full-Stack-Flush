@@ -356,8 +356,10 @@ describe("Blackjack Routes Tests", () => {
 
         //Change which message is sent based on the state of the game
         if (game1.dealer.get_total() === 21 || game1.players[0].get_total() === 21){
-            expect(msg.type).toBe("DEALER_CARD");            
-            msg = JSON.parse(await server.nextMessage);
+            while (msg.type === "DEALER_CARD"){
+                expect(msg.type).toBe("DEALER_CARD");
+                msg = JSON.parse(await server.nextMessage);
+            }
             expect(msg.type).toBe("GAME_OVER");
 
             const message = {
