@@ -13,6 +13,19 @@ module.exports.GetUserInfo = async (req, res) => {
     }
   };
 
+module.exports.GetTimeLimit = async (req, res) => {
+  const { username } = req.query;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    res.status(200).json({ success: true, timeLimit: user.timeLimit });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 module.exports.GetMoneySpent = async (req, res) => {
   const { username } = req.query; 
   try {
@@ -34,9 +47,7 @@ module.exports.SetMoneySpent = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
     if (money != undefined && money > 0) {
-      user.moneySpent += money;
-      user.markModified('moneySpent');
-      await user.save();
+      await user.updateMoneySpent(money);
       res.status(200).json({ success: true, moneySpent: user.moneySpent });
     } else {
       return res.status(400).json({ success: false, message: "Invalid money value" });
@@ -60,16 +71,14 @@ module.exports.GetTimeSpent = async (req, res) => {
 };
 
 module.exports.SetTimeSpent = async (req, res) => {
-  const { username, time } = req.body;
+  const { username, timeSpent } = req.body;
   try {
     const user = await User.findOne({ username }); 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-    if (time != undefined && time > 0) {
-      user.timeSpent += time;
-      user.markModified('timeSpent');
-      await user.save();
+    if (timeSpent != undefined && timeSpent > 0) {
+      await user.updateTimeSpent(timeSpent);
       res.status(200).json({ success: true, timeSpent: user.timeSpent });
     } else {
       return res.status(400).json({ success: false, message: "Invalid time value" });

@@ -6,6 +6,7 @@ import AuthRedirect from "./AuthRedirect";
 export default function Blackjack({username}) {
 
   const [socket, setSocket] = useState(null);
+  var startTime = Date.now();
   const [gameState, setGameState] = useState({
     otherPlayers: [],
     dealerHand: [],
@@ -28,6 +29,7 @@ export default function Blackjack({username}) {
 
       newSocket.onopen = () => {
         console.log('Connected to websocket server');
+        startTime = Date.now();
         newSocket.send(JSON.stringify({type: "JOIN"}));
       };
 
@@ -38,6 +40,9 @@ export default function Blackjack({username}) {
 
       newSocket.onclose = () => {
         console.log('Disconnected from websocket server');
+        const endTime = Date.now();
+        const timeSpent = Math.floor((endTime - startTime)/1000); //Time in seconds
+        updateTimeSpent(username, timeSpent);
         reset_state();
       }
 
@@ -51,6 +56,21 @@ export default function Blackjack({username}) {
       console.error('A problem occurred starting blackjack game: ', error);
     }
   }
+
+  const updateTimeSpent = async (username, timeSpent) => {
+    try{
+      await fetch('http://localhost:5050/setTimeSpent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({username, timeSpent}),
+      });
+    }
+    catch (error){
+      console.error('A problem occurred updating time spent: ', error);
+    }
+  };
 
   /*
   Handle all of the messages the server could send to the player
@@ -92,6 +112,10 @@ export default function Blackjack({username}) {
         handle_dealer_card(message);
         break;
       case "GAME_OVER":
+        const endTime = Date.now();
+        const timeSpent = Math.floor((endTime - startTime)/1000); //Time in seconds
+        updateTimeSpent(username, timeSpent);
+        startTime = Date.now();
         setGameState((prevState) => ({
           ...prevState,
           gameOver: true,
@@ -221,6 +245,7 @@ export default function Blackjack({username}) {
   Tell the server we wish to play again and reset the state of the game
   */
   function play_again(){
+    startTime = Date.now();
     send_message("PLAY_AGAIN");
     setGameState({
       otherPlayers: [],
@@ -275,7 +300,7 @@ export default function Blackjack({username}) {
     <AuthRedirect username={username}>
     <div className="blackjack-container">
       {!gameState.inGame && (
-        <button onClick={startGame}>Start Game</button>
+        <button className="start-button" onClick={startGame}>Start Game</button>
       )}
       {(gameState.inGame && !gameState.playing && (
         <p>Waiting for other players...</p>
