@@ -97,7 +97,25 @@
     font-weight: bold;
     color: #333;
   }
+
+  .bet-container {
+    margin-bottom: 20px;
+    text-align: center;
+  }
   
+  .bet-container label {
+    font-size: 18px;
+    margin-right: 10px;
+  }
+  
+  .bet-input {
+    width: 100px;
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
   .start-button {
     background-color: #4CAF50; /* Green */
     border: none;

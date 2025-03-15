@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import Card from "./Card.jsx";
 import "../design/Blackjack.css";
+import { toast } from "react-toastify";
 import AuthRedirect from "./AuthRedirect";
 
 export default function Blackjack({username}) {
 
   const [socket, setSocket] = useState(null);
+  const [betAmount, setBetAmount] = useState(0);
   var startTime = Date.now();
+  var newBalance = 100; //Default value for testing
   const [gameState, setGameState] = useState({
     otherPlayers: [],
     dealerHand: [],
@@ -18,12 +21,17 @@ export default function Blackjack({username}) {
     bust: false,
     gameOver: false,
     result: null,
+    balance: 100, //Change this to be the user's balance
   });
 
   /*
   Create the websocket to start the game
   */
   async function startGame(){
+    if (betAmount <= 0 || betAmount > gameState.balance) {
+      toast.info("Invalid bet amount", {position: "top-center"});
+      return;
+    }
     try{
       const newSocket = new WebSocket('ws://localhost:5050/')
 
@@ -86,7 +94,8 @@ export default function Blackjack({username}) {
       case "START":
         setGameState((prevState) => ({
           ...prevState,
-          playing: true
+          playing: true,
+          balance: newBalance,
         }));
         break;
       case "DEAL":
@@ -116,11 +125,23 @@ export default function Blackjack({username}) {
         const timeSpent = Math.floor((endTime - startTime)/1000); //Time in seconds
         updateTimeSpent(username, timeSpent);
         startTime = Date.now();
-        setGameState((prevState) => ({
-          ...prevState,
-          gameOver: true,
-          result: message.result
-        }));
+        setGameState((prevState) => {
+          console.log(prevState.balance);
+          if(prevState.balance){
+            newBalance = prevState.balance;
+          }
+          if (message.result === "WIN") {
+            newBalance += betAmount; // Double the bet amount if the player wins
+          }else if (message.result === "LOSE"){
+            newBalance -= betAmount; // Subtract the bet amount if the player
+          }
+          return {
+              ...prevState,
+              gameOver: true,
+              result: message.result,
+              balance: newBalance,
+            };
+        });
         break;
       case "OTHER_PLAYER_DEAL":
         handle_other_deal(message);
@@ -299,6 +320,20 @@ export default function Blackjack({username}) {
   return (
     <AuthRedirect username={username}>
     <div className="blackjack-container">
+      <div className="bet-container">
+        <label htmlFor="betAmount">Bet Amount:</label>
+        <input
+          type="number"
+          id="betAmount"
+          value={betAmount}
+          onChange={(bet) => setBetAmount(Number(bet.target.value))}
+          min="1"
+          max={gameState.balance}
+        />
+        <div className="balance-display">
+          Current Balance: ${gameState.balance}
+        </div>
+    </div>
       {!gameState.inGame && (
         <button className="start-button" onClick={startGame}>Start Game</button>
       )}
