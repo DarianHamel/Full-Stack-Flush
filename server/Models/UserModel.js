@@ -10,8 +10,10 @@ const userSchema = new mongoose.Schema({
   moneySpent: { type: Number, default: 0},
   timeSpent: { type: Number, default: 0}, //In seconds
   dailyTimeSpent: { type: Number, default: 0 }, //In seconds
+  dailyMoneySpent: { type: Number, default: 0 },
   timeLimit: { type: Number, default: 3600 }, // 1 hour initial limit
   moneyLimit: { type: Number, default: 100 }, // $100 initial limit
+  lastLogin: { type: Date, default: Date.now() }, //Track users last day logged in to reset daily limits
 });
 
 userSchema.pre("save", async function () {
@@ -27,9 +29,22 @@ userSchema.methods.updateTimeSpent = async function (timeSpent) {
   await this.save();
 };
 
+//Could convert these to a single function that takes in an amount and a type
 userSchema.methods.updateMoneySpent = async function (money) {
+  this.dailyMoneySpent += money;
   this.moneySpent += money;
-  await this.save();
+  this.balance -= money;
+  this.losses++;
+  this.markModified('balance');
+  this.markModified('moneySpent');
+  this.markModified('dailyMoneySpent');
 };
+
+userSchema.methods.updateMoneyWon = async function (money) {
+  this.balance += Number(money);
+  console.log("New Balance: ", this.balance);
+  this.wins++;
+  this.markModified('balance');
+}
 
 module.exports = mongoose.model("User", userSchema);

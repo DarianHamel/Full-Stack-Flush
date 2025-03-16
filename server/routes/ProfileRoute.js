@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { GetUserInfo, GetMoneySpent, GetTimeLimit, SetMoneySpent, GetTimeSpent, SetTimeSpent } = require("../Controllers/ProfileController");
+const { GetUserInfo, GetBalance, GetLastLogin, GetMoneyLimit, SetTimeSpent, ResetDailyLimits } = require("../Controllers/ProfileController");
 
 router.get("/userInfo", GetUserInfo);
-router.get("/moneySpent", GetMoneySpent);
-router.get("/timeSpent", GetTimeSpent);
-router.get("/getTimeLimit", GetTimeLimit);
-router.post("/setMoneySpent", SetMoneySpent);
+router.get("/getBalance", GetBalance);
+router.get("/getMoneyLimit", GetMoneyLimit);
+router.get("/getLastLogin", GetLastLogin);
 router.post("/setTimeSpent", SetTimeSpent);
-
+router.post("/resetDailyLimits", ResetDailyLimits);
 
 module.exports = router;

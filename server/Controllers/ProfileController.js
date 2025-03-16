@@ -1,89 +1,78 @@
 const User = require("../Models/UserModel");
 
-module.exports.GetUserInfo = async (req, res) => {
-    const { username } = req.query; 
-    try {
-      const user = await User.findOne({ username }); 
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      res.status(200).json({ username: user.username, password: user.password });
-    } catch (error) {
-      res.status(500).json({ message: "Server error" });
-    }
-  };
-
-module.exports.GetTimeLimit = async (req, res) => {
-  const { username } = req.query;
+const findUserByUsername = async (username) => {
   try {
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return { error: "User not found", status: 404 };
     }
-    res.status(200).json({ success: true, timeLimit: user.timeLimit });
+    return { user };
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server error" });
+    return { error: "Server error", status: 500 };
   }
 };
 
-module.exports.GetMoneySpent = async (req, res) => {
-  const { username } = req.query; 
-  try {
-    const user = await User.findOne({ username }); 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.status(200).json({ moneySpent: user.moneySpent });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
+module.exports.GetUserInfo = async (req, res) => {
+  const { username } = req.query;
+  const { user, error, status } = await findUserByUsername(username);
+  if (error) {
+    return res.status(status).json({ message: error });
   }
+  res.status(200).json({ username: user.username, password: user.password });
 };
 
-module.exports.SetMoneySpent = async (req, res) => {
-  const { username, money } = req.body;
-  try {
-    const user = await User.findOne({ username }); 
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-    if (money != undefined && money > 0) {
-      await user.updateMoneySpent(money);
-      res.status(200).json({ success: true, moneySpent: user.moneySpent });
-    } else {
-      return res.status(400).json({ success: false, message: "Invalid money value" });
-    }
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Server error" });
+module.exports.GetBalance = async (req, res) => {
+  const { username } = req.query;
+  const { user, error, status } = await findUserByUsername(username);
+  if (error) {
+    return res.status(status).json({ message: error });
   }
+  res.status(200).json({ balance: user.balance });
 }
-  
-module.exports.GetTimeSpent = async (req, res) => {
-  const { username } = req.query; 
-  try {
-    const user = await User.findOne({ username }); 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.status(200).json({ timeSpent: user.timeSpent });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
+
 
 module.exports.SetTimeSpent = async (req, res) => {
   const { username, timeSpent } = req.body;
-  try {
-    const user = await User.findOne({ username }); 
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+  if (timeSpent != undefined && timeSpent > 0) {
+    const { user, error, status } = await findUserByUsername(username);
+    if (error) {
+      return res.status(status).json({ success: false, message: error });
     }
-    if (timeSpent != undefined && timeSpent > 0) {
-      await user.updateTimeSpent(timeSpent);
-      res.status(200).json({ success: true, timeSpent: user.timeSpent });
-    } else {
-      return res.status(400).json({ success: false, message: "Invalid time value" });
-    }
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Server error" });
+    await user.updateTimeSpent(timeSpent);
+    res.status(200).json({ success: true, timeSpent: user.timeSpent });
+  } else {
+    return res.status(400).json({ success: false, message: "Invalid time value" });
   }
-}
+};
+
+module.exports.GetLastLogin = async (req, res) => {
+  const { username } = req.query;
+  const { user, error, status } = await findUserByUsername(username);
+  if (error) {
+    return res.status(status).json({ message: error });
+  }
+  res.status(200).json({ lastLogin: user.lastLogin });
+};
+
+module.exports.ResetDailyLimits = async (req, res) => {
+  const { username } = req.body;
+  const { user, error, status } = await findUserByUsername(username);
+  if (error) {
+    return res.status(status).json({ success: false, message: error });
+  }
+  user.dailyTimeSpent = 0;
+  user.lastLogin = Date.now();
+  user.dailyMoneySpent = 0;
+  await user.save();
+  res.status(200).json({ success: true, message: "Daily limits reset" });
+};
+
+
+ module.exports.GetMoneyLimit = async (req, res) => {
+  const { username } = req.query;
+  const { user, error, status } = await findUserByUsername(username);
+  if (error) {
+    return res.status(status).json({ success: false, message: error });
+  }
+  res.status(200).json({ success: true, moneyLimit: user.moneyLimit });
+};

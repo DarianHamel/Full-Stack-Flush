@@ -20,17 +20,17 @@ class Game{
     /*
     Add a player to this game if it's not started yet or stick them in the queue
     */
-    add_player(ws, username){
+    add_player(ws, username, betAmount){
         
         //Now start the game or let the player know the current state
         if (!this.started){
-            this.players.push(new Player(ws, this.playerIdCounter, username));
+            this.players.push(new Player(ws, this.playerIdCounter, username, betAmount));
             this.playerIdCounter++;
             
             this.start_game();
         }
         else{
-            this.playerQueue.push(new Player(ws, this.playerIdCounter, username));
+            this.playerQueue.push(new Player(ws, this.playerIdCounter, username, betAmount));
             this.playerIdCounter++;
         }
         
@@ -168,14 +168,16 @@ class Game{
         for (const player of this.players){
             const playerHand = player.get_total();
             if (playerHand <= 21 && (dealerHand > 21 || playerHand > dealerHand)){
-                handleWin(player.username);
+                console.log(player.bet);
+                handleWin(player.username, player.bet);
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
                     result: "WIN"
                 }));
             }
             else if (playerHand < dealerHand || playerHand > 21){
-                handleLose(player.username);
+                console.log(player.bet);
+                handleLose(player.username, player.bet);
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
                     result: "LOSE"
@@ -201,7 +203,7 @@ class Game{
     Go to the next person on STAND
     Mark the player as wanting to play again on PLAY_AGAIN
     */
-    handle_action(action, ws){
+    handle_action(action, ws, bet){
         for (const player of this.players){
             if (player.ws === ws){
                 console.log(player.username + " called " + action + " in game " + this.id);
@@ -229,6 +231,7 @@ class Game{
                     case "PLAY_AGAIN":
                         //Check if the game is over
                         if (this.gameOver){
+                            player.bet = bet;
                             this.play_again();
                         }
                         //Just kick them if they're out of sync

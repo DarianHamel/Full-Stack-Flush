@@ -10,14 +10,15 @@ function handle_web_socket(ws, username){
     console.log(username + " websocket connected");
     
     ws.on('message', (msg) => {
-        console.log('Received: '+ msg + " from " + username);
+        console.log('Received: '+ msg + " from " + username, "bet amount: ",  JSON.parse(msg).bet);
         try{
             if (JSON.parse(msg).type == "JOIN"){
-                assign_player(ws, username);
+                console.log("Bet amount: ", JSON.parse(msg).bet);
+                assign_player(ws, username, JSON.parse(msg).bet);
                 ws.send(JSON.stringify({type: "JOIN"}));
             }
             else{
-                handle_message(JSON.parse(msg), ws);
+                handle_message(JSON.parse(msg), ws, JSON.parse(msg).bet);
             }
         }
         catch (error){
@@ -41,7 +42,7 @@ function handle_web_socket(ws, username){
 /*
 Assign new players to a game, make a new one if none available
 */
-function assign_player(ws, username){
+function assign_player(ws, username, bet){
     let game;
     //Search the games for a viable one to join
     for (const g of blackjackState.games){
@@ -55,7 +56,7 @@ function assign_player(ws, username){
         blackjackState.gameIdCounter++;
         blackjackState.games.push(game);
     }
-    game.add_player(ws, username);    
+    game.add_player(ws, username, bet);    
 
     return game;
 
@@ -76,10 +77,10 @@ function remove_player(ws){
 /*
 Pass the action and websocket to every game, the game will deal with it if needed
 */
-function handle_message(message, ws){
+function handle_message(message, ws, bet){
     if (message.type === "ACTION"){
         for (const g of blackjackState.games){
-            g.handle_action(message.action, ws);
+            g.handle_action(message.action, ws, bet);
         }
     }
     else{

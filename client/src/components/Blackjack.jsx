@@ -3,13 +3,14 @@ import Card from "./Card.jsx";
 import "../design/Blackjack.css";
 import { toast } from "react-toastify";
 import AuthRedirect from "./AuthRedirect";
+import { checkAndResetDailyValues, updateTimeSpent , fetchUserBalance} from "./helpers/userInfoHelper.js";
 
 export default function Blackjack({username}) {
 
   const [socket, setSocket] = useState(null);
-  const [betAmount, setBetAmount] = useState(0);
+  const [betAmount, setBetAmount] = useState(1);
   var startTime = Date.now();
-  var newBalance = 100; //Default value for testing
+  var newBalance = 0;
   const [gameState, setGameState] = useState({
     otherPlayers: [],
     dealerHand: [],
@@ -21,8 +22,27 @@ export default function Blackjack({username}) {
     bust: false,
     gameOver: false,
     result: null,
-    balance: 100, //Change this to be the user's balance
+    balance: 0, //Defaults to 0 until we get the user's balance
   });
+
+  useEffect(() => {
+    checkAndResetDailyValues(username);
+    getUserBalance(username);
+  }, [username]);
+
+  const getUserBalance = async (username) => {
+    try {
+      const balance = await fetchUserBalance(username);
+      console.log('Balance is:', balance); 
+      newBalance = balance;
+      setGameState((prevState) => ({
+        ...prevState,
+        balance: balance
+      }));
+    } catch (error) {
+      console.error('Error fetching user balance:', error);
+    }
+  }
 
   /*
   Create the websocket to start the game
@@ -38,7 +58,7 @@ export default function Blackjack({username}) {
       newSocket.onopen = () => {
         console.log('Connected to websocket server');
         startTime = Date.now();
-        newSocket.send(JSON.stringify({type: "JOIN"}));
+        newSocket.send(JSON.stringify({type: "JOIN" , username: username, bet: betAmount}));
       };
 
       newSocket.onmessage = (event) => {
@@ -65,21 +85,6 @@ export default function Blackjack({username}) {
     }
   }
 
-  const updateTimeSpent = async (username, timeSpent) => {
-    try{
-      await fetch('http://localhost:5050/setTimeSpent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({username, timeSpent}),
-      });
-    }
-    catch (error){
-      console.error('A problem occurred updating time spent: ', error);
-    }
-  };
-
   /*
   Handle all of the messages the server could send to the player
   */
@@ -92,6 +97,11 @@ export default function Blackjack({username}) {
         }));
         break;
       case "START":
+        if(gameState.balance < betAmount){
+          toast.info("Insufficient funds", {position: "top-center"});
+          break;
+        }
+        setBetAmount(document.getElementById("betAmount").value);
         setGameState((prevState) => ({
           ...prevState,
           playing: true,
@@ -126,9 +136,10 @@ export default function Blackjack({username}) {
         updateTimeSpent(username, timeSpent);
         startTime = Date.now();
         setGameState((prevState) => {
-          console.log(prevState.balance);
           if(prevState.balance){
             newBalance = prevState.balance;
+          }else{
+            newBalance = gameState.balance;
           }
           if (message.result === "WIN") {
             newBalance += betAmount; // Double the bet amount if the player wins
@@ -250,7 +261,7 @@ export default function Blackjack({username}) {
   Sends the specified action to the server
   */
   function send_message(type){
-    socket.send(JSON.stringify({"type": "ACTION", "action": type}));
+    socket.send(JSON.stringify({"type": "ACTION", "action": type, "bet": betAmount}));
 
     //If we're standing, set playerTurn back to false
     if (type === "STAND"){
@@ -267,6 +278,7 @@ export default function Blackjack({username}) {
   */
   function play_again(){
     startTime = Date.now();
+    setBetAmount(document.getElementById("betAmount").value);
     send_message("PLAY_AGAIN");
     setGameState({
       otherPlayers: [],
