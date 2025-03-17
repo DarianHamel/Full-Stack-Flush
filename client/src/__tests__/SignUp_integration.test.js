@@ -51,7 +51,7 @@ describe("Signup Component", () => {
     fireEvent.click(screen.getByText("Submit"));
 
     await waitFor(() => {
-        const successMessages = screen.getAllByText("Signup successful");
+      const successMessages = screen.getAllByText("Signup successful");
       expect(successMessages.length).toBeGreaterThan(0);
     });
   });
@@ -68,7 +68,7 @@ describe("Signup Component", () => {
 
     await waitFor(() => {
         const errorMessages = screen.getAllByText("Signup failed");
-        expect(errorMessages.length).toBeGreaterThan(0); // ✅ Fix: Expect at least one match
+        expect(errorMessages.length).toBeGreaterThan(0); 
       });
   });
 
