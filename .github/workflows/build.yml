@@ -2,11 +2,11 @@ name: Build, Test, and Deploy
 
 on:
   push:
-    branches: [main]
-    tags:
-      - 'v*'  # Trigger CD on version tags, e.g., v1.0.0
+    branches: [main]  # Trigger CI on pushes to main
   pull_request:
-    branches: [main]
+    branches: [main]  # Trigger CI on PRs to main
+  release:
+    types: [published]  # Trigger CD when a release is published
 
 jobs:
   build:
@@ -100,8 +100,8 @@ jobs:
     needs: [build, test]  # Ensure build and test jobs succeed before deploying
     runs-on: ubuntu-latest
 
-    # Only run this job when a tag is pushed
-    if: startsWith(github.ref, 'refs/tags/v')
+    # Only run this job when a release is published
+    if: github.event_name == 'release' && github.event.action == 'published'
 
     steps:
       - name: Checkout Repository
@@ -122,5 +122,5 @@ jobs:
           context: .
           push: true
           tags: |
-            realprash/fullstackflush:${{ github.ref_name }}  # Use the tag name (e.g., v1.0.0)
+            realprash/fullstackflush:${{ github.event.release.tag_name }}  # Use the release tag (e.g., v1.0.0)
             realprash/fullstackflush:latest  # Optionally push as 'latest'
