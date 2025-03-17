@@ -40,6 +40,8 @@ module.exports.SetTimeSpent = async (req, res) => {
     }
     await user.updateTimeSpent(timeSpent);
     res.status(200).json({ success: true, timeSpent: user.timeSpent });
+  } else if(timeSpent == 0){
+    res.status(200).json({ success: true, message: "Time spent updated" });
   } else {
     return res.status(400).json({ success: false, message: "Invalid time value" });
   }
@@ -76,3 +78,12 @@ module.exports.ResetDailyLimits = async (req, res) => {
   }
   res.status(200).json({ success: true, moneyLimit: user.moneyLimit });
 };
+
+module.exports.GetLimits = async (req, res) => {
+  const { username } = req.query;
+  const { user, error, status } = await findUserByUsername(username);
+  if (error) {
+    return res.status(status).json({ success: false, message: error });
+  }
+  res.status(200).json({ success: true, moneyLimit: user.moneyLimit, timeLimit: user.timeLimit , timeSpent: user.dailyTimeSpent, moneySpent: user.dailyMoneySpent });
+}

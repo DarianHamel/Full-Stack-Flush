@@ -56,7 +56,6 @@ module.exports.UpdateStats = async (req, res) => {
         user.wins += wins;
         console.log(money);
         if(money !== undefined){
-          console.log("We've won money");
           await user.updateMoneyWon(money);
         }
 
@@ -65,7 +64,6 @@ module.exports.UpdateStats = async (req, res) => {
         user.losses += losses;
         console.log(money);
         if(money !== undefined){
-          console.log("We've lost money");
           await user.updateMoneySpent(money);
         }
         

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Card from "./Card.jsx";
 import "../design/Blackjack.css";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import AuthRedirect from "./AuthRedirect";
 import { checkAndResetDailyValues, updateTimeSpent , fetchUserBalance} from "./helpers/userInfoHelper.js";
 
@@ -9,6 +10,8 @@ export default function Blackjack({username}) {
 
   const [socket, setSocket] = useState(null);
   const [betAmount, setBetAmount] = useState(1);
+  const [limitHit, setLimitHit] = useState(false);
+  const navigate = useNavigate();
   var startTime = Date.now();
   var newBalance = 0;
   const [gameState, setGameState] = useState({
@@ -44,12 +47,25 @@ export default function Blackjack({username}) {
     }
   }
 
+  const handleLockOut = () => {
+    setLimitHit(true);
+    toast.error("You have reached your daily limit and are locked out from playing. Redirecting...", {position: "top-center"});
+    setTimeout(() => {
+    navigate('/'); //Redirect to home page
+    }, 3000); // Redirect after 3 seconds
+  }
+
   /*
   Create the websocket to start the game
   */
   async function startGame(){
     if (betAmount <= 0 || betAmount > gameState.balance) {
       toast.info("Invalid bet amount", {position: "top-center"});
+      return;
+    }
+    if (limitHit){
+      console.log("Limit hit");
+      handleLockOut();
       return;
     }
     try{
@@ -142,9 +158,9 @@ export default function Blackjack({username}) {
             newBalance = gameState.balance;
           }
           if (message.result === "WIN") {
-            newBalance += betAmount; // Double the bet amount if the player wins
+            newBalance += Number(document.getElementById("betAmount").value); // Double the bet amount if the player wins
           }else if (message.result === "LOSE"){
-            newBalance -= betAmount; // Subtract the bet amount if the player
+            newBalance -= Number(document.getElementById("betAmount").value); // Subtract the bet amount if the player
           }
           return {
               ...prevState,
@@ -165,6 +181,9 @@ export default function Blackjack({username}) {
           ...prevState,
           playerTurn: false
         }));
+        break;
+      case "LOCKOUT":
+        handleLockOut();
         break;
       default:
         console.log("Unknown message type");
@@ -298,7 +317,7 @@ export default function Blackjack({username}) {
   Close the websocket and reset the game state
   */
   function quit(){
-    socket.close()
+    socket.close();
     reset_state();
   }
 
@@ -333,8 +352,9 @@ export default function Blackjack({username}) {
     <AuthRedirect username={username}>
     <div className="blackjack-container">
       <div className="bet-container">
+      
         <label htmlFor="betAmount">Bet Amount:</label>
-        <input
+        <input disabled={gameState.playing && !gameState.gameOver}
           type="number"
           id="betAmount"
           value={betAmount}
@@ -346,7 +366,7 @@ export default function Blackjack({username}) {
           Current Balance: ${gameState.balance}
         </div>
     </div>
-      {!gameState.inGame && (
+      {!gameState.inGame &&(
         <button className="start-button" onClick={startGame}>Start Game</button>
       )}
       {(gameState.inGame && !gameState.playing && (
@@ -408,7 +428,7 @@ export default function Blackjack({username}) {
               <br />
               </div>
               <div className="game-buttons">
-                <button onClick={play_again}>Play Again</button>
+                <button onClick={play_again} disabled={limitHit}>Play Again</button>
                 <button onClick={quit}>Quit</button>
               </div>
             </div>

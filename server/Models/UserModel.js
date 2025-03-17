@@ -31,9 +31,9 @@ userSchema.methods.updateTimeSpent = async function (timeSpent) {
 
 //Could convert these to a single function that takes in an amount and a type
 userSchema.methods.updateMoneySpent = async function (money) {
-  this.dailyMoneySpent += money;
-  this.moneySpent += money;
-  this.balance -= money;
+  this.dailyMoneySpent += Number(money);
+  this.moneySpent += Number(money);
+  this.balance -= Number(money);
   this.losses++;
   this.markModified('balance');
   this.markModified('moneySpent');

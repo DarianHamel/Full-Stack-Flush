@@ -11,6 +11,7 @@ export const checkAndResetDailyValues = async (username) => {
         await axios.post(`http://localhost:5050/resetDailyLimits`, {username});
         console.log("Daily values reset");
       }
+      console.log("Daily values checked");
     } catch (error) {
       console.error('Error checking and resetting daily values:', error);
     }
