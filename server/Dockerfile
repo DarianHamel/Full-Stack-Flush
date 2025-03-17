@@ -1,19 +1,20 @@
-# Use Node.js as base image
+# Use official Node.js image
 FROM node:20
 
-# Set working directory
+# Set working directory inside container
 WORKDIR /app
 
-# Copy package.json and install dependencies
+# Copy only package.json and package-lock.json first to optimize Docker caching
 COPY package.json package-lock.json ./
+
+# Install dependencies
 RUN npm ci
 
-# Copy source code
+# Copy the rest of the application
 COPY . .
 
-# Expose port (same as your Express server)
+# Expose port (should match the one in server.js)
 EXPOSE 5050
 
 # Start the server
 CMD ["node", "server.js"]
-
