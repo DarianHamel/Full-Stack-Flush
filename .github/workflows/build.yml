@@ -27,6 +27,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
+      - name: Install root dependencies
+        run: npm ci
+
       - name: Install dependencies (Server)
         run: |
           cd server
@@ -45,20 +48,15 @@ jobs:
       - name: Start Server
         run: |
           cd server
-          if [ -f config.env ]; then
-            node --env-file=config.env server.js > server.log 2>&1 &
-            echo "Server started"
-          else
-            echo "config.env not found! Skipping server startup."
-            exit 1
-          fi
+          npm start > server.log 2>&1 &
+          echo "Server started on port 5050"
 
       - name: Start Client
         run: |
           cd client
           npm run dev > client.log 2>&1 &
           sleep 5 # ensure the client has time to start
-          echo "Client started"
+          echo "Client started on port 5173"
 
   test:
     runs-on: ubuntu-latest
