@@ -7,6 +7,7 @@ import ProgressBar from "./ProgressBar";
 import AuthRedirect from "./AuthRedirect";
 import { checkAndResetDailyValues, updateTimeSpent , fetchUserBalance, fetchUserLimits} from "./helpers/userInfoHelper.js";
 
+
 export default function Blackjack({username}) {
 
   const [socket, setSocket] = useState(null);
@@ -16,6 +17,8 @@ export default function Blackjack({username}) {
   const [moneyLimit, setMoneyLimit] = useState(0);
   const [timePlayed, setTimePlayed] = useState(0);
   const [moneySpent, setMoneySpent] = useState(0);
+  const [lastTrendMessage, setTrendMessage] = useState(0);
+  const trendMessageTimer = 120000; // 2 minutes
   const navigate = useNavigate();
   var startTime = Date.now();
   var newBalance = 0;
@@ -182,7 +185,12 @@ export default function Blackjack({username}) {
             newBalance += Number(document.getElementById("betAmount").value); // Double the bet amount if the player wins
           }else if (message.result === "LOSE"){
             newBalance -= Number(document.getElementById("betAmount").value); // Subtract the bet amount if the player
-            setMoneySpent(moneySpent + Number(document.getElementById("betAmount").value));
+            setMoneySpent(prevMoneySpent => {
+              const newMoney = prevMoneySpent + Number(betAmount);
+              console.log("MoneySpent: ", prevMoneySpent); 
+              console.log("New money spent: ", newMoney);
+              return newMoney;
+            });
           }
           return {
               ...prevState,
@@ -206,6 +214,16 @@ export default function Blackjack({username}) {
         break;
       case "LOCKOUT":
         handleLockOut();
+        break;
+      case "TREND_CHANGE":
+        setTrendMessage((prevTrendMessage) => {
+          if(prevTrendMessage - trendMessageTimer < Date.now()){
+            console.log("Trend message timer: ", prevTrendMessage - trendMessageTimer);
+            toast.info(message.message, {position: "top-center"});
+            return Date.now();
+          }
+          return prevTrendMessage;
+        });
         break;
       default:
         console.log("Unknown message type");
@@ -341,6 +359,7 @@ export default function Blackjack({username}) {
   function quit(){
     socket.close();
     reset_state();
+    navigate('/');
   }
 
   /*
@@ -373,8 +392,8 @@ export default function Blackjack({username}) {
   return (
     <AuthRedirect username={username}>
     <div className="Progress-Bars">
-      <ProgressBar label="Time Played" value={timePlayed} max={timeLimit} />
-      <ProgressBar label="Money Spent" value={moneySpent} max={moneyLimit} />
+      <ProgressBar label="Time Played" label2="Minutes:" value={Math.floor(timePlayed/60)} max={Math.floor(timeLimit/60)} />
+      <ProgressBar label="Money Spent" label2="$" value={moneySpent} max={moneyLimit} />
     </div>
     <div className="blackjack-container">
       <div className="bet-container">

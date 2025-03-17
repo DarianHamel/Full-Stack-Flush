@@ -1,5 +1,5 @@
 const axios = require("axios");
-const Game = require("../models/Game.js");
+const Game = require("../Models/Game.js");
 
 const blackjackState = {
     games: [],

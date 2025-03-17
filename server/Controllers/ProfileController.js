@@ -62,6 +62,7 @@ module.exports.ResetDailyLimits = async (req, res) => {
   if (error) {
     return res.status(status).json({ success: false, message: error });
   }
+  user.numLogins++;
   user.dailyTimeSpent = 0;
   user.lastLogin = Date.now();
   user.dailyMoneySpent = 0;

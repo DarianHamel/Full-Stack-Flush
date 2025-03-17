@@ -1,7 +1,7 @@
 import React from 'react';
 import '../design/ProgressBar.css';
 
-const ProgressBar = ({ label, value, max }) => {
+const ProgressBar = ({ label, label2, value, max }) => {
   const percentage = (value / max) * 100;
 
   let color;
@@ -19,7 +19,7 @@ const ProgressBar = ({ label, value, max }) => {
       <div className="progress-bar-container">
         <div className="progress-bar-fill" style={{ width: `${percentage}%` , backgroundColor: color}}></div>
       </div>
-      <span>{value}/{max}</span>
+      <span>{label2}{value}/{max}</span>
     </div>
   );
 };

@@ -204,7 +204,7 @@ class Game{
     Go to the next person on STAND
     Mark the player as wanting to play again on PLAY_AGAIN
     */
-    handle_action(action, ws, bet){
+    async handle_action(action, ws, bet){
         for (const player of this.players){
             if (player.ws === ws){
                 console.log(player.username + " called " + action + " in game " + this.id);
@@ -233,7 +233,8 @@ class Game{
                         //Check if the game is over
                         if (this.gameOver){
                             player.bet = bet;
-                            handleBet(player.username, player.bet);
+                            const message = await handleBet(player.username, player.bet);
+                            player.ws.send(JSON.stringify({type: "TREND_CHANGE", message: message}));
                             this.play_again();
                         }
                         //Just kick them if they're out of sync

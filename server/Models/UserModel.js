@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   timeLimit: { type: Number, default: 3600 }, // 1 hour initial limit
   moneyLimit: { type: Number, default: 100 }, // $100 initial limit
   lastLogin: { type: Date, default: Date.now() }, //Track users last day logged in to reset daily limits
+  numLogins: { type: Number, default: 0 },
 });
 
 userSchema.pre("save", async function () {

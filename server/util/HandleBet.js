@@ -9,6 +9,7 @@ const handleBet = async (username, bet) => {
         { withCredentials: true}
         );
         console.log("Money: ", data.money);
+        return data.message;
     } catch (error) {
         console.error("Error updating losses: ", error);
     }
