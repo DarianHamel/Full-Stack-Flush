@@ -1,22 +1,27 @@
-# Use Node.js as base image
-FROM node:20
+# Use official Node.js image
+FROM node:20 as builder
 
-# Set working directory
+# Set working directory inside container
 WORKDIR /app
 
 # Copy package.json and install dependencies
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy source code
+# Copy the rest of the frontend code
 COPY . .
 
-# Build the React app
+# Build the React/Vite app
 RUN npm run build
 
-# Serve the build files using a simple HTTP server
-RUN npm install -g serve
-CMD ["serve", "-s", "dist"]
+# Use Nginx for serving the frontend
+FROM nginx:alpine
 
-# Expose React default port
-EXPOSE 3000
+# Copy built frontend files to Nginx server
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
