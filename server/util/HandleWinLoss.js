@@ -17,7 +17,6 @@ const handleWin = async (username, bet) => {
   const handleLose = async (username, bet) => {
     if (!username) return;
     try {
-      console.log("Bet: ", bet);
       const { data } = await axios.post(
         "http://localhost:5050/updateStats",
         { username: username, wins: 0, losses: 1 , money: bet},

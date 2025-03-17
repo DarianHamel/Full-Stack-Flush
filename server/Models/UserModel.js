@@ -33,9 +33,8 @@ userSchema.methods.updateTimeSpent = async function (timeSpent) {
 userSchema.methods.updateMoneySpent = async function (money) {
   this.dailyMoneySpent += Number(money);
   this.moneySpent += Number(money);
-  this.balance -= Number(money);
-  this.losses++;
-  this.markModified('balance');
+  console.log("Daily Money Spent: ", this.dailyMoneySpent);
+  console.log("Total Money Spent: ", this.moneySpent);
   this.markModified('moneySpent');
   this.markModified('dailyMoneySpent');
 };
@@ -43,7 +42,6 @@ userSchema.methods.updateMoneySpent = async function (money) {
 userSchema.methods.updateMoneyWon = async function (money) {
   this.balance += Number(money);
   console.log("New Balance: ", this.balance);
-  this.wins++;
   this.markModified('balance');
 }
 

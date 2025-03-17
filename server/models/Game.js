@@ -1,6 +1,7 @@
 const Player = require ("./Player.js");
 const Deck = require("./Deck.js");
 const { handleLose, handleWin } = require("../util/HandleWinLoss.js");
+const { handleBet } = require("../util/HandleBet.js");
 
 class Game{
     constructor(id){
@@ -26,7 +27,7 @@ class Game{
         if (!this.started){
             this.players.push(new Player(ws, this.playerIdCounter, username, betAmount));
             this.playerIdCounter++;
-            
+            handleBet(username, betAmount);
             this.start_game();
         }
         else{
@@ -169,7 +170,7 @@ class Game{
             const playerHand = player.get_total();
             if (playerHand <= 21 && (dealerHand > 21 || playerHand > dealerHand)){
                 console.log(player.bet);
-                handleWin(player.username, player.bet);
+                handleWin(player.username, 2*player.bet);
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
                     result: "WIN"
@@ -232,6 +233,7 @@ class Game{
                         //Check if the game is over
                         if (this.gameOver){
                             player.bet = bet;
+                            handleBet(player.username, player.bet);
                             this.play_again();
                         }
                         //Just kick them if they're out of sync
