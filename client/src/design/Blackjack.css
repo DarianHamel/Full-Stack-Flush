@@ -135,3 +135,11 @@
     color: black;
     border: 2px solid #4CAF50;
   }
+
+  .Progress-Bars{
+    position: fixed;
+    top: 15%;
+    right:5%;
+    width: 300px;
+    z-index: 1000;
+  }

@@ -36,3 +36,14 @@ export const fetchUserBalance = async (username) => {
     console.error('Error fetching user balance:', error);
   }
 };
+
+export const fetchUserLimits = async (username) => {
+  try {
+    const response = await axios.get(`http://localhost:5050/getLimits`, {
+      params: { username }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user limits:', error);
+  }
+}

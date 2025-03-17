@@ -21,7 +21,7 @@ class Game{
     Add a player to this game if it's not started yet or stick them in the queue
     */
     add_player(ws, username, betAmount){
-        
+
         //Now start the game or let the player know the current state
         if (!this.started){
             this.players.push(new Player(ws, this.playerIdCounter, username, betAmount));

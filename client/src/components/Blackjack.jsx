@@ -3,14 +3,19 @@ import Card from "./Card.jsx";
 import "../design/Blackjack.css";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import ProgressBar from "./ProgressBar";
 import AuthRedirect from "./AuthRedirect";
-import { checkAndResetDailyValues, updateTimeSpent , fetchUserBalance} from "./helpers/userInfoHelper.js";
+import { checkAndResetDailyValues, updateTimeSpent , fetchUserBalance, fetchUserLimits} from "./helpers/userInfoHelper.js";
 
 export default function Blackjack({username}) {
 
   const [socket, setSocket] = useState(null);
   const [betAmount, setBetAmount] = useState(1);
   const [limitHit, setLimitHit] = useState(false);
+  const [timeLimit, setTimeLimit] = useState(0);
+  const [moneyLimit, setMoneyLimit] = useState(0);
+  const [timePlayed, setTimePlayed] = useState(0);
+  const [moneySpent, setMoneySpent] = useState(0);
   const navigate = useNavigate();
   var startTime = Date.now();
   var newBalance = 0;
@@ -31,6 +36,7 @@ export default function Blackjack({username}) {
   useEffect(() => {
     checkAndResetDailyValues(username);
     getUserBalance(username);
+    getUserLimits(username);
   }, [username]);
 
   const getUserBalance = async (username) => {
@@ -44,6 +50,18 @@ export default function Blackjack({username}) {
       }));
     } catch (error) {
       console.error('Error fetching user balance:', error);
+    }
+  }
+
+  const getUserLimits = async (username) => {
+    try {
+      const limits = await fetchUserLimits(username);
+      setTimeLimit(limits.timeLimit);
+      setMoneyLimit(limits.moneyLimit);
+      setTimePlayed(limits.timeSpent);
+      setMoneySpent(limits.moneySpent);
+    } catch (error) {
+      console.error('Error fetching user limits:', error);
     }
   }
 
@@ -86,6 +104,8 @@ export default function Blackjack({username}) {
         console.log('Disconnected from websocket server');
         const endTime = Date.now();
         const timeSpent = Math.floor((endTime - startTime)/1000); //Time in seconds
+        setTimePlayed(timePlayed + timeSpent);
+
         updateTimeSpent(username, timeSpent);
         reset_state();
       }
@@ -150,6 +170,7 @@ export default function Blackjack({username}) {
         const endTime = Date.now();
         const timeSpent = Math.floor((endTime - startTime)/1000); //Time in seconds
         updateTimeSpent(username, timeSpent);
+        setTimePlayed(timePlayed + timeSpent);
         startTime = Date.now();
         setGameState((prevState) => {
           if(prevState.balance){
@@ -161,6 +182,7 @@ export default function Blackjack({username}) {
             newBalance += Number(document.getElementById("betAmount").value); // Double the bet amount if the player wins
           }else if (message.result === "LOSE"){
             newBalance -= Number(document.getElementById("betAmount").value); // Subtract the bet amount if the player
+            setMoneySpent(moneySpent + Number(document.getElementById("betAmount").value));
           }
           return {
               ...prevState,
@@ -350,6 +372,10 @@ export default function Blackjack({username}) {
 
   return (
     <AuthRedirect username={username}>
+    <div className="Progress-Bars">
+      <ProgressBar label="Time Played" value={timePlayed} max={timeLimit} />
+      <ProgressBar label="Money Spent" value={moneySpent} max={moneyLimit} />
+    </div>
     <div className="blackjack-container">
       <div className="bet-container">
       
