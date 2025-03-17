@@ -24,8 +24,9 @@ COPY . .
 # Build the client
 RUN cd client && npm run build --if-present
 
-# Expose the port the server runs on
-EXPOSE 5050
+# Expose the ports the server and client run on
+EXPOSE 5050  # Server port
+EXPOSE 5173  # Client port
 
-# Set the command to start the server
-CMD ["sh", "-c", "cd server && node --env-file=config.env server.js"]
+# Set the command to start the server and client
+CMD ["sh", "-c", "cd server && npm start & cd ../client && npm run dev"]
