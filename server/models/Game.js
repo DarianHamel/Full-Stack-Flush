@@ -234,7 +234,7 @@ class Game{
                         if (this.gameOver){
                             player.bet = bet;
                             const message = await handleBet(player.username, player.bet);
-                            player.ws.send(JSON.stringify({type: "TREND_CHANGE", message: message}));
+                            player.ws.send(JSON.stringify({type: "TREND_CHANGE", message: message || null}));
                             this.play_again();
                         }
                         //Just kick them if they're out of sync

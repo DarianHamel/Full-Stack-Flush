@@ -21,10 +21,13 @@ async function handle_web_socket(ws, username){
                     ws.send(JSON.stringify({type: "LOCKOUT"}));
                     ws.close();
                     return;
+                }else if(moneySpent + JSON.parse(msg).bet <= moneyLimit){
+                    console.log("Bet amount: ", JSON.parse(msg).bet);
+                    assign_player(ws, username, JSON.parse(msg).bet);
+                    ws.send(JSON.stringify({type: "JOIN"}));
+                }else{
+                    ws.send(JSON.stringify({type: "BET_EXCEEDS_LIMIT"}));
                 }
-                console.log("Bet amount: ", JSON.parse(msg).bet);
-                assign_player(ws, username, JSON.parse(msg).bet);
-                ws.send(JSON.stringify({type: "JOIN"}));
             }
             else{
                 handle_message(JSON.parse(msg), ws, username, JSON.parse(msg).bet);
@@ -103,7 +106,7 @@ async function handle_message(message, ws, username, bet){
         }
     }
     else{
-        console.log("Unkown message");
+        console.log("Unknown message");
         ws.close();
     }
 }

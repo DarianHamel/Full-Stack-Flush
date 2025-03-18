@@ -59,10 +59,10 @@ export default function Blackjack({username}) {
   const getUserLimits = async (username) => {
     try {
       const limits = await fetchUserLimits(username);
-      setTimeLimit(limits.timeLimit);
-      setMoneyLimit(limits.moneyLimit);
-      setTimePlayed(limits.timeSpent);
-      setMoneySpent(limits.moneySpent);
+      setTimeLimit(limits.timeLimit || 0);
+      setMoneyLimit(limits.moneyLimit || 0);
+      setTimePlayed(limits.timeSpent || 0);
+      setMoneySpent(limits.moneySpent || 0);
     } catch (error) {
       console.error('Error fetching user limits:', error);
     }
@@ -95,7 +95,11 @@ export default function Blackjack({username}) {
       newSocket.onopen = () => {
         console.log('Connected to websocket server');
         startTime = Date.now();
-        newSocket.send(JSON.stringify({type: "JOIN" , username: username, bet: betAmount}));
+        if(betAmount+moneySpent <= moneyLimit){
+          newSocket.send(JSON.stringify({type: "JOIN" , username: username, bet: betAmount}));
+        }else{
+          toast.info("Bet exceeds money limit", {position: "top-center"});
+        }
       };
 
       newSocket.onmessage = (event) => {
@@ -216,15 +220,20 @@ export default function Blackjack({username}) {
         handleLockOut();
         break;
       case "TREND_CHANGE":
-        setTrendMessage((prevTrendMessage) => {
-          if(prevTrendMessage - trendMessageTimer < Date.now()){
-            console.log("Trend message timer: ", prevTrendMessage - trendMessageTimer);
-            toast.info(message.message, {position: "top-center"});
-            return Date.now();
-          }
-          return prevTrendMessage;
-        });
+        if(message !== null){
+          setTrendMessage((prevTrendMessage) => {
+            if(prevTrendMessage - trendMessageTimer < Date.now()){
+              console.log("Trend message timer: ", prevTrendMessage - trendMessageTimer);
+              toast.info(message.message, {position: "top-center"});
+              return Date.now();
+            }
+            return prevTrendMessage;
+          });
+        }
         break;
+      case "BET_EXCEEDS_LIMIT":
+        toast.info("Bet exceeds money limit", {position: "top-center"});
+
       default:
         console.log("Unknown message type");
     }
@@ -377,6 +386,7 @@ export default function Blackjack({username}) {
       bust: false,
       gameOver: false,
       result: null,
+      balance: gameState.balance,
     });
   }
 
@@ -392,8 +402,8 @@ export default function Blackjack({username}) {
   return (
     <AuthRedirect username={username}>
     <div className="Progress-Bars">
-      <ProgressBar label="Time Played" label2="Minutes:" value={Math.floor(timePlayed/60)} max={Math.floor(timeLimit/60)} />
-      <ProgressBar label="Money Spent" label2="$" value={moneySpent} max={moneyLimit} />
+      <ProgressBar label="Time Played" label2="Minutes:" value={Math.floor(timePlayed/60)} max={Math.floor(timeLimit/60) || 1} />
+      <ProgressBar label="Money Spent" label2="$" value={moneySpent} max={moneyLimit || 1} />
     </div>
     <div className="blackjack-container">
       <div className="bet-container">
@@ -405,7 +415,7 @@ export default function Blackjack({username}) {
           value={betAmount}
           onChange={(bet) => setBetAmount(Number(bet.target.value))}
           min="1"
-          max={gameState.balance}
+          max={Math.min(gameState.balance, moneyLimit-moneySpent) || 1}
         />
         <div className="balance-display">
           Current Balance: ${gameState.balance}
@@ -418,7 +428,22 @@ export default function Blackjack({username}) {
         <p>Waiting for other players...</p>
       ))}
       {(gameState.playing) && (
+        
         <div>
+          <h2>Dealer hand</h2>
+          <div className="card-row">
+            {gameState.dealerHand.map((card, index) => (
+              <Card key={index} rank={card.rank} suit={card.suit} delay={index * 0.3} />
+            ))}
+          </div>
+
+          <br/>
+          {gameState.bust && (
+            <div>
+              <br />
+              <p>You bust!</p>
+            </div>
+          )}
           <h2>Your hand</h2>
           <div className="card-row">
               {gameState.hand.map((card, index) => (
@@ -435,20 +460,7 @@ export default function Blackjack({username}) {
             </div>
           )}
 
-          {gameState.bust && (
-            <div>
-              <br />
-              <p>You bust!</p>
-            </div>
-          )}
-
           <br />
-          <h2>Dealer hand</h2>
-          <div className="card-row">
-            {gameState.dealerHand.map((card, index) => (
-              <Card key={index} rank={card.rank} suit={card.suit} delay={index * 0.3} />
-            ))}
-          </div>
 
           {gameState.otherPlayers.length > 0 && (
             <div>
@@ -472,8 +484,10 @@ export default function Blackjack({username}) {
               <p>Game result: {gameState.result}</p>
               <br />
               </div>
-              <div className="game-buttons">
+              <div className="action-buttons">
+                <br/>
                 <button onClick={play_again} disabled={limitHit}>Play Again</button>
+                <br/>
                 <button onClick={quit}>Quit</button>
               </div>
             </div>

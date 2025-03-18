@@ -3,7 +3,7 @@ const User = require("../Models/UserModel");
 
 module.exports.bet = async (req, res) => {
     const { username, money } = req.body;
-    var message = "";
+    var mess = "";
     try {
         const user = await User.findOne({ username });
         if (!user) {    
@@ -16,14 +16,16 @@ module.exports.bet = async (req, res) => {
         user.markModified("balance");
         await user.save();
 
-        const todaySpending = user.dailyMoneySpent;
-        const averageDailySpending = (user.moneySpent-todaySpending) / user.numLogins;
-        console.log("Today's spending:", todaySpending);
-        console.log("Average daily spending:", averageDailySpending);
-        if(todaySpending > averageDailySpending){
-            message = "You're spending more than your average daily amount";
+        if(user.numLogins > 5){ //Don't update users until we get enough data
+            const todaySpending = user.dailyMoneySpent;
+            const averageDailySpending = ((user.moneySpent-todaySpending) / user.numLogins) || 0;
+            console.log("Today's spending:", todaySpending);
+            console.log("Average daily spending:", averageDailySpending);
+            if(todaySpending > averageDailySpending){
+                mess = "You're spending more than your average daily amount";
+            }
         }
-        res.status(200).json({ money: user.balance , message: message});
+        res.status(200).json({ money: user.balance , message: mess});
     }
     catch (error) {
         res.status(500).json({ message: "Server error" });
