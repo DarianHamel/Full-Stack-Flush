@@ -3,12 +3,11 @@ import "../design/Poker.css";
 import { Link } from "react-router-dom";
 import Card from "./Card.jsx";
 
-
-
 const Poker = () => {
   const [playerHand, setPlayerHand] = useState([]);
   const [scoredHand, setScoredHand] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
+  const [selectedCards, setSelectedCards] = useState([]);
 
   const startGame = async () => {
     const response = await fetch("http://localhost:5050/poker/start");
@@ -30,15 +29,43 @@ const Poker = () => {
     return card;
   };
 
+  const handleCardClick = (card) => {
+    setSelectedCards((prevSelectedCards) => {
+      const isSelected = prevSelectedCards.some(
+        (selectedCard) => selectedCard.rank === card.rank && selectedCard.suit === card.suit
+      );
+      if (isSelected) {
+        return prevSelectedCards.filter(
+          (selectedCard) => selectedCard.rank !== card.rank || selectedCard.suit !== card.suit
+        );
+      } else {
+        return [...prevSelectedCards, card];
+      }
+    });
+  };
+
   const renderHand = (hand) => {
     return (
       <div className="card-row">
         {hand.map((card, index) => (
-          <Card key={index} rank={card.rank} suit={card.suit} delay={index * 0.3} className="poker-card-img"/>
+          <Card
+            key={index}
+            rank={card.rank}
+            suit={card.suit}
+            delay={index * 0.3}
+            className="poker-card-img"
+            onClick={() => handleCardClick(card)}
+            selected={selectedCards.some(
+              (selectedCard) => selectedCard.rank === card.rank && selectedCard.suit === card.suit
+            )}
+          />
         ))}
       </div>
     );
   };
+
+  // Log the selected cards for debugging
+  console.log("Selected Cards:", selectedCards);
 
   return (
     <div className="poker-container">

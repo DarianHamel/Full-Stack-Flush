@@ -14,7 +14,7 @@ class PokerGame {
 
     startGame() {
         this.started = true;
-        this.playerHand = this.deck.dealCard(5);
+        this.playerHand = this.deck.dealCard(8);
     }
 
     getPlayerHand() {
