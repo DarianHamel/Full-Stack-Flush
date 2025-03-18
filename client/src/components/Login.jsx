@@ -26,7 +26,7 @@ const Login = ({ show, onClose, setShowSignup }) => {
     });
   const handleSuccess = (msg) =>
     toast.success(msg, {
-      position: "bottom-left",
+      position: "bottom-right",
     });
 
   const handleSubmit = async (e) => {

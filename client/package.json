@@ -30,6 +30,7 @@
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.17",
+    "axios-mock-adapter": "^2.1.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^29.7.0",
     "cypress": "^13.6.4",

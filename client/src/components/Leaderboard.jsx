@@ -12,12 +12,12 @@ const Leaderboard = () => {
     useEffect(() =>{
         const fetchLeaderboard = async () => {
             try{
-                const { data } = await axios.get(`http://localhost:5050/leaderboard?sortBy=${sortBy}&order=${order}&filter=${filter}`,
-                );
+                const { data } = await axios.get(`http://localhost:5050/leaderboard?sortBy=${sortBy}&order=${order}&filter=${filter}`,);
                 setLeaderboard(data);
             }
             catch(error){
                 console.error("An error occurred with the Network: ", error);
+                setLeaderboard([]);
             }
         }
 
