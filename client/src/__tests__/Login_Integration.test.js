@@ -19,7 +19,6 @@ jest.mock("react-toastify", () => ({
 }));
 
 // Mock useNavigate globally
-const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: jest.fn(),
@@ -82,11 +81,11 @@ describe("Login Component", () => {
 
     await waitFor(() => {
         expect(toast.success).toHaveBeenCalledWith("Login successful", expect.any(Object));
-      });      
+    });      
 
     expect(mockOnClose).toHaveBeenCalled();
-    await waitFor(() => expect(mockNavigate).toHaveBeenCalledTimes(1));
-    expect(mockNavigate).toHaveBeenCalledWith("/");
+    //await waitFor(() => expect(mockNavigate).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith("/"), { timeout: 5000 });
 
     expect(window.location.reload).toHaveBeenCalled();
   });

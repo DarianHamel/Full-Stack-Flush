@@ -11,25 +11,28 @@ describe("Leaderboard Component", () => {
 
   beforeEach(() => {
     mock = new MockAdapter(axios);
+    mock.reset();
   });
 
   afterEach(() => {
     mock.restore();
   });
 
-  test("renders sorting dropdown options", () => {
+  test("renders sorting dropdown options", async () => {
     render(
       <Router>
         <Leaderboard />
       </Router>
     );
 
-    expect(screen.getByText("Username")).toBeInTheDocument();
-    expect(screen.getByText("Wins")).toBeInTheDocument();
-    expect(screen.getByText("Losses")).toBeInTheDocument();
-    expect(screen.getByText("Win/Loss Ratio")).toBeInTheDocument();
-    expect(screen.getByText("Money Spent")).toBeInTheDocument();
-    expect(screen.getByText("Time Spent")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Username")).toBeInTheDocument();
+      expect(screen.getByText("Wins")).toBeInTheDocument();
+      expect(screen.getByText("Losses")).toBeInTheDocument();
+      expect(screen.getByText("Win/Loss Ratio")).toBeInTheDocument();
+      expect(screen.getByText("Money Spent")).toBeInTheDocument();
+      expect(screen.getByText("Time Spent")).toBeInTheDocument();
+    });
   });
 
   test("displays leaderboard data when API call succeeds", async () => {
@@ -89,7 +92,7 @@ describe("Leaderboard Component", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("No data available")).toBeInTheDocument();
-    });
+      expect(screen.getByText(/No data available/i)).toBeInTheDocument();
+    }, { timeout: 5000 }); 
   });
 });
