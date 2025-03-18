@@ -15,86 +15,131 @@
   font-size: 1rem;
   }
   
-  .game-buttons {
-    position: fixed;
-    top: 25%;
-    left: 45%; /* Formatting reasons... */
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: row;
-    gap: 15px; 
-    z-index: 1000; 
-  }
+.game-buttons {
+  position: fixed;
+  top: 50%;
+  right: 20px; /* Formatting reasons... */
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 15px; 
+  z-index: 1000; 
+}
 
-  .game-buttons button {
-    padding: 12px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  .game-buttons button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-  }
-  
-  .game-buttons button:active {
-    transform: scale(0.98);
-  }
-  
-  .action-buttons {
-    position: fixed;
-    top: 50%;
-    right: 20px; 
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 15px; 
-    z-index: 1000; 
-  }
-  
-  .action-buttons button {
-    padding: 12px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  .action-buttons button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-  }
-  
-  .action-buttons button:active {
-    transform: scale(0.98);
-  }
-  
-  .game-outcome {
-    position: fixed;
-    top: 20%;
-    left: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    text-align: left;
-  }
-  
-  .game-outcome p {
-    margin: 10px 0;
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-  }
-  
+.game-buttons button {
+  padding: 12px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.game-buttons button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.game-buttons button:active {
+  transform: scale(0.98);
+}
+
+.action-buttons {
+  position: fixed;
+  top: 50%;
+  right: 20px; 
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 15px; 
+  z-index: 1000; 
+}
+
+.action-buttons button {
+  padding: 12px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.action-buttons button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.action-buttons button:active {
+  transform: scale(0.98);
+}
+
+.game-outcome {
+  position: fixed;
+  top: 20%;
+  left: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  text-align: left;
+}
+
+.game-outcome p {
+  margin: 10px 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.bet-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.bet-container label {
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.bet-input {
+  width: 100px;
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.start-button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+}
+
+.start-button:hover {
+  background-color: white;
+  color: black;
+  border: 2px solid #4CAF50;
+}
+
+.Progress-Bars{
+  position: fixed;
+  top: 15%;
+  right:5%;
+  width: 300px;
+  z-index: 900;
+}

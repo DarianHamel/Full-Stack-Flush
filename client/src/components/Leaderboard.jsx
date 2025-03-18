@@ -24,6 +24,19 @@ const Leaderboard = () => {
         fetchLeaderboard();
     }, [sortBy, order, filter]);
 
+
+    const formatNumber = (num) => {
+        if (num >= 1e9) {
+            return (num / 1e9).toFixed(1) + 'B'; // Billion
+        } else if (num >= 1e6) {
+            return (num / 1e6).toFixed(1) + 'M'; // Million
+        } else if (num >= 1e3) {
+            return (num / 1e3).toFixed(1) + 'K'; // Thousand
+        } else {
+            return num.toString(); // Less than thousand
+        }
+    };
+
     //each row has these user data displayed
     function LeaderboardRows(){
         return leaderboard.map((entry, index) => (
@@ -33,8 +46,8 @@ const Leaderboard = () => {
                 <td className="border border-gray-400 p-2">{entry.wins}</td>
                 <td className="border border-gray-400 p-2">{entry.losses}</td>
                 <td className="border border-gray-400 p-2">{entry.winLossRatio}</td>
-                <td className="border border-gray-400 p-2">{entry.moneySpent}</td>
-                <td className="border border-gray-400 p-2">{entry.timeSpent}</td>
+                <td className="border border-gray-400 p-2">${formatNumber(entry.moneySpent)}</td>
+                <td className="border border-gray-400 p-2">{Math.floor(entry.timeSpent/60)}</td>
             </tr>
         ));
     }
