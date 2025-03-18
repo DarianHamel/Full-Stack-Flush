@@ -2,9 +2,9 @@ name: Build, Test, and Deploy
 
 on:
   push:
-    branches: [main]  # Trigger CI on pushes to main
+    branches: [main, dev]  # Trigger CI on pushes to main
   pull_request:
-    branches: [main]  # Trigger CI on PRs to main
+    branches: [main, dev]  # Trigger CI on PRs to main
   release:
     types: [published]  # Trigger CD when a release is published
 
