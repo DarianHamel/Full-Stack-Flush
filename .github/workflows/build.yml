@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
   
     # Only run this job when a release is published
-    if: github.event_name == 'release' && github.event.action == 'published'
+    if: startsWith(github.ref, 'refs/tags/')
   
     steps:
       - name: Checkout Repository
