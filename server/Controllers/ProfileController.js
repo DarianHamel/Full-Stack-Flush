@@ -18,7 +18,7 @@ module.exports.GetUserInfo = async (req, res) => {
   if (error) {
     return res.status(status).json({ message: error });
   }
-  res.status(200).json({ username: user.username, password: user.password });
+  res.status(200).json({ username: user.username, password: user.password , timeLimit: user.timeLimit, moneyLimit: user.moneyLimit });
 };
 
 module.exports.GetBalance = async (req, res) => {
@@ -87,4 +87,45 @@ module.exports.GetLimits = async (req, res) => {
     return res.status(status).json({ success: false, message: error });
   }
   res.status(200).json({ success: true, moneyLimit: user.moneyLimit, timeLimit: user.timeLimit , timeSpent: user.dailyTimeSpent, moneySpent: user.dailyMoneySpent });
-}
+};
+
+module.exports.GetStats = async (req, res) => {
+  const { username } = req.query;
+  const { user, error, status } = await findUserByUsername(username);
+  if (error) {
+    return res.status(status).json({ success: false, message: error });
+  }
+  res.status(200).json({ success: true, timeSpent: user.timeSpent, moneySpent: user.moneySpent , wins: user.wins, losses: user.losses});
+};
+
+module.exports.SetTimeLimit = async (req, res) => {
+  const { username, timeLimit } = req.body;
+  if (timeLimit != undefined && timeLimit > 0) {
+    const { user, error, status } = await findUserByUsername(username);
+    if (error) {
+      return res.status(status).json({ success: false, message: error });
+    }
+    user.timeLimit = timeLimit;
+    user.markModified("timeLimit");
+    await user.save();
+    res.status(200).json({ success: true, message: "Time limit updated" });
+  } else {
+    return res.status(400).json({ success: false, message: "Invalid time limit" });
+  }
+};
+
+module.exports.SetMoneyLimit = async (req, res) => {
+  const { username, moneyLimit } = req.body;
+  if (moneyLimit != undefined && moneyLimit > 0) {
+    const { user, error, status } = await findUserByUsername(username);
+    if (error) {
+      return res.status(status).json({ success: false, message: error });
+    }
+    user.moneyLimit = moneyLimit;
+    user.markModified("moneyLimit");
+    await user.save();
+    res.status(200).json({ success: true, message: "Money limit updated" });
+  } else {
+    return res.status(400).json({ success: false, message: "Invalid money limit" });
+  }
+};

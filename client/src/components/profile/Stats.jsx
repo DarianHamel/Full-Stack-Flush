@@ -14,58 +14,21 @@ const MyProfile = () => {
   useEffect(() => {
     if (!cookies.username) return;
 
-    const fetchMoneySpent = async () => {
+    const fetchUserStats = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:5050/moneySpent?username=${cookies.username}`,
+          `http://localhost:5050/GetStats?username=${cookies.username}`,
           { withCredentials: true }
         );
         setMoneySpent(data.moneySpent);
-      } catch (error) {
-        console.error("Error fetching user money spent:", error);
-      }
-    };
-
-    const fetchTimeSpent = async () => {
-      try {
-        const { data } = await axios.get(
-          `http://localhost:5050/timeSpent?username=${cookies.username}`,
-          { withCredentials: true }
-        );
-        setTimeSpent(data.timeSpent);
-      } catch (error) {
-        console.error("Error fetching user time spent:", error);
-      }
-    };
-
-    const fetchWins = async () => {
-      try {
-        const { data } = await axios.get(
-          `http://localhost:5050/getWins?username=${cookies.username}`,
-          { withCredentials: true }
-        );
+        setTimeSpent(Math.floor(data.timeSpent/60)); // In Minutes
         setWins(data.wins);
-      } catch (error) {
-        console.error("Error fetching user wins:", error);
-      }
-    };
-
-    const fetchLosses = async () => {
-      try {
-        const { data } = await axios.get(
-          `http://localhost:5050/getLosses?username=${cookies.username}`,
-          { withCredentials: true }
-        );
         setLosses(data.losses);
       } catch (error) {
-        console.error("Error fetching user losses:", error);
+        console.error("Error fetching user stats:", error);
       }
     };
-
-    fetchMoneySpent();
-    fetchTimeSpent();
-    fetchWins();
-    fetchLosses();
+    fetchUserStats();
   }, [cookies.username]);
 
   useEffect(() => {
@@ -85,7 +48,7 @@ const MyProfile = () => {
           </tr>
           <tr>
             <td>Time Spent</td>
-            <td>{timeSpent} hours</td>
+            <td>{timeSpent} Minutes</td> 
           </tr>
           <tr>
             <td>Wins</td>
