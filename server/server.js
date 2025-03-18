@@ -12,7 +12,7 @@ const winloseRoute = require("./routes/WinLoseRoute");
 const leaderboardRoute = require("./routes/LeaderboardRoute");
 const userInfoRoute = require("./routes/ProfileRoute");
 const tutorialRoutes = require("./routes/TutorialRoute.js");
-const PokerGame = require("./Models/PokerGame.js");
+const pokerRoute = require("./routes/PokerRoute.js");
 
 const { ATLAS_URI, PORT } = process.env;
 const app = express();
@@ -30,18 +30,6 @@ app.use(
   })
 );
 //app.use("/api/blackjack", blackjack);
-
-// testing poker game stuff, need to make separate controller/route later
-// temporary lol
-let game = new PokerGame(1);
-
-app.get("/poker/start", (req, res) => {
-  game.startGame();
-  res.json({
-    playerHand: game.getPlayerHand()
-  });
-});
-
 
 expressWs(app);
 
@@ -68,3 +56,4 @@ app.use("/", winloseRoute);
 app.use("/", leaderboardRoute);
 app.use("/", userInfoRoute);
 app.use("/", tutorialRoutes);
+app.use("/", pokerRoute);

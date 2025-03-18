@@ -38,8 +38,10 @@ const Poker = () => {
         return prevSelectedCards.filter(
           (selectedCard) => selectedCard.rank !== card.rank || selectedCard.suit !== card.suit
         );
-      } else {
+      }  else if (prevSelectedCards.length < 5) { // can only select 5 cards at a time
         return [...prevSelectedCards, card];
+      } else {
+        return prevSelectedCards;
       }
     });
   };
@@ -64,7 +66,7 @@ const Poker = () => {
     );
   };
 
-  // Log the selected cards for debugging
+  // log the selected cards for debugging purposes
   console.log("Selected Cards:", selectedCards);
 
   return (
@@ -72,13 +74,7 @@ const Poker = () => {
       <div className="poker-card">
         {!gameStarted && (
           <>
-            <h1>Coming Soon!</h1>
-            <h1>♠️ Poker Game ♥️</h1>
-            <p>
-              We’re working hard to bring you an immersive poker experience with the same commitment 
-              to responsible gambling. Stay tuned for exciting features, strategic gameplay, 
-              and ethical gambling options — all coming your way soon!
-            </p>
+            <h1>♠️ Poker Minigame ♥️</h1>
             <button onClick={startGame} className="start-game">
               Start Game
             </button>
