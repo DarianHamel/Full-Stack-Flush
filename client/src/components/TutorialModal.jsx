@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createTutorial } from "../api";
+import "../design/Tutorial.css";
 
 const TutorialModal = ({ onClose, onTutorialAdded }) => {
   const [formData, setFormData] = useState({
