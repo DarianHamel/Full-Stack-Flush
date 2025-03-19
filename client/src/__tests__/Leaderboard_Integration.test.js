@@ -61,8 +61,8 @@ describe("Leaderboard Component", () => {
       expect(screen.getByText("10")).toBeInTheDocument();
       expect(screen.getByText("5")).toBeInTheDocument();
       expect(screen.getByText("2")).toBeInTheDocument();
-      expect(screen.getByText("1500")).toBeInTheDocument();
-      expect(screen.getByText("100")).toBeInTheDocument();
+      expect(screen.getByText("1.5K")).toBeInTheDocument();
+      expect(screen.getByText("1")).toBeInTheDocument();
     });
   });
 
