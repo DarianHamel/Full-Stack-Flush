@@ -1,5 +1,6 @@
 // Win Losses Controller
 
+const { TbHistory } = require("react-icons/tb");
 const User = require("../Models/UserModel");
 
 // Get User Wins by username
@@ -38,7 +39,7 @@ module.exports.GetLosses = async (req, res) => {
 
 module.exports.UpdateStats = async (req, res) => {
   try {
-      const { username, wins, losses } = req.body;
+      const { username, wins, losses, money } = req.body;
 
       if (!username) {
         return res.status(400).json({ message: "Invalid request. Provide a username." })
@@ -51,8 +52,22 @@ module.exports.UpdateStats = async (req, res) => {
       const user = await User.findOne({ username }); // This will search by username field
       if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-      if (wins !== undefined) user.wins += wins;
-      if (losses !== undefined) user.losses += losses;
+      if (wins !== undefined && wins > 0){ 
+        user.wins += wins;
+        console.log(money);
+        if(money !== undefined){
+          await user.updateMoneyWon(money);
+        }
+
+      }
+      if (losses !== undefined && losses > 0){
+        user.losses += losses;
+        console.log(money);
+        if(money !== undefined){
+          await user.updateMoneySpent(money);
+        }
+        
+      }
 
       // so password isnt rehashed
       user.markModified('wins');

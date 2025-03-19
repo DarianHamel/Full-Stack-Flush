@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const remindTimer = 60000; // 60 seconds
@@ -10,7 +10,12 @@ const GamblingReminders = () => {
       "Remember to take regular breaks while gambling.",
       "Never gamble with money you can't afford to lose.",
       "If you feel you have a gambling problem, seek help immediately.",
-      "Gambling should be fun, not a way to make money."
+      "Gambling should be fun, not a way to make money.",
+      "Set a budget for gambling and stick to it.",
+      "Don't chase your losses.",
+      "Balance gambling with other activities.",
+      "Know the odds and understand the game.",
+      "Take frequent breaks to avoid fatigue."
     ];
 
     let lastFact = "";

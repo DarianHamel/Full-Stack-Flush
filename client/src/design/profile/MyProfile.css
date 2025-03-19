@@ -22,3 +22,24 @@
     border-bottom: 1px solid #ddd;
     font-size: 20px;
   }
+
+  .profile-flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .button-group {
+    width: 100%;
+    display: fixed;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .edit_button {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    font-size: 14px;
+  }
+  

@@ -12,6 +12,7 @@ const winloseRoute = require("./routes/WinLoseRoute");
 const leaderboardRoute = require("./routes/LeaderboardRoute");
 const userInfoRoute = require("./routes/ProfileRoute");
 const tutorialRoutes = require("./routes/TutorialRoute.js");
+const betRoutes = require("./routes/BetRoute.js");
 
 const { ATLAS_URI, PORT } = process.env;
 const app = express();
@@ -58,3 +59,4 @@ app.use("/", winloseRoute);
 app.use("/", leaderboardRoute);
 app.use("/", userInfoRoute);
 app.use("/", tutorialRoutes);
+app.use("/", betRoutes);
