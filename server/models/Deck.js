@@ -31,8 +31,21 @@ class Deck{
         }
     }
 
+    changeCard(card) {
+        if (card.rank === 14) {
+            card.rank = "Ace";
+        } else if (card.rank === 11) {
+            card.rank = "Jack";
+        } else if (card.rank === 12) {
+            card.rank = "Queen";
+        } else if (card.rank === 13) {
+            card.rank = "King";
+        }
+        return card;
+        }
+
     dealCard(numCards) {
-        return this.cards.splice(0, numCards);
+        return this.cards.splice(0, numCards).map(this.changeCard);
       }
 }
 
