@@ -132,9 +132,22 @@ const Poker = () => {
         {!gameStarted && (
           <>
             <h1>♠️ Poker Minigame ♥️</h1>
-            <button onClick={startGame} className="start-game">
-              Start Game
-            </button>
+            <p>Welcome to the Poker Minigame! Click "Start Game" to begin.</p>
+            <p>
+              Check out our{" "}
+              <Link to="/tutorials" className="tutorials-link">
+                tutorials
+              </Link>{" "}
+              section for more information on how to play the game!
+            </p>
+            <div className="button-group">
+              <button onClick={startGame} className="start-game">
+                Start Game
+              </button>
+              <Link to="/" className="back-to-home">
+                Back to Home
+              </Link>
+            </div>
           </>
         )}
         {gameStarted && (
@@ -142,20 +155,19 @@ const Poker = () => {
             <h1>Your Hand</h1>
             <div className="hand">{renderHand(playerHand)}</div>
             <h2>Current Score: {currentScore}</h2>
-            <div className="action-buttons">
-              <button onClick={discardCards} className="discard">
-                Discard
-              </button>
-              <button onClick={playHand} className="play-hand">
-                Play Hand
-              </button>
-            </div>  
           </>
         )}
-        <Link to="/" className="back-to-home">
-          Back to Home
-        </Link>
       </div>
+      {gameStarted && ( // Put this outside other divs so the buttons are below the cards
+        <div className="action-buttons-poker">
+          <button onClick={discardCards} className="discard">
+            Discard
+          </button>
+          <button onClick={playHand} className="play-hand">
+            Play Hand
+          </button>
+        </div>
+      )}
     </div>
   );
 };
