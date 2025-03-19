@@ -15,18 +15,23 @@ async function handle_web_socket(ws, username){
         try{
             if (JSON.parse(msg).type == "JOIN"){
                 const response = await axios.get('http://localhost:5050/getLimits', {params: {username}});
-                const {timeLimit, moneyLimit, timeSpent, moneySpent} = response.data;
+                const {timeLimit, moneyLimit, timeSpent, moneySpent, balance} = response.data;
                 if(timeSpent >= timeLimit || moneySpent >= moneyLimit){
                     console.log("User has reached their limit, closing connection");
                     ws.send(JSON.stringify({type: "LOCKOUT"}));
                     ws.close();
                     return;
-                }else if(moneySpent + JSON.parse(msg).bet <= moneyLimit){
+                }else if(balance < JSON.parse(msg).bet){
+                    ws.send(JSON.stringify({type: "NOT_ENOUGH_FUNDS"}));
+                    return;
+                }
+                else if(moneySpent + JSON.parse(msg).bet <= moneyLimit){
                     console.log("Bet amount: ", JSON.parse(msg).bet);
                     assign_player(ws, username, JSON.parse(msg).bet);
                     ws.send(JSON.stringify({type: "JOIN"}));
                 }else{
                     ws.send(JSON.stringify({type: "BET_EXCEEDS_LIMIT"}));
+                    return;
                 }
             }
             else{
@@ -93,14 +98,24 @@ async function handle_message(message, ws, username, bet){
     if (message.type === "ACTION"){
         if(message.action === "PLAY_AGAIN"){
             const response = await axios.get('http://localhost:5050/getLimits', {params: {username}});
-                const {timeLimit, moneyLimit, timeSpent, moneySpent} = response.data;
+                const {timeLimit, moneyLimit, timeSpent, moneySpent, balance} = response.data;
                 if(timeSpent >= timeLimit || moneySpent >= moneyLimit){
                     console.log("User has reached their limit, closing connection");
                     ws.send(JSON.stringify({type: "LOCKOUT"}));
                     ws.close();
                     return;
+                }else if(moneySpent + Number(bet) > moneyLimit){
+                    console.log("Money spent + bet: ", moneySpent + Number(bet))
+                    console.log("In handle message");
+                    ws.send(JSON.stringify({type: "BET_EXCEEDS_LIMIT"}));
+                    ws.close(); 
+                    return;
+                }else if(balance < bet){
+                    ws.send(JSON.stringify({type: "NOT_ENOUGH_FUNDS"}));
+                    ws.close();
+                    return;
                 }
-        }
+            }
         for (const g of blackjackState.games){
             g.handle_action(message.action, ws, bet);
         }

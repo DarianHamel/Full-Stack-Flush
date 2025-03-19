@@ -63,6 +63,9 @@ export default function Blackjack({username}) {
       setMoneyLimit(limits.moneyLimit || 0);
       setTimePlayed(limits.timeSpent || 0);
       setMoneySpent(limits.moneySpent || 0);
+      if(moneySpent >= moneyLimit){
+        setLimitHit(true);
+      }
     } catch (error) {
       console.error('Error fetching user limits:', error);
     }
@@ -80,13 +83,20 @@ export default function Blackjack({username}) {
   Create the websocket to start the game
   */
   async function startGame(){
-    if (betAmount <= 0 || betAmount > gameState.balance) {
-      toast.info("Invalid bet amount", {position: "top-center"});
-      return;
+    if(gameState.balance != 0){
+      if (betAmount > gameState.balance) {
+        toast.info("Insufficient Funds", {position: "top-center"});
+        return;
+      }
     }
     if (limitHit){
       console.log("Limit hit");
       handleLockOut();
+      return;
+    }
+    if(gameState.balance == 0){
+      toast.info("Insufficient funds", {position: "top-center" });
+      setLimitHit(true);
       return;
     }
     try{
@@ -233,7 +243,10 @@ export default function Blackjack({username}) {
         break;
       case "BET_EXCEEDS_LIMIT":
         toast.info("Bet exceeds money limit", {position: "top-center"});
-
+        break;
+      case "NOT_ENOUGH_FUNDS":
+        toast.info("Bet exceeds balance", {position: "top-center"});
+        break;
       default:
         console.log("Unknown message type");
     }
@@ -424,7 +437,7 @@ export default function Blackjack({username}) {
       {!gameState.inGame &&(
         <div>
         <button className="start-button" onClick={startGame}>Start Game</button>
-        <button className="start-button-free" onClick={startGame}>Start Free Game</button>
+        {/* <button className="start-button-free" onClick={startGame}>Start Free Game</button> */}
         </div>
       )}
       {(gameState.inGame && !gameState.playing && (
