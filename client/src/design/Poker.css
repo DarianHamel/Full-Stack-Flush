@@ -42,6 +42,21 @@
     font-weight: bold;
     transition: background-color 0.3s;
   }
+
+  .start-game {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #1e3c72;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+
+  .start-game:hover {
+    background-color: #2a5298;
+  }
   
   .back-to-home:hover {
     background-color: #2a5298;
