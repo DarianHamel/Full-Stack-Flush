@@ -14,20 +14,17 @@ const userInfoRoute = require("./routes/ProfileRoute");
 const tutorialRoutes = require("./routes/TutorialRoute.js");
 const betRoutes = require("./routes/BetRoute.js");
 
-const { ATLAS_URI, PORT } = process.env;
-const app = express();
+const { ATLAS_URI , PORT} = process.env;const app = express();
 expressWs(app);
 
-mongoose
-  .connect(ATLAS_URI)
-  .then(() => console.log("MongoDB is  connected successfully"))
-  .catch((err) => console.error(err));
+if(process.env.NODE_ENV !== 'test'){
+  mongoose
+    .connect(ATLAS_URI)
+    .then(() => console.log("MongoDB is  connected successfully"))
+    .catch((err) => console.error(err));
 
-
+}
 //app.use("/api/blackjack", blackjack);
-
-
-expressWs(app);
 
 app.ws('/', (ws, req) => {
   console.log(req.headers.cookie);
@@ -60,3 +57,6 @@ app.use("/", leaderboardRoute);
 app.use("/", userInfoRoute);
 app.use("/", tutorialRoutes);
 app.use("/", betRoutes);
+
+// Export the app for testing
+module.exports = app;

@@ -28,8 +28,6 @@ const mockResponse = () => {
   return res;
 };
 
-// ========================================================================
-
 describe("GetLeaderboard API Tests", () => {
 
     test("GetLeaderboard should return sorted users", async () => {
