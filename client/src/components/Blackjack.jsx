@@ -422,7 +422,10 @@ export default function Blackjack({username}) {
         </div>
     </div>
       {!gameState.inGame &&(
+        <div>
         <button className="start-button" onClick={startGame}>Start Game</button>
+        <button className="start-button-free" onClick={startGame}>Start Free Game</button>
+        </div>
       )}
       {(gameState.inGame && !gameState.playing && (
         <p>Waiting for other players...</p>
