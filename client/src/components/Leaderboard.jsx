@@ -46,7 +46,7 @@ const Leaderboard = () => {
                 <td className="border border-gray-400 p-2">{entry.wins}</td>
                 <td className="border border-gray-400 p-2">{entry.losses}</td>
                 <td className="border border-gray-400 p-2">{entry.winLossRatio}</td>
-                <td className="border border-gray-400 p-2">${formatNumber(entry.moneySpent)}</td>
+                <td className="border border-gray-400 p-2">{formatNumber(entry.moneySpent)}</td>
                 <td className="border border-gray-400 p-2">{Math.floor(entry.timeSpent/60)}</td>
             </tr>
         ));
