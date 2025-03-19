@@ -24,9 +24,9 @@ COPY . .
 # Build the client
 RUN cd client && npm run build --if-present
 
-# Expose the ports the server and client run on
-EXPOSE 5050  # Server port
-EXPOSE 5173  # Client port
+# Expose ports (without comments next to them)
+EXPOSE 5050  
+EXPOSE 5173  
 
 # Set the command to start the server and client
 CMD ["sh", "-c", "cd server && npm start & cd client && npm run dev"]
