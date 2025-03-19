@@ -29,4 +29,4 @@ EXPOSE 5050  # Server port
 EXPOSE 5173  # Client port
 
 # Set the command to start the server and client
-CMD ["sh", "-c", "cd server && npm start & cd ../client && npm run dev"]
+CMD ["sh", "-c", "cd server && npm start & cd client && npm run dev"]
