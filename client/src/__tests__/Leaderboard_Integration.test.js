@@ -45,7 +45,7 @@ describe("Leaderboard Component", () => {
         losses: 5,
         winLossRatio: 2.0,
         moneySpent: 1500,
-        timeSpent: 100,
+        timeSpent: 180,
       },
     ]);
 
@@ -62,7 +62,7 @@ describe("Leaderboard Component", () => {
       expect(screen.getByText("5")).toBeInTheDocument();
       expect(screen.getByText("2")).toBeInTheDocument();
       expect(screen.getByText("1.5K")).toBeInTheDocument();
-      expect(screen.getByText("1")).toBeInTheDocument();
+      expect(screen.getByText("3")).toBeInTheDocument();
     });
   });
 
