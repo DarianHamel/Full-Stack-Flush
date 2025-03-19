@@ -5,15 +5,17 @@ import Card from "./Card.jsx";
 
 const Poker = () => {
   const [playerHand, setPlayerHand] = useState([]);
-  const [scoredHand, setScoredHand] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedCards, setSelectedCards] = useState([]);
+  const [gameID, setgameID] = useState(null);
 
   const startGame = async () => {
     const response = await fetch("http://localhost:5050/poker/start");
     const data = await response.json();
+    setgameID(data.gameID);
     setPlayerHand(data.playerHand.map(changeCard));
     setGameStarted(true);
+    console.log(data.gameID);
   };
 
   const changeCard = (card) => {
@@ -44,6 +46,33 @@ const Poker = () => {
         return prevSelectedCards;
       }
     });
+  };
+
+  const discardCards = async () => {
+    const remainingCards = playerHand.filter(
+      (card) =>
+        !selectedCards.some(
+          (selectedCard) => selectedCard.rank === card.rank && selectedCard.suit === card.suit
+        )
+    );
+
+    const response = await fetch(`http://localhost:5050/poker/draw?gameID=${gameID}&count=${selectedCards.length}`,);
+
+    const data = await response.json();
+
+    setPlayerHand([...remainingCards, ...data.newCards.map(changeCard)]);
+    setSelectedCards([]);
+  };
+
+  const playHand = async () => {
+    console.log("Playing this hand:", selectedCards);
+
+    setSelectedCards([]);
+
+    const response = await fetch(`http://localhost:5050/poker/draw?gameID=${gameID}&count=${selectedCards.length}`);
+    const data = await response.json();
+
+    setPlayerHand([...remainingCards, ...data.newCards.map(changeCard)]);
   };
 
   const renderHand = (hand) => {
@@ -84,6 +113,14 @@ const Poker = () => {
           <>
             <h1>Your Hand</h1>
             <div className="hand">{renderHand(playerHand)}</div>
+            <div className="action-buttons">
+              <button onClick={discardCards} className="discard">
+                Discard
+              </button>
+              <button onClick={playHand} className="play-hand">
+                Play Hand
+              </button>
+            </div>  
           </>
         )}
         <Link to="/" className="back-to-home">

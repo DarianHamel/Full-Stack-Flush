@@ -1,11 +1,30 @@
 const PokerGame = require('../Models/PokerGame');
 
-// temporary just declaring a hard coded game for testing purposes
-let game = new PokerGame(1);
+let activeGames = {};
 
-module.exports.StartPoker = async (req, res) => {
-    game.startGame();
+module.exports.StartPoker = (req, res) => {
+    const gameID = Date.now(); // should change to username tracking probably ?
+    const newGame = new PokerGame(gameID);
+    newGame.startGame();
+
+    console.log(gameID);
+    activeGames[gameID] = newGame;
+
     res.json({
-        playerHand: game.getPlayerHand()
+        gameID,
+        playerHand: newGame.getPlayerHand()
     });
+};
+
+module.exports.DrawCards = (req, res) => {
+    const { gameID, count } = req.query;
+
+    if (!activeGames[gameID]) {
+        return res.status(404).json({ message: "Game not found" });
+    }
+
+    const game = activeGames[gameID];
+    const newCards = game.deck.dealCard(count);
+
+    res.json({ newCards });
 };
