@@ -1,9 +1,9 @@
 const { WS } = require("jest-websocket-mock");
 const { handle_web_socket, blackjackState, assign_player, remove_player, handle_message } = require("../routes/Blackjack.js");
-const Card = require("../models/Card.js");
-const Deck = require("../models/Deck");
-const Player = require("../models/Player");
-const Game = require("../models/Game");
+const Card = require("../Models/Card.js");
+const Deck = require("../Models/Deck");
+const Player = require("../Models/Player");
+const Game = require("../Models/Game");
 const { handleLose, handleWin } = require("../util/HandleWinLoss.js");
 
 let server;
