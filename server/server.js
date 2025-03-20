@@ -15,7 +15,8 @@ const tutorialRoutes = require("./routes/TutorialRoute.js");
 const pokerRoute = require("./routes/PokerRoute.js");
 const betRoutes = require("./routes/BetRoute.js");
 
-const { ATLAS_URI , PORT} = process.env;const app = express();
+const { ATLAS_URI , PORT} = process.env;
+const app = express();
 expressWs(app);
 
 if(process.env.NODE_ENV !== 'test'){
@@ -24,6 +25,7 @@ if(process.env.NODE_ENV !== 'test'){
     .then(() => console.log("MongoDB is  connected successfully"))
     .catch((err) => console.error(err));
 
+}
 
 //app.use("/api/blackjack", blackjack);
 

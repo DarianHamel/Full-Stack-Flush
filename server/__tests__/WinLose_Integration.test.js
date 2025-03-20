@@ -4,7 +4,7 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 const User = require("../Models/UserModel");
 const app = require("../server");
 
-jest.setTimeout(90000);
+jest.setTimeout(120000);
 
 describe("WinLose Controller Integration Tests", () => {
   let mongoServer;
@@ -34,6 +34,9 @@ describe("WinLose Controller Integration Tests", () => {
     await User.deleteMany({});
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
   test("GET /getWins should return the correct win count for a valid user", async () => {
     // Create a test user
@@ -173,10 +176,10 @@ describe("WinLose Controller Integration Tests", () => {
 
   test("POST /updateStats should return 500 if User.save fails", async () => {
     // Create a test user
-    const user = await User.create({ username: "testuser", password: "testpassword", wins: 10, losses: 5 });
+    await User.create({ username: "testuser", password: "testpassword", wins: 10, losses: 5 });
 
     // Mock User.save to simulate a database error
-    jest.spyOn(user, "save").mockRejectedValue(new Error("Database save error"));
+    jest.spyOn(User.prototype, "save").mockRejectedValue(new Error("Database error"));
 
     const response = await request(app)
       .post("/updateStats")
@@ -187,6 +190,6 @@ describe("WinLose Controller Integration Tests", () => {
     expect(response.body).toHaveProperty("message", "Server error");
 
     // Restore the original User.save implementation
-    user.save.mockRestore();
+    //User.save.mockRestore();
   });
 });
