@@ -1,7 +1,7 @@
 # Use an official Node.js runtime as the base image
 FROM node:20
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json for both server and client
@@ -22,11 +22,14 @@ RUN cd client && npm ci
 COPY . .
 
 # Build the client
-RUN cd client && npm run build --if-present
+RUN cd client && npm run build
 
-# Expose ports (without comments next to them)
+# Install a lightweight static file server
+RUN npm install -g serve
+
+# Expose necessary ports
 EXPOSE 5050  
 EXPOSE 5173  
 
-# Set the command to start the server and client
-CMD ["sh", "-c", "cd server && npm start & cd client && npm run dev"]
+# Start both server and client properly
+CMD ["sh", "-c", "cd server && npm start & serve -s client/dist -l 5173"]
