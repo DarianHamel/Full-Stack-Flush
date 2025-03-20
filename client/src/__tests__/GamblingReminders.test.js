@@ -39,4 +39,14 @@ describe("GamblingReminders Component", () => {
     expect(toast.info).toHaveBeenCalledTimes(2);
     expect(toast.info.mock.calls[0][0]).not.toBe(toast.info.mock.calls[1][0]);
   });
+
+  test("No reminders appear before the first 60 seconds", () => {
+    render(<GamblingReminders />);
+
+    jest.advanceTimersByTime(59000); // Just before the first reminder
+    expect(toast.info).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(1000); // Now at 60 seconds
+    expect(toast.info).toHaveBeenCalledTimes(1);
+  });
 });
