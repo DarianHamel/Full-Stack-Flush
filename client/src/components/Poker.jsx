@@ -8,27 +8,16 @@ const Poker = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedCards, setSelectedCards] = useState([]);
   const [gameID, setgameID] = useState(null);
+  const [currentScore, setCurrentScore] = useState(0);
 
   const startGame = async () => {
     const response = await fetch("http://localhost:5050/poker/start");
     const data = await response.json();
     setgameID(data.gameID);
-    setPlayerHand(data.playerHand.map(changeCard));
+    setPlayerHand(data.playerHand);
     setGameStarted(true);
+    setCurrentScore(0);
     console.log(data.gameID);
-  };
-
-  const changeCard = (card) => {
-    if (card.rank === 14) {
-      card.rank = "Ace";
-    } else if (card.rank === 11) {
-      card.rank = "Jack";
-    } else if (card.rank === 12) {
-      card.rank = "Queen";
-    } else if (card.rank === 13) {
-      card.rank = "King";
-    }
-    return card;
   };
 
   const handleCardClick = (card) => {
@@ -55,24 +44,63 @@ const Poker = () => {
           (selectedCard) => selectedCard.rank === card.rank && selectedCard.suit === card.suit
         )
     );
+    
 
     const response = await fetch(`http://localhost:5050/poker/draw?gameID=${gameID}&count=${selectedCards.length}`,);
 
     const data = await response.json();
 
-    setPlayerHand([...remainingCards, ...data.newCards.map(changeCard)]);
+    setPlayerHand([...remainingCards, ...data.newCards]);
     setSelectedCards([]);
   };
 
   const playHand = async () => {
-    console.log("Playing this hand:", selectedCards);
+    if (selectedCards.length === 0) {
+        console.error("No cards selected to play");
+        return;
+    }
 
-    setSelectedCards([]);
+    try {
+        const response = await fetch("http://localhost:5050/poker/score", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                gameID,
+                selectedCards,
+            }),
+        });
 
-    const response = await fetch(`http://localhost:5050/poker/draw?gameID=${gameID}&count=${selectedCards.length}`);
-    const data = await response.json();
+        const data = await response.json();
 
-    setPlayerHand([...remainingCards, ...data.newCards.map(changeCard)]);
+        if (data.score) {
+            console.log("Score for the played hand:", data.score);
+            alert(`Your hand scored: ${data.score}`);
+            setCurrentScore(data.currentScore);
+        } else {
+            console.error("Failed to score hand:", data.error);
+        }
+
+        // Remove the selected cards from the player's hand
+        const remainingCards = playerHand.filter(
+            (card) =>
+                !selectedCards.some(
+                    (selectedCard) => selectedCard.rank === card.rank && selectedCard.suit === card.suit
+                )
+        );
+
+        // Get new cards to replace the discarded ones
+        const drawResponse = await fetch(
+            `http://localhost:5050/poker/draw?gameID=${gameID}&count=${selectedCards.length}`
+        );
+        const drawData = await drawResponse.json();
+
+        setPlayerHand([...remainingCards, ...drawData.newCards]);
+        setSelectedCards([]);
+    } catch (error) {
+        console.error("Error playing hand:", error);
+    }
   };
 
   const renderHand = (hand) => {
@@ -104,29 +132,42 @@ const Poker = () => {
         {!gameStarted && (
           <>
             <h1>♠️ Poker Minigame ♥️</h1>
-            <button onClick={startGame} className="start-game">
-              Start Game
-            </button>
+            <p>Welcome to the Poker Minigame! Click "Start Game" to begin.</p>
+            <p>
+              Check out our{" "}
+              <Link to="/tutorials" className="tutorials-link">
+                tutorials
+              </Link>{" "}
+              section for more information on how to play the game!
+            </p>
+            <div className="button-group">
+              <button onClick={startGame} className="start-game">
+                Start Game
+              </button>
+              <Link to="/" className="back-to-home">
+                Back to Home
+              </Link>
+            </div>
           </>
         )}
         {gameStarted && (
           <>
             <h1>Your Hand</h1>
             <div className="hand">{renderHand(playerHand)}</div>
-            <div className="action-buttons">
-              <button onClick={discardCards} className="discard">
-                Discard
-              </button>
-              <button onClick={playHand} className="play-hand">
-                Play Hand
-              </button>
-            </div>  
+            <h2>Current Score: {currentScore}</h2>
           </>
         )}
-        <Link to="/" className="back-to-home">
-          Back to Home
-        </Link>
       </div>
+      {gameStarted && ( // Put this outside other divs so the buttons are below the cards
+        <div className="action-buttons-poker">
+          <button onClick={discardCards} className="discard">
+            Discard
+          </button>
+          <button onClick={playHand} className="play-hand">
+            Play Hand
+          </button>
+        </div>
+      )}
     </div>
   );
 };
