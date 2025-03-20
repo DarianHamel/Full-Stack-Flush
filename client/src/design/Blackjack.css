@@ -7,7 +7,7 @@
 
 .blackjack-container {
   padding-top:10%;
-  margin-top: 50%;
+  margin-top: 25%;
   height: 100%; 
   width: 100%;
   color: white;
@@ -101,24 +101,37 @@
 .bet-container {
   margin-bottom: 20px;
   text-align: center;
+  margin-bottom: 25%;
 }
 
 .bet-container label {
-  font-size: 18px;
+  font-size: 30px;
   margin-right: 10px;
 }
 
-.bet-input {
+.bet-container input {
   width: 100px;
   padding: 5px;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: 30px;
+  padding-left: 10px;
+  background-color: white;
+}
+
+.balance-display {
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+.button-container {
+
 }
 
 .start-button {
   background-color: #4CAF50; /* Green */
-  border: none;
+  border: 2px solid #4CAF50;
   color: white;
   padding: 15px 32px;
   text-align: center;
@@ -136,10 +149,34 @@
   border: 2px solid #4CAF50;
 }
 
+.start-button-free {
+  background-color: #FFBF00;
+  border: 2px solid #FFBF00;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+.start-button-free:hover {
+  background-color: white;
+  color: black;
+  border: 2px solid #FFBF00;
+}
+
 .Progress-Bars{
   position: fixed;
   top: 15%;
   right:5%;
   width: 300px;
   z-index: 900;
+  color: white;
+  font-size: 20px;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
 }
+
