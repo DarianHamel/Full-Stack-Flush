@@ -95,7 +95,7 @@ describe("Home Component - Integration Tests", () => {
     fireEvent.click(screen.getByText(/poker/i));
 
     await waitFor(() => {
-      expect(screen.getByText(/Poker Minigame/i)).toBeInTheDocument();
+      expect(screen.getByText(/♠️ Poker Minigame ♥️/i)).toBeInTheDocument();
     });
   });
 
