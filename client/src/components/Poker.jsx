@@ -25,6 +25,18 @@ const Poker = ({ username }) => {
       return;
     }
 
+    // Fetch the user's current balance
+    const balance = await fetchBalance();
+    if (balance === null) {
+      return; // Stop if balance couldn't be fetched
+    }
+
+    // Check if the bet amount exceeds the user's balance
+    if (betAmount > balance) {
+      alert("You cannot bet more than your available balance!");
+      return;
+    }
+
     console.log("Placing bet with:", {
       username,
       amount: betAmount,
@@ -226,6 +238,24 @@ const Poker = ({ username }) => {
     );
   };
 
+  const fetchBalance = async () => {
+    try {
+      const response = await fetch(`http://localhost:5050/balance?username=${username}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const data = await response.json();
+      return data.balance;
+    } catch (error) {
+      console.error("Error fetching balance:", error);
+      alert("An error occurred while fetching your balance.");
+      return null;
+    }
+  };
+
   // log the selected cards for debugging purposes
   console.log("Selected Cards:", selectedCards);
   console.log(gameOver);
@@ -236,7 +266,7 @@ const Poker = ({ username }) => {
     <AuthRedirect username = {username}>
       <div className="poker-container">
         <div className="poker-card">
-          {!difficultySelected && (
+          {!gameStarted && (
             <>
               <h1>♠️ Poker Minigame ♥️</h1>
               <p>Welcome to the Poker Minigame! Select a difficulty and place your bet to begin.</p>
@@ -269,13 +299,12 @@ const Poker = ({ username }) => {
                 />
               </div>
               <div className="button-group">
-                <button onClick={() => {
+                <button onClick={ async () => {
                   if (betAmount <= 0) {
                     alert("Please place a valid bet!");
                     return;
                   }
-                  setDifficultySelected(true);
-                  startGame();
+                  await startGame();
                 }} className="start-game">
                   Start Game
                 </button>

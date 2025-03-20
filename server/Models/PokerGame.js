@@ -27,7 +27,7 @@ class PokerGame {
         } else if (this.difficulty === "medium") {
           this.targetScore = 500;
         } else {
-          this.targetScore = 1000;
+          this.targetScore = 10;
         }
     }
 
