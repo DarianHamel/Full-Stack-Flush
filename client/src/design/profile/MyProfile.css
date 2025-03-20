@@ -19,6 +19,6 @@
   
   .profile-table td {
     padding: 20px;
-    border-bottom: 1px solid #ddd;
+    border: none;
     font-size: 20px;
   }

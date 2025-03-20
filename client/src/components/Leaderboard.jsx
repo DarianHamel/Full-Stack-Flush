@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "../design/Leaderboard.css";
 
 const Leaderboard = () => {
     const[leaderboard, setLeaderboard] = useState([]);
@@ -39,41 +40,46 @@ const Leaderboard = () => {
         ));
     }
 
-    return(
-        <div>
-            <h3 className="leaderboard-title">Leaderboard</h3>
-
-            <div className="flex gap-4 mb-4">
-                {/*Sort dropdown */}
-                <select onChange={(newSort) => setSortBy(newSort.target.value)} value={sortBy} className="border p-2">
-                    <option value="username">Username</option>
-                    <option value="wins">Wins</option>
-                    <option value="losses">Losses</option>
-                    <option value="winLossRatio">Win/Loss Ratio</option>
-                    <option value="moneySpent">Money Spent</option>
-                    <option value="timeSpent">Time Spent</option>
-                </select>
-
-                {/*Order dropdown */}
-                <select onChange={(newOrder) => setOrderBy(newOrder.target.value)} value={order} className="border p-2">
-                    <option value="desc">Descending Order</option>
-                    <option value="asc">Ascending Order</option>
-                </select>
-
-                {/*Filter dropdown */}
-                <select onChange={(newFilter) => setFilter(newFilter.target.value)} value={filter} className="border p-2">
-                    <option value="">All Users</option>
-                    <option value="highSpenders">High Spenders ($1500+)</option>
-                    <option value="longestPlayers">Longest Playtime (100+ hrs)</option>
-                </select>
+    return (
+        <div className="container">
+            {/* Header Section */}
+            <div className="header-container">
+                <h3 className="leaderboard-title">Leaderboard</h3>
+    
+                <div className="sort-dropdown">
+                    {/* Sort Dropdown */}
+                    <select onChange={(newSort) => setSortBy(newSort.target.value)} value={sortBy} className="border p-2">
+                        <option value="username">Username</option>
+                        <option value="wins">Wins</option>
+                        <option value="losses">Losses</option>
+                        <option value="winLossRatio">Win/Loss Ratio</option>
+                        <option value="moneySpent">Money Spent</option>
+                        <option value="timeSpent">Time Spent</option>
+                    </select>
+    
+                    {/* Order Dropdown */}
+                    <select onChange={(newOrder) => setOrderBy(newOrder.target.value)} value={order} className="border p-2">
+                        <option value="desc">Descending Order</option>
+                        <option value="asc">Ascending Order</option>
+                    </select>
+    
+                    {/* Filter Dropdown */}
+                    <select onChange={(newFilter) => setFilter(newFilter.target.value)} value={filter} className="border p-2">
+                        <option value="">All Users</option>
+                        <option value="highSpenders">High Spenders ($1500+)</option>
+                        <option value="longestPlayers">Longest Playtime (100+ hrs)</option>
+                    </select>
+                </div>
             </div>
-
-            {/*Leaderboard table*/}
-            <div className="leaderboard-container">
-                {leaderboard.length === 0 ? (<p>No data available</p>): (
+    
+            {/* Results Section */}
+            <div className="results-container">
+                {leaderboard.length === 0 ? (
+                    <p>No data available</p>
+                ) : (
                     <div>
-                        <table className="w-full border-collapse border border-gray-400">
-                            <thead className="bg-grey-200">
+                        <table className="leaderboard-table">
+                            <thead className="leaderboard-thead">
                                 <tr>
                                     <th className="border border-gray-400 p-2">Rank</th>
                                     <th className="border border-gray-400 p-2">Username</th>
@@ -84,14 +90,14 @@ const Leaderboard = () => {
                                     <th className="border border-gray-400 p-2">Time Spent</th>
                                 </tr>
                             </thead>
-
-                            <tbody>
+    
+                            <tbody className="results">
                                 {LeaderboardRows()}
                             </tbody>
                         </table>
                     </div>
                 )}
-            </div>    
+            </div>
         </div>
     );
 }

@@ -6,11 +6,13 @@ import "../design/Login.css";
 
 const Login = ({ show, onClose, setShowSignup }) => {
   if (!show) return null;
+
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     username: "",
     password: "",
   });
+
   const { username, password } = inputValue;
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +41,6 @@ const Login = ({ show, onClose, setShowSignup }) => {
         },
         { withCredentials: true }
       );
-      console.log(data);
       const { success, message } = data;
       if (success) {
         handleSuccess(message);

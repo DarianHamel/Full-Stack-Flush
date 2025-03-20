@@ -13,6 +13,28 @@ module.exports.GetUserInfo = async (req, res) => {
     }
   };
 
+module.exports.ChangeUserInfo = async (req, res) => {
+  const { username, password, newName, newPass } = req.query;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ success: false, message: "User not found" });
+    }
+    if (user.password != password) {
+      return res.status(400).json({ success: false, message: "Incorrect credentials" });
+    } 
+    if (newName) {
+      user.username = newName;
+    }
+    if (newPass) {
+      user.username = newPass;
+    }
+    res.status(200).json({ username: user.username, password: user.password });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports.GetMoneySpent = async (req, res) => {
   const { username } = req.query; 
   try {

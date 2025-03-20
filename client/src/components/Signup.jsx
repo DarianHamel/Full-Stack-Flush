@@ -2,16 +2,19 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import "../design/Signup.css"
+import "../design/Signup.css";
+import bcrypt from "bcryptjs";
 
 
 const Signup = ({ show, onClose, setShowLogin }) => {
   if (!show) return null;
+  
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     password: "",
     username: "",
   });
+
   const { password, username } = inputValue;
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -33,21 +36,30 @@ const Signup = ({ show, onClose, setShowLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const hashedPassword = await bcrypt.hash(password, 12);
       const { data } = await axios.post(
         "http://localhost:5050/signup",
         {
-          ...inputValue,
+          username,
+          password: hashedPassword,
         },
         { withCredentials: true }
       );
       const { success, message } = data;
       if (success) {
         handleSuccess(message);
+        onClose();
         setTimeout(() => {
           navigate("/");
+          window.location.reload(); 
         }, 1000);
       } else {
         handleError(message);
+        onClose();
+        setTimeout(() => {
+          navigate("/");
+          window.location.reload(); 
+        }, 1000);
       }
     } catch (error) {
       console.log(error);

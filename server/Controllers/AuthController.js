@@ -56,13 +56,16 @@ module.exports.Login = async (req, res, next) => {
       if(username == undefined) {
         return res.status(400).json({message:'All fields are required'})
       }
+
       if(password == undefined) {
         return res.status(400).json({message:'All fields are required'})
       }
+
       const user = await User.findOne({ username });
       if(user == undefined){
         return res.status(404).json({message:'Incorrect password or username' }) 
       }
+      
       const auth = await bcrypt.compare(password, user.password);
       if (!auth) {
         return res.status(401).json({message:'Incorrect password or username'}) 
