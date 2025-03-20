@@ -21,17 +21,17 @@ class Game{
     /*
     Add a player to this game if it's not started yet or stick them in the queue
     */
-    add_player(ws, username, betAmount){
+    add_player(ws, username, betAmount, fakeMoney){
 
         //Now start the game or let the player know the current state
         if (!this.started){
-            this.players.push(new Player(ws, this.playerIdCounter, username, betAmount));
+            this.players.push(new Player(ws, this.playerIdCounter, username, betAmount, fakeMoney));
             this.playerIdCounter++;
             handleBet(username, betAmount);
             this.start_game();
         }
         else{
-            this.playerQueue.push(new Player(ws, this.playerIdCounter, username, betAmount));
+            this.playerQueue.push(new Player(ws, this.playerIdCounter, username, betAmount, fakeMoney));
             this.playerIdCounter++;
         }
         
@@ -181,8 +181,10 @@ class Game{
                 handleLose(player.username, player.bet);
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
-                    result: "LOSE"
-                }));
+                    result: "LOSE",
+                    fakeMoney: player.fakeMoney,
+                }))
+                
             }
             else if (playerHand == dealerHand){
                 player.ws.send(JSON.stringify({
@@ -232,7 +234,11 @@ class Game{
                     case "PLAY_AGAIN":
                         //Check if the game is over
                         if (this.gameOver){
-                            player.bet = bet;
+                            if(player.fakeMoney){
+                                player.bet = 0;
+                            }else{
+                                player.bet = bet;
+                            }
                             const message = await handleBet(player.username, player.bet);
                             player.ws.send(JSON.stringify({type: "TREND_CHANGE", message: message || null}));
                             this.play_again();

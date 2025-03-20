@@ -11,12 +11,13 @@ async function handle_web_socket(ws, username){
     console.log(username + " websocket connected");
     
     ws.on('message', async (msg) => {
-        console.log('Received: '+ msg + " from " + username, "bet amount: ",  JSON.parse(msg).bet);
+        const usingFakeMoney = JSON.parse(msg).usingFakeMoney;
+        console.log('Received: '+ msg + " from " + username, "bet amount: ",  JSON.parse(msg).bet, " using fake money?:", usingFakeMoney);
         try{
             if (JSON.parse(msg).type == "JOIN"){
                 const response = await axios.get('http://localhost:5050/getLimits', {params: {username}});
-                const {timeLimit, moneyLimit, timeSpent, moneySpent, balance} = response.data;
-                if(timeSpent >= timeLimit || moneySpent >= moneyLimit){
+                const {timeLimit, moneyLimit, timeSpent, moneySpent} = response.data;
+                if((timeSpent >= timeLimit || moneySpent >= moneyLimit) && !usingFakeMoney){
                     console.log("User has reached their limit, closing connection");
                     ws.send(JSON.stringify({type: "LOCKOUT"}));
                     ws.close();
@@ -27,7 +28,12 @@ async function handle_web_socket(ws, username){
                 }
                 else if(moneySpent + JSON.parse(msg).bet <= moneyLimit){
                     console.log("Bet amount: ", JSON.parse(msg).bet);
-                    assign_player(ws, username, JSON.parse(msg).bet);
+                    if(!usingFakeMoney){
+                        assign_player(ws, username, JSON.parse(msg).bet, false);
+                    }else{
+                        console.log("Fake money bet");
+                        assign_player(ws, username, 0, usingFakeMoney); //Don't actually bet any money
+                    }
                     ws.send(JSON.stringify({type: "JOIN"}));
                 }else{
                     ws.send(JSON.stringify({type: "BET_EXCEEDS_LIMIT"}));
@@ -35,7 +41,12 @@ async function handle_web_socket(ws, username){
                 }
             }
             else{
-                handle_message(JSON.parse(msg), ws, username, JSON.parse(msg).bet);
+                if(!usingFakeMoney){
+                    handle_message(JSON.parse(msg), ws, username, JSON.parse(msg).bet);
+                }else{
+                    console.log("Fake money bet");
+                    handle_message(JSON.parse(msg), ws, username, 0);
+                }
             }
         }
         catch (error){
@@ -59,7 +70,7 @@ async function handle_web_socket(ws, username){
 /*
 Assign new players to a game, make a new one if none available
 */
-function assign_player(ws, username, bet){
+function assign_player(ws, username, bet, fakeMoney){
     let game;
     //Search the games for a viable one to join
     for (const g of blackjackState.games){
@@ -73,7 +84,7 @@ function assign_player(ws, username, bet){
         blackjackState.gameIdCounter++;
         blackjackState.games.push(game);
     }
-    game.add_player(ws, username, bet);    
+    game.add_player(ws, username, bet, fakeMoney);    
 
     return game;
 
