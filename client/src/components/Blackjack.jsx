@@ -64,7 +64,7 @@ export default function Blackjack({username}) {
       setTimePlayed(limits.timeSpent || 0);
       setMoneySpent(limits.moneySpent || 0);
       if(moneySpent >= moneyLimit){
-        setLimitHit(true);
+        handleLockOut();
       }
     } catch (error) {
       console.error('Error fetching user limits:', error);
