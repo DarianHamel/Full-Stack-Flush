@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import axios from "axios";
+import "../design/Tutorial.css";
 
 const TutorialPage = () => {
   const [tutorials, setTutorials] = useState([]);

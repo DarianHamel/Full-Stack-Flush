@@ -1,25 +1,29 @@
 .left-panel {
     display: flex;
-    align-items: 20px;
+    /* align-items: 20px; */
 }
 
 .left-panel h2 {
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
     color: white;
-    font-size: 35px;
+    font-size: clamp(16px, 3vw, 7vh);
 }
 
 .left-panel button {
     display: flex;
     align-items: center;
-    margin: 10px 0;
-    padding: 15px;
+    margin: clamp(5px, 1vw, 2vh) 0;
+    /* padding: 15px; Change for dynamic */
     background-color: #f0f0f0;
     border: none;
-    width: 100%;
+    /* width: 100%; */
     cursor: pointer;
-    font-size: 20px;
-    width: 200px;
+    font-size: clamp(10px, 2vw, 5vh);
+    font-family: Sancreek, Verdana, Geneva, Tahoma, sans-serif;
+    width: 15vw;
+    max-width: 40vh;
+    height: 5vw;
+    max-height: 12vh;
 }
 
 .left-panel button:hover {
@@ -27,14 +31,43 @@
 }
 
 .left-panel button svg {
-    margin-right: 10px;
+    margin-right: clamp(5px, 1vw, 2vh); 
+    width: 2vw;
+    max-width: 5vh;
 }
 
 .right-panel {
-    flex: 1;
-    margin-left: 50px;
-    padding: 50px;
+    /* flex: 1; */
+    margin-left: clamp(10px, 2vw, 5vh);
+    padding: clamp(10px, 3vw, 7vh);
     background-color: white;
-    width: 700px;
-    height: 600px;
+    width: 45vw;
+    max-width: 112vh;
+    height: 45vw;
+    max-height: 85vh;
+}
+
+.profile-container {
+    width: 100%;
+    /* max-width: 450px; */
+    /* font-family: Arial, sans-serif; */
+    margin: 0 auto;
+    /* text-align: left; */
+}
+  
+.profile-label {
+    text-align: center;
+    /* margin-bottom: 20px; */
+    font-size: clamp(16px, 3vw, 7vh);
+}
+  
+/*.profile-table {
+    width: 100%;
+    border-collapse: separate;
+}*/
+  
+.profile-table td {
+    /* padding: 20px; */
+    /* border-bottom: 1px solid #ddd; */
+    font-size: clamp(10px, 2vw, 5vh);
 }

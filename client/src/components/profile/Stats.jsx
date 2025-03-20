@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
-import "../../design/profile/Stats.css";
+import "../../design/Profile.css";
 
 const MyProfile = () => {
   const [cookies] = useCookies(["username", "token"]);
