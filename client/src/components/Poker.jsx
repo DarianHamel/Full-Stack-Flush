@@ -15,9 +15,32 @@ const Poker = ({ username }) => {
   const [gameOver, setGameOver] = useState(false); // Track if the game is over
   const [difficulty, setDifficulty] = useState("easy");
   const [targetScore, setTargetScore] = useState(0);
+  const [difficultySelected, setDifficultySelected] = useState(false); // for resetting difficulty select after game ends
+  const [betAmount, setBetAmount] = useState(0);
   console.log(username);
 
   const startGame = async () => {
+    if (betAmount <= 0) {
+      alert("Please place a valid bet!");
+      return;
+    }
+
+    console.log("Placing bet with:", {
+      username,
+      amount: betAmount,
+    });
+
+    const betResponse = await fetch("http://localhost:5050/bet", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username, // Pass the logged-in user's username
+        money: betAmount, // Deduct the bet amount
+      }),
+    });
+
     const response = await fetch("http://localhost:5050/poker/start", {
       method: "POST",
       headers: {
@@ -108,6 +131,35 @@ const Poker = ({ username }) => {
 
             const gameResult = finalScore >= targetScore;
 
+            let multiplier = 1;
+            if (difficulty === "medium") { multiplier = 2;
+            } else if (difficulty === "hard") { multiplier = 3; }
+
+            const winnings = gameResult ? betAmount * multiplier : 0;
+
+            if (gameResult) {
+              const balanceResponse = await fetch("http://localhost:5050/update-balance-no-password", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  username, // Pass the logged-in user's username
+                  amount: winnings,
+                }),
+              });
+              const balanceData = await balanceResponse.json();
+
+              if (!balanceData.success) {
+                alert(balanceData.message);
+              } else {
+                alert(`You won $${winnings}`);
+              }
+            } 
+            else {
+                alert(`You lost $${betAmount}`);
+              }
+
             // Update stats in the backend
             await fetch("http://localhost:5050/updateStats", {
               method: "POST",
@@ -118,6 +170,7 @@ const Poker = ({ username }) => {
                 username, // Pass the logged-in user's username
                 wins: gameResult ? 1 : 0,
                 losses: gameResult ? 0 : 1,
+                money: betAmount
               }),
             });
 
@@ -178,16 +231,15 @@ const Poker = ({ username }) => {
   console.log(gameOver);
 
 
-  // TODO: return back to difficulty selection after game ends rather than just a button to start new one with same difficulty
-  // TODO: add betting selection and bet win modifiers based on difficulty
+  // TODO: track time and money spent on poker
   return (
     <AuthRedirect username = {username}>
       <div className="poker-container">
         <div className="poker-card">
-          {!gameStarted && (
+          {!difficultySelected && (
             <>
               <h1>♠️ Poker Minigame ♥️</h1>
-              <p>Welcome to the Poker Minigame! Select a difficulty and click "Start Game" to begin.</p>
+              <p>Welcome to the Poker Minigame! Select a difficulty and place your bet to begin.</p>
               <div className="difficulty-selection">
                 <label htmlFor="difficulty">Select Difficulty:</label>
                 <select
@@ -204,15 +256,27 @@ const Poker = ({ username }) => {
                   <option value="hard">Hard</option>
                 </select>
               </div>
-              <p>
-                Check out our{" "}
-                <Link to="/tutorials" className="tutorials-link">
-                  tutorials
-                </Link>{" "}
-                section for more information on how to play the game!
-              </p>
+              <div className="betting-selection">
+                <label htmlFor="betAmount">Place Your Bet:</label>
+                <input
+                  type="number"
+                  id="betAmount"
+                  name="betAmount"
+                  value={betAmount}
+                  onChange={(e) => setBetAmount(Number(e.target.value))}
+                  min="1"
+                  placeholder="Enter your bet"
+                />
+              </div>
               <div className="button-group">
-                <button onClick={startGame} className="start-game">
+                <button onClick={() => {
+                  if (betAmount <= 0) {
+                    alert("Please place a valid bet!");
+                    return;
+                  }
+                  setDifficultySelected(true);
+                  startGame();
+                }} className="start-game">
                   Start Game
                 </button>
                 <Link to="/" className="back-to-home">
@@ -240,8 +304,20 @@ const Poker = ({ username }) => {
               ) : (
                 <p>Sorry, you lose. Better luck next time!</p>
               )}
-              <button onClick={startGame} className="start-game">
-                Start New Game
+              <button
+                onClick={() => {
+                  setGameOver(false);
+                  setGameStarted(false);
+                  setDifficultySelected(false);
+                  setPlayerHand([]);
+                  setCurrentScore(0);
+                  setHandsRemaining(0);
+                  setDiscardsRemaining(0);
+                  setSelectedCards([]); 
+                }}
+                className="start-game"
+              >
+                End Game
               </button>
             </>
           )}

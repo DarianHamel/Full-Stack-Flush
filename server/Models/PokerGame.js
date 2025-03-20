@@ -23,7 +23,7 @@ class PokerGame {
         this.discardsRemaining = 3;
 
         if (this.difficulty === "easy") {
-          this.targetScore = 250;
+          this.targetScore = 25;
         } else if (this.difficulty === "medium") {
           this.targetScore = 500;
         } else {
