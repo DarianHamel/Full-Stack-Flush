@@ -3,8 +3,9 @@ const PokerGame = require('../Models/PokerGame');
 let activeGames = {};
 
 module.exports.StartPoker = (req, res) => {
+    const { difficulty } = req.body;
     const gameID = Date.now(); // should change to username tracking probably ?
-    const newGame = new PokerGame(gameID);
+    const newGame = new PokerGame(gameID, difficulty);
     newGame.startGame();
 
     console.log(gameID);
@@ -12,7 +13,12 @@ module.exports.StartPoker = (req, res) => {
 
     res.json({
         gameID,
-        playerHand: newGame.getPlayerHand()
+        playerHand: newGame.getPlayerHand(),
+        handsRemaining: newGame.handsRemaining,
+        discardsRemaining: newGame.discardsRemaining,
+        gameOver: newGame.gameOver,
+        difficulty: newGame.difficulty,
+        targetScore: newGame.targetScore
     });
 };
 
@@ -39,5 +45,5 @@ module.exports.ScoreHand = (req, res) => {
     const game = activeGames[gameID];
     const score = game.scoreHand(selectedCards);
 
-    res.json({ score, currentScore: game.currentScore });
+    res.json({ score, currentScore: game.currentScore, handsRemaining: game.handsRemaining, discardsRemaining: game.discardsRemaining, gameOver: game.gameOver });
 };

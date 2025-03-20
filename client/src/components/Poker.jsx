@@ -2,22 +2,42 @@ import React, { useState } from "react";
 import "../design/Poker.css";
 import { Link } from "react-router-dom";
 import Card from "./Card.jsx";
+import AuthRedirect from "./AuthRedirect";
 
-const Poker = () => {
+const Poker = ({ username }) => {
   const [playerHand, setPlayerHand] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedCards, setSelectedCards] = useState([]);
   const [gameID, setgameID] = useState(null);
   const [currentScore, setCurrentScore] = useState(0);
+  const [handsRemaining, setHandsRemaining] = useState(0);
+  const [discardsRemaining, setDiscardsRemaining] = useState(0);
+  const [gameOver, setGameOver] = useState(false); // Track if the game is over
+  const [difficulty, setDifficulty] = useState("easy");
+  const [targetScore, setTargetScore] = useState(0);
+  console.log(username);
 
   const startGame = async () => {
-    const response = await fetch("http://localhost:5050/poker/start");
+    const response = await fetch("http://localhost:5050/poker/start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ difficulty }), // Send the selected difficulty
+    });
+
     const data = await response.json();
+    console.log("Start Game Response:", data); // Debugging
+
     setgameID(data.gameID);
     setPlayerHand(data.playerHand);
+    setHandsRemaining(data.handsRemaining || 0);
+    setDiscardsRemaining(data.discardsRemaining || 0);
     setGameStarted(true);
+    setGameOver(false); // Reset game over state
+    setSelectedCards([]); // Reset selected cards
     setCurrentScore(0);
-    console.log(data.gameID);
+    setTargetScore(data.targetScore); // Set the target score from the backend
   };
 
   const handleCardClick = (card) => {
@@ -38,6 +58,11 @@ const Poker = () => {
   };
 
   const discardCards = async () => {
+    if (discardsRemaining <= 0) {
+      alert("No discards remaining.");
+      return;
+    }
+
     const remainingCards = playerHand.filter(
       (card) =>
         !selectedCards.some(
@@ -52,11 +77,12 @@ const Poker = () => {
 
     setPlayerHand([...remainingCards, ...data.newCards]);
     setSelectedCards([]);
+    setDiscardsRemaining(discardsRemaining - 1);
   };
 
   const playHand = async () => {
     if (selectedCards.length === 0) {
-        console.error("No cards selected to play");
+        alert("No cards selected to play!");
         return;
     }
 
@@ -74,10 +100,34 @@ const Poker = () => {
 
         const data = await response.json();
 
+        if (data.handsRemaining === 0) {
+          const finalScore = data.currentScore;
+            setCurrentScore(finalScore);
+            setGameOver(true);
+            setHandsRemaining(0);
+
+            const gameResult = finalScore >= targetScore;
+
+            // Update stats in the backend
+            await fetch("http://localhost:5050/updateStats", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                username, // Pass the logged-in user's username
+                wins: gameResult ? 1 : 0,
+                losses: gameResult ? 0 : 1,
+              }),
+            });
+
+            return;
+        }
+
         if (data.score) {
-            console.log("Score for the played hand:", data.score);
             alert(`Your hand scored: ${data.score}`);
             setCurrentScore(data.currentScore);
+            setHandsRemaining(data.handsRemaining);
         } else {
             console.error("Failed to score hand:", data.error);
         }
@@ -125,50 +175,89 @@ const Poker = () => {
 
   // log the selected cards for debugging purposes
   console.log("Selected Cards:", selectedCards);
+  console.log(gameOver);
 
+
+  // TODO: return back to difficulty selection after game ends rather than just a button to start new one with same difficulty
+  // TODO: add betting selection and bet win modifiers based on difficulty
   return (
-    <div className="poker-container">
-      <div className="poker-card">
-        {!gameStarted && (
-          <>
-            <h1>♠️ Poker Minigame ♥️</h1>
-            <p>Welcome to the Poker Minigame! Click "Start Game" to begin.</p>
-            <p>
-              Check out our{" "}
-              <Link to="/tutorials" className="tutorials-link">
-                tutorials
-              </Link>{" "}
-              section for more information on how to play the game!
-            </p>
-            <div className="button-group">
+    <AuthRedirect username = {username}>
+      <div className="poker-container">
+        <div className="poker-card">
+          {!gameStarted && (
+            <>
+              <h1>♠️ Poker Minigame ♥️</h1>
+              <p>Welcome to the Poker Minigame! Select a difficulty and click "Start Game" to begin.</p>
+              <div className="difficulty-selection">
+                <label htmlFor="difficulty">Select Difficulty:</label>
+                <select
+                  id="difficulty"
+                  name="difficulty"
+                  value={difficulty}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    setDifficulty(e.target.value);
+                  }}
+                >
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <p>
+                Check out our{" "}
+                <Link to="/tutorials" className="tutorials-link">
+                  tutorials
+                </Link>{" "}
+                section for more information on how to play the game!
+              </p>
+              <div className="button-group">
+                <button onClick={startGame} className="start-game">
+                  Start Game
+                </button>
+                <Link to="/" className="back-to-home">
+                  Back to Home
+                </Link>
+              </div>
+            </>
+          )}
+          {gameStarted && !gameOver && (
+            <>
+              <h1>Your Hand</h1>
+              <div className="hand">{renderHand(playerHand)}</div>
+              <h2>Current Score: {currentScore}</h2>
+              <h2>Target Score: {targetScore}</h2>
+              <p>Hands Remaining: {handsRemaining}</p>
+              <p>Discards Remaining: {discardsRemaining}</p>
+            </>
+          )}
+          {gameOver && (
+            <>
+              <h1>Game Over!</h1>
+              <p>Your final score: {currentScore}</p>
+              {currentScore >= targetScore ? (
+                <p>Congratulations! You win!</p>
+              ) : (
+                <p>Sorry, you lose. Better luck next time!</p>
+              )}
               <button onClick={startGame} className="start-game">
-                Start Game
+                Start New Game
               </button>
-              <Link to="/" className="back-to-home">
-                Back to Home
-              </Link>
-            </div>
-          </>
-        )}
-        {gameStarted && (
-          <>
-            <h1>Your Hand</h1>
-            <div className="hand">{renderHand(playerHand)}</div>
-            <h2>Current Score: {currentScore}</h2>
-          </>
+            </>
+          )}
+        </div>
+        {gameStarted && !gameOver && ( // Put this outside other divs so the buttons are below the cards
+          <div className="action-buttons-poker">
+            <button onClick={discardCards} className="discard">
+              Discard
+            </button>
+            <button onClick={playHand} className="play-hand">
+              Play Hand
+            </button>
+          </div>
         )}
       </div>
-      {gameStarted && ( // Put this outside other divs so the buttons are below the cards
-        <div className="action-buttons-poker">
-          <button onClick={discardCards} className="discard">
-            Discard
-          </button>
-          <button onClick={playHand} className="play-hand">
-            Play Hand
-          </button>
-        </div>
-      )}
-    </div>
+    </AuthRedirect>
   );
 };
 
