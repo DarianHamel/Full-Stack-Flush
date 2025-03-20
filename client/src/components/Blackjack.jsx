@@ -407,7 +407,9 @@ export default function Blackjack({username}) {
     </div>
     <div className="blackjack-container">
       <div className="bet-container">
-      
+        <div className="balance-display">
+            Current Balance: ${gameState.balance}
+          </div>
         <label htmlFor="betAmount">Bet Amount:</label>
         <input disabled={gameState.playing && !gameState.gameOver}
           type="number"
@@ -417,12 +419,9 @@ export default function Blackjack({username}) {
           min="1"
           max={Math.min(gameState.balance, moneyLimit-moneySpent) || 1}
         />
-        <div className="balance-display">
-          Current Balance: ${gameState.balance}
-        </div>
     </div>
       {!gameState.inGame &&(
-        <div>
+        <div className="button-container">
         <button className="start-button" onClick={startGame}>Start Game</button>
         <button className="start-button-free" onClick={startGame}>Start Free Game</button>
         </div>
