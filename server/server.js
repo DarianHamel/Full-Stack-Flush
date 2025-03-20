@@ -12,6 +12,8 @@ const winloseRoute = require("./routes/WinLoseRoute");
 const leaderboardRoute = require("./routes/LeaderboardRoute");
 const userInfoRoute = require("./routes/ProfileRoute");
 const tutorialRoutes = require("./routes/TutorialRoute.js");
+const pokerRoute = require("./routes/PokerRoute.js");
+const betRoutes = require("./routes/BetRoute.js");
 
 const { ATLAS_URI, PORT } = process.env;
 const app = express();
@@ -22,9 +24,19 @@ mongoose
   .then(() => console.log("MongoDB is  connected successfully"))
   .catch((err) => console.error(err));
 
-
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
 //app.use("/api/blackjack", blackjack);
-
 
 expressWs(app);
 
@@ -43,13 +55,6 @@ app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
 
-app.use(
-  cors({
-    origin: ["http://localhost:5173"],
-    credentials: true,
-  })
-);
-
 app.use(express.json());
 app.use(cookieParser());
 app.use("/", authRoute);
@@ -58,3 +63,5 @@ app.use("/", winloseRoute);
 app.use("/", leaderboardRoute);
 app.use("/", userInfoRoute);
 app.use("/", tutorialRoutes);
+app.use("/", betRoutes);
+app.use("/", pokerRoute);

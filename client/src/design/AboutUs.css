@@ -1,7 +1,11 @@
 .about-container {
-    margin-top: 50%;
+    position: relative;
+    /* max-height: 100vh; */
+    /* top: 0; */
+    /* margin-top: 100px; */
     padding: 1.5rem;
-    max-width: 1200px;
+    width: clamp(700px, 80vw, 2000px);
+    /* width: 80vw; */
     text-align: center;
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 12px;
