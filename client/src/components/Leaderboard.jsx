@@ -13,17 +13,30 @@ const Leaderboard = () => {
     useEffect(() =>{
         const fetchLeaderboard = async () => {
             try{
-                const { data } = await axios.get(`http://localhost:5050/leaderboard?sortBy=${sortBy}&order=${order}&filter=${filter}`,
-                );
+                const { data } = await axios.get(`http://localhost:5050/leaderboard?sortBy=${sortBy}&order=${order}&filter=${filter}`,);
                 setLeaderboard(data);
             }
             catch(error){
                 console.error("An error occurred with the Network: ", error);
+                setLeaderboard([]);
             }
         }
 
         fetchLeaderboard();
     }, [sortBy, order, filter]);
+
+
+    const formatNumber = (num) => {
+        if (num >= 1e9) {
+            return (num / 1e9).toFixed(1) + 'B'; // Billion
+        } else if (num >= 1e6) {
+            return (num / 1e6).toFixed(1) + 'M'; // Million
+        } else if (num >= 1e3) {
+            return (num / 1e3).toFixed(1) + 'K'; // Thousand
+        } else {
+            return num.toString(); // Less than thousand
+        }
+    };
 
     //each row has these user data displayed
     function LeaderboardRows(){
@@ -34,8 +47,8 @@ const Leaderboard = () => {
                 <td className="border border-gray-400 p-2">{entry.wins}</td>
                 <td className="border border-gray-400 p-2">{entry.losses}</td>
                 <td className="border border-gray-400 p-2">{entry.winLossRatio}</td>
-                <td className="border border-gray-400 p-2">{entry.moneySpent}</td>
-                <td className="border border-gray-400 p-2">{entry.timeSpent}</td>
+                <td className="border border-gray-400 p-2">{formatNumber(entry.moneySpent)}</td>
+                <td className="border border-gray-400 p-2">{Math.floor(entry.timeSpent/60)}</td>
             </tr>
         ));
     }
