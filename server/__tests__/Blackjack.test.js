@@ -374,6 +374,8 @@ describe("Blackjack Routes Tests", () => {
                 type: "ACTION",
                 action: "PLAY_AGAIN",
             };
+
+            const bet = 1;
             handle_message(message, client, "TestPlayer", bet);
     
             msg = JSON.parse(await server.nextMessage);
@@ -386,6 +388,8 @@ describe("Blackjack Routes Tests", () => {
                 type: "ACTION",
                 action: "HIT",
             };
+
+            const bet = 1;
             handle_message(message, client);
     
             msg = JSON.parse(await server.nextMessage);

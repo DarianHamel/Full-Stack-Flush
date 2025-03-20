@@ -5,6 +5,7 @@ const User = require("../Models/UserModel");
 const { GetLeaderboard, applyFilters, calculateWinLossRatio, sortLeaderboard } = require("../Controllers/LeaderboardController");
 
 let mongoServer;
+jest.setTimeout(30000);
 
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
@@ -27,8 +28,6 @@ const mockResponse = () => {
   res.json = jest.fn().mockReturnValue(res);
   return res;
 };
-
-// ========================================================================
 
 describe("GetLeaderboard API Tests", () => {
 
