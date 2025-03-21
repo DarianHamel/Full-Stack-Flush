@@ -16,7 +16,7 @@ const History = () => {
           `http://localhost:5050/getHistory?username=${cookies.username}`,
           { withCredentials: true }
         );
-        setHistory(data);
+        setHistory(data.reverse());
       } catch (error) {
         console.error("Error fetching transaction history:", error);
       }
