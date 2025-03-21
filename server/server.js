@@ -72,4 +72,5 @@ app.use("/", betRoutes);
 app.use("/", pokerRoute);
 app.use("/", historyRoutes)
 
+// Export the app for testing
 module.exports = app;

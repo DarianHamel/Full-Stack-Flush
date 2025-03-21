@@ -3,13 +3,14 @@ import "../design/Profile.css";
 import AuthRedirect from "./AuthRedirect";
 
 // icons
-import { FaUser, FaWallet, FaChartBar, FaHeadset } from "react-icons/fa";
+import { FaUser, FaWallet, FaChartBar, FaHeadset, FaHistory } from "react-icons/fa";
 
 // import Panel Components
 import ProfilePanel from "./profile/MyProfile";
 import BalancePanel from "./profile/Balance";
 import StatsPanel from "./profile/Stats";
 import SupportPanel from "./profile/Support";
+import HistoryPanel from "./profile/History";
 
 const Profile = ({ username }) => {
   const [currentPanel, setCurrentPanel] = useState("profile"); //Default to profile
@@ -19,6 +20,7 @@ const Profile = ({ username }) => {
     balance: <BalancePanel />,
     stats: <StatsPanel />,
     support: <SupportPanel />,
+    history: <HistoryPanel />,
   };
 
   const loadPanelData = (panel) => {
@@ -51,6 +53,9 @@ const Profile = ({ username }) => {
             </button>
             <button onClick={() => loadPanelData("support")}>
               <FaHeadset /> Support
+            </button>
+            <button onClick={() => loadPanelData("history")}>
+              <FaHistory /> History
             </button>
           </div>
         </div>

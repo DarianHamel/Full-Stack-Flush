@@ -13,10 +13,8 @@
     display: flex;
     align-items: center;
     margin: clamp(5px, 1vw, 2vh) 0;
-    /* padding: 15px; Change for dynamic */
     background-color: #f0f0f0;
     border: none;
-    /* width: 100%; */
     cursor: pointer;
     font-size: clamp(10px, 2vw, 5vh);
     font-family: Sancreek, Verdana, Geneva, Tahoma, sans-serif;
@@ -24,6 +22,7 @@
     max-width: 40vh;
     height: 5vw;
     max-height: 12vh;
+    padding-left: 20px; 
 }
 
 .left-panel button:hover {

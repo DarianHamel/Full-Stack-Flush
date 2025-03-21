@@ -1,0 +1,58 @@
+.history-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 20px auto;
+  }
+  
+  .title {
+    font-size: 50px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .history-list {
+    max-height: 550px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+  }
+  
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .history-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .history-item:hover {
+    background-color: #ddd;
+  }
+  
+  .game-name {
+    font-weight: bold;
+    font-size: 25px;
+  }
+  
+  .date {
+    font-size: 18px;
+    color: #666;
+  }
+  
+  .transaction-number {
+    font-size: 20px;
+    color: #444;
+  }
+  
+  .no-history {
+    text-align: center;
+    color: #888;
+    font-size: 25px;
+  }
+  
