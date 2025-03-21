@@ -141,6 +141,7 @@ const Poker = ({ username }) => {
     } catch (error) {
       console.error("Error updating money spent on the backend:", error);
     }
+
   };
 
   // track what cards a user is selecting to know what to discard/play and display animations
@@ -287,7 +288,6 @@ const Poker = ({ username }) => {
                 username, // Pass the logged-in user's username
                 wins: gameResult ? 1 : 0,
                 losses: gameResult ? 0 : 1,
-                money: betAmount,
                 game: "Poker"
               }),
             });
