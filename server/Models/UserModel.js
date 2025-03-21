@@ -24,13 +24,18 @@ userSchema.pre("save", async function () {
   }
 });
 
+/*
+Update the time spent of the user with the respective timeSpent
+*/
 userSchema.methods.updateTimeSpent = async function (timeSpent) {
   this.dailyTimeSpent += timeSpent;
   this.timeSpent += timeSpent;
   await this.save();
 };
 
-//Could convert these to a single function that takes in an amount and a type
+/*
+Update the money spent of the user with the respective money
+*/
 userSchema.methods.updateMoneySpent = async function (money) {
   this.dailyMoneySpent += Number(money);
   this.moneySpent += Number(money);
@@ -40,6 +45,9 @@ userSchema.methods.updateMoneySpent = async function (money) {
   this.markModified('dailyMoneySpent');
 };
 
+/*
+Update the money won of the user with the respective money
+*/
 userSchema.methods.updateMoneyWon = async function (money) {
   this.balance += Number(money);
   console.log("New Balance: ", this.balance);

@@ -6,6 +6,9 @@ const blackjackState = {
     gameIdCounter: 0,
 };
 
+/*
+Handle connection between player and server, handles user limits and ensures bets are valid.
+*/
 async function handle_web_socket(ws, username){
 
     console.log(username + " websocket connected");
@@ -16,17 +19,13 @@ async function handle_web_socket(ws, username){
         try{
             if (JSON.parse(msg).type == "JOIN"){
                 const response = await axios.get('http://localhost:5050/getLimits', {params: {username}});
-                const {timeLimit, moneyLimit, timeSpent, moneySpent} = response.data;
+                const {timeLimit, moneyLimit, timeSpent, moneySpent, balance} = response.data;
                 if((timeSpent >= timeLimit || moneySpent >= moneyLimit) && !usingFakeMoney){
                     console.log("User has reached their limit, closing connection");
                     ws.send(JSON.stringify({type: "LOCKOUT"}));
                     ws.close();
                     return;
-                }else if(balance < JSON.parse(msg).bet){
-                    ws.send(JSON.stringify({type: "NOT_ENOUGH_FUNDS"}));
-                    return;
-                }
-                else if(moneySpent + JSON.parse(msg).bet <= moneyLimit){
+                }else if(moneySpent + Number(JSON.parse(msg).bet) <= moneyLimit || usingFakeMoney){
                     console.log("Bet amount: ", JSON.parse(msg).bet);
                     if(!usingFakeMoney){
                         assign_player(ws, username, JSON.parse(msg).bet, false);
@@ -35,6 +34,8 @@ async function handle_web_socket(ws, username){
                         assign_player(ws, username, 0, usingFakeMoney); //Don't actually bet any money
                     }
                     ws.send(JSON.stringify({type: "JOIN"}));
+                }else if(JSON.parse(msg).bet > balance){
+                    ws.send(JSON.stringify({type: "NOT_ENOUGH_FUNDS"}))
                 }else{
                     ws.send(JSON.stringify({type: "BET_EXCEEDS_LIMIT"}));
                     return;
@@ -51,7 +52,7 @@ async function handle_web_socket(ws, username){
         }
         catch (error){
             //Just close the socket and remove the player who sent the bad JSON
-            console.log("Failed to parse JSON");
+            console.log("Failed to parse JSON", error);
             ws.close();
         }
     });

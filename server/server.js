@@ -32,17 +32,7 @@ app.use(
     credentials: true,
   })
 );
-app.use(
-  cors({
-    origin: ["http://localhost:5173"],
-    credentials: true,
-  })
-);
-//app.use("/api/blackjack", blackjack);
-
-
 }
-
 //app.use("/api/blackjack", blackjack);
 
 app.ws('/', (ws, req) => {

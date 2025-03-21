@@ -14,6 +14,10 @@ const Balance = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   
+  /*
+  Get the balance on launch of page
+  Sets it in balance const
+  */
   useEffect(() => {
     if (!cookies.username) return;
 
@@ -32,12 +36,16 @@ const Balance = () => {
     getBalance();
   }, [cookies.username]);
 
+  /*
+  Allows the user to deposit if the input values are "valid"
+  If the user is valid, updates the amount deposited into the account and updates balance
+  */
   const handleDeposit = async () => {
     setError(""); 
 
     const amount = parseFloat(depositAmount);
 
-    if (!depositAmount || !cardNumber || !expirationDate || !confirmationNumber || !password) {
+    if (!depositAmount || !cardNumber || !expirationDate || !confirmationNumber || !password) { //Fake validation checking
       setError("All fields are required.");
       return;
     }

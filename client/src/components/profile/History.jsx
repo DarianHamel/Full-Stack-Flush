@@ -7,6 +7,10 @@ const History = () => {
   const [cookies] = useCookies(["username", "token"]);
   const [history, setHistory] = useState([]);
 
+  /*
+  Gets the history of user on page launch
+  Sets the history in const "history"
+  */
   useEffect(() => {
     if (!cookies.username) return;
 
@@ -16,7 +20,7 @@ const History = () => {
           `http://localhost:5050/getHistory?username=${cookies.username}`,
           { withCredentials: true }
         );
-        setHistory(data);
+        setHistory(data.reverse());
       } catch (error) {
         console.error("Error fetching transaction history:", error);
       }

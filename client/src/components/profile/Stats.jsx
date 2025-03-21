@@ -11,6 +11,12 @@ const MyProfile = () => {
   const [losses, setLosses] = useState(0);
   const [ratio, setRatio] = useState(0);
 
+    /*
+    Gets the users stats on page launch
+    Calls the route /GetStats
+    Input: username
+    Updates const for displaying users: Money Spent, Time Spent, Wins and Losses
+    */
   useEffect(() => {
     if (!cookies.username) return;
 
@@ -31,6 +37,10 @@ const MyProfile = () => {
     fetchUserStats();
   }, [cookies.username]);
 
+  /*
+  Sets the win loss ratio of the user on page launch
+  Ensures we do not divide by 0
+  */
   useEffect(() => {
     if (wins + losses > 0) {
       setRatio((wins / (wins + losses)));

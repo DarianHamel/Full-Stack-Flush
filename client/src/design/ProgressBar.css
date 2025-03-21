@@ -13,3 +13,16 @@
     height: 20px;
     transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
 }
+
+.Progress-Bars{
+  position: fixed;
+  top: 100px;
+  right:5%;
+  width: 12em;
+  z-index: 900;
+  color: white;
+  font-size: 1.5vw;
+  /* gap: 20px; */
+  display: flex;
+  flex-direction: column;
+}

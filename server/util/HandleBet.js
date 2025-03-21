@@ -1,5 +1,11 @@
 const axios = require("axios");
 
+/*
+Handles the bet
+Calls the route /Bet
+Input parameters: username and bet
+Returns: A message containing their gambling habits (if the user played enough)
+*/
 const handleBet = async (username, bet) => {
     if (!username) return;
     try {

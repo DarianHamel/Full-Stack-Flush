@@ -1,5 +1,9 @@
 const User = require("../Models/UserModel");
 
+/*
+Find a user in the database by their username
+Returns the user if found or the respective error and status
+*/
 const findUserByUsername = async (username) => {
   try {
     const user = await User.findOne({ username });
@@ -12,6 +16,9 @@ const findUserByUsername = async (username) => {
   }
 };
 
+/*
+Get the username and password along with time and money limits
+*/
 module.exports.GetUserInfo = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
@@ -21,6 +28,9 @@ module.exports.GetUserInfo = async (req, res) => {
   res.status(200).json({ username: user.username, password: user.password , timeLimit: user.timeLimit, moneyLimit: user.moneyLimit });
 };
 
+/*
+Get the balance of the user
+*/
 module.exports.GetBalance = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
@@ -30,7 +40,9 @@ module.exports.GetBalance = async (req, res) => {
   res.status(200).json({ balance: user.balance });
 }
 
-
+/*
+Set the time spent playing of the user
+*/
 module.exports.SetTimeSpent = async (req, res) => {
   const { username, timeSpent } = req.body;
   if (timeSpent != undefined && timeSpent > 0) {
@@ -47,6 +59,10 @@ module.exports.SetTimeSpent = async (req, res) => {
   }
 };
 
+/*
+Get the last day logged in
+This is called in order to determine user limit resets
+*/
 module.exports.GetLastLogin = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
@@ -56,6 +72,11 @@ module.exports.GetLastLogin = async (req, res) => {
   res.status(200).json({ lastLogin: user.lastLogin });
 };
 
+/*
+Reset the limits of the user
+This is called if the user logged in a different day 
+and resets the users limits to allow for betting again
+*/
 module.exports.ResetDailyLimits = async (req, res) => {
   const { username } = req.body;
   const { user, error, status } = await findUserByUsername(username);
@@ -70,7 +91,10 @@ module.exports.ResetDailyLimits = async (req, res) => {
   res.status(200).json({ success: true, message: "Daily limits reset" });
 };
 
-
+/*
+Get the money limit of the user
+Money limit restricts the user to a dollar spend amount of {moneyLimit}
+*/
  module.exports.GetMoneyLimit = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
@@ -80,6 +104,9 @@ module.exports.ResetDailyLimits = async (req, res) => {
   res.status(200).json({ success: true, moneyLimit: user.moneyLimit });
 };
 
+/*
+Get the limits of the user and related information to check if user hit their limits
+*/
 module.exports.GetLimits = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
@@ -89,6 +116,9 @@ module.exports.GetLimits = async (req, res) => {
   res.status(200).json({ success: true, moneyLimit: user.moneyLimit, timeLimit: user.timeLimit , timeSpent: user.dailyTimeSpent, moneySpent: user.dailyMoneySpent , balance: user.balance});
 };
 
+/*
+Get the users stats; timeSpent, moneySpent, Wins, Losses
+*/
 module.exports.GetStats = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
@@ -98,6 +128,10 @@ module.exports.GetStats = async (req, res) => {
   res.status(200).json({ success: true, timeSpent: user.timeSpent, moneySpent: user.moneySpent , wins: user.wins, losses: user.losses});
 };
 
+/*
+Set the time limit of the user
+Time limit restricts the user to a playtime of {timeLimit}
+*/
 module.exports.SetTimeLimit = async (req, res) => {
   const { username, timeLimit } = req.body;
   if (timeLimit != undefined && timeLimit > 0) {
@@ -114,6 +148,10 @@ module.exports.SetTimeLimit = async (req, res) => {
   }
 };
 
+/*
+Set the money limit of the user
+Money limit restricts the user to a dollar spend amount of {moneyLimit}
+*/
 module.exports.SetMoneyLimit = async (req, res) => {
   const { username, moneyLimit } = req.body;
   if (moneyLimit != undefined && moneyLimit > 0) {

@@ -9,7 +9,11 @@ const Leaderboard = () => {
     const[order, setOrderBy] = useState("desc");
     const[filter, setFilter] = useState("");
 
-    //gets the leaderboard data from the API
+    /*
+    Gets the leaderboard data
+    Calls route /leaderboard with filter values
+    Sets the leaderboard with the returned data
+    */
     useEffect(() =>{
         const fetchLeaderboard = async () => {
             try{
@@ -26,6 +30,10 @@ const Leaderboard = () => {
     }, [sortBy, order, filter]);
 
 
+    /*
+    Formats numbers to be displayed in decimal form with trailing letter to display value
+    This is done for formatting in the list
+    */
     const formatNumber = (num) => {
         if (num >= 1e9) {
             return (num / 1e9).toFixed(1) + 'B'; // Billion
@@ -38,7 +46,9 @@ const Leaderboard = () => {
         }
     };
 
-    //each row has these user data displayed
+    /*
+    Each row has these user data displayed
+    */
     function LeaderboardRows(){
         return leaderboard.map((entry, index) => (
             <tr key={entry._id} className="leaderboard-entry">

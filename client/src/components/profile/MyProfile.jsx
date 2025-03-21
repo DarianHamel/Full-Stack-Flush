@@ -12,6 +12,10 @@ const MyProfile = () => {
   const [isEditingTime, setIsEditingTime] = useState(false);
   const [isEditingMoney, setIsEditingMoney] = useState(false);
 
+  /*
+  Gets the user info on page launch
+  Sets the username, time limit and money limit
+  */
   useEffect(() => {
     if (!cookies.username) return;
 
@@ -33,6 +37,11 @@ const MyProfile = () => {
     fetchUserProfile();
   }, [cookies.username]);
 
+  /*
+  Allows the user to set their time limit
+  Calls route /SetTimeLimit
+  Input: username and new time limit (newLimit)
+  */
   const handleSaveTimeLimit = async () => {
     try {
       var newLimit = timeLimit*60;
@@ -47,6 +56,11 @@ const MyProfile = () => {
     }
   };
 
+  /*
+  Allows the user to set their time limit
+  Calls route /SetMoneyLimit
+  Input: username and new money limit (moneyLimit)
+  */
   const handleSaveMoneyLimit = async () => {
     try {
       await axios.post(

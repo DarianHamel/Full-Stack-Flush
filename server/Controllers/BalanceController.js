@@ -1,7 +1,10 @@
 const User = require("../Models/UserModel");
+const History = require("../Models/History");
 const bcrypt = require("bcryptjs");
 
-// Get User Balance by username
+/*
+Get User Balance by username
+*/
 module.exports.GetBalance = async (req, res) => {
     const { username } = req.query; 
     try {
@@ -14,12 +17,12 @@ module.exports.GetBalance = async (req, res) => {
       res.status(500).json({ message: "Server error" });
     }
   };
-  
-  
 
-// Update balance for deposit or bet (POST request)
+/*
+Update balance for deposit or bet (POST request)
+*/
 module.exports.UpdateBalance = async (req, res) => {
-  const { username, amount, password } = req.body;
+  const { username, amount, password, day } = req.body;
   
   if (!username || typeof amount !== 'number') {
     return res.status(400).json({ message: "Invalid request. Provide username and amount as a number.", success: false });
@@ -43,6 +46,15 @@ module.exports.UpdateBalance = async (req, res) => {
 
     user.balance = newBalance; 
     await user.save();
+    const transaction = amount;
+    const game = "Deposit";
+    await History.create({
+      username, 
+      transaction,
+      game,
+      day,
+    });
+    
     res.status(200).json({ balance: user.balance, success: true });
 
   } catch (error) {
@@ -51,8 +63,10 @@ module.exports.UpdateBalance = async (req, res) => {
   }
 };
 
-// Update balance without requiring a password (for game results)
-// added this to deal with unable to update balance after a win because password is required in other method 
+/* 
+Update balance without requiring a password (for game results)
+added this to deal with unable to update balance after a win because password is required in other method 
+*/
 module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
   const { username, amount } = req.body;
 
@@ -81,5 +95,30 @@ module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
   } catch (error) {
     console.error("Error updating balance:", error);
     res.status(500).json({ message: "Server error", success: false });
+  }
+};
+
+module.exports.UpdateMoneySpent = async (req, res) => {
+  const { username, moneySpent } = req.body;
+
+  if (!username || moneySpent === undefined) {
+    return res.status(400).json({ success: false, message: "Invalid request data" });
+  }
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    await user.updateMoneySpent(moneySpent);
+    await user.save();
+
+    console.log(user.moneySpent);
+
+    res.status(200).json({ success: true, message: "Money spent updated successfully", updatedDailyMoneySpent: user.moneySpent });
+  } catch (error) {
+    console.error("Error updating money spent:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };

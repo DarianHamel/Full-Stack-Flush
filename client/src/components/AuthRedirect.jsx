@@ -5,6 +5,10 @@ import { toast } from "react-toastify";
 const RequireAuth = ({ username, children }) => {
   const navigate = useNavigate();
 
+  /*
+  Checks if the client is signed in on launch
+  If they are not, then redirects to home page and alerts the client
+  */
   useEffect(() => {
     if (!username) {
       toast.info("You are not signed in. Redirecting to home page...", {

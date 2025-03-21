@@ -12,19 +12,6 @@ html, body {
   overflow-x: hidden;
 }
 
-/*body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(
-    90deg,
-    rgb(20, 7, 7) 0%,
-    rgb(100, 13, 13) 35%,
-    rgb(20, 7, 7) 35%,
-  );
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-}*/
-
 /* Main container for the home page */
 .home_page {
   margin-top: 10%;
@@ -82,10 +69,6 @@ html, body {
   word-wrap: break-word; /* Break long words */
   box-shadow: 5px 5px 5px rgba(0,0,0,0.9);
   position: relative;
-  /* transform: translateY(100vh) rotate(10deg); */
-
-  /* animation: dealIn 1s ease-out forwards; */
-
 }
 
 
@@ -106,7 +89,6 @@ html, body {
 }
 
 .card-wrapper {
-  /* transform: translateY(100vh) rotate(10deg); */
   animation: dealIn 1s ease-out forwards;
 }
 .card-wrapper:nth-child(1) {
