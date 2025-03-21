@@ -13,7 +13,7 @@ class PokerGame {
         this.handsRemaining = 4;
         this.discardsRemaining = 3;
         this.difficulty= difficulty;
-        this.targetScore = 500;
+        this.targetScore = 200;
     }
 
     startGame() {
@@ -23,11 +23,11 @@ class PokerGame {
         this.discardsRemaining = 3;
 
         if (this.difficulty === "easy") {
-          this.targetScore = 25;
+          this.targetScore = 200;
         } else if (this.difficulty === "medium") {
-          this.targetScore = 500;
+          this.targetScore = 400;
         } else {
-          this.targetScore = 10;
+          this.targetScore = 800;
         }
     }
 

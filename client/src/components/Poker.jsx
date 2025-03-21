@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../design/Poker.css";
 import { Link } from "react-router-dom";
 import Card from "./Card.jsx";
 import AuthRedirect from "./AuthRedirect";
+import ProgressBar from "./ProgressBar";
+import { checkAndResetDailyValues, updateTimeSpent , fetchUserBalance, fetchUserLimits} from "./helpers/userInfoHelper.js";
 
 const Poker = ({ username }) => {
   const [playerHand, setPlayerHand] = useState([]);
@@ -17,7 +19,42 @@ const Poker = ({ username }) => {
   const [targetScore, setTargetScore] = useState(0);
   const [difficultySelected, setDifficultySelected] = useState(false); // for resetting difficulty select after game ends
   const [betAmount, setBetAmount] = useState(0);
+  // all the limits tracking stuff like how blackjack implements it
+  const [timeLimit, setTimeLimit] = useState(0);
+  const [moneyLimit, setMoneyLimit] = useState(0);
+  const [timePlayed, setTimePlayed] = useState(0);
+  const [moneySpent, setMoneySpent] = useState(0);
+  const [limitHit, setLimitHit] = useState(false);
   console.log(username);
+
+  useEffect(() => {
+    checkAndResetDailyValues(username);
+    getUserLimits(username);
+  }, [username]);
+  
+  const getUserLimits = async (username) => {
+    try {
+      const limits = await fetchUserLimits(username);
+      setTimeLimit(limits.timeLimit || 0);
+      setMoneyLimit(limits.moneyLimit || 0);
+      setTimePlayed(limits.timeSpent || 0);
+      setMoneySpent(limits.moneySpent || 0);
+  
+      if (limits.moneySpent > limits.moneyLimit || limits.timeSpent >= limits.timeLimit) {
+        handleLockOut();
+      }
+    } catch (error) {
+      console.error("Error fetching user limits:", error);
+    }
+  };
+
+  const handleLockOut = () => {
+    setLimitHit(true);
+    alert("You have reached your daily limit and are locked out from playing. Redirecting...", {position: "top-center"});
+    setTimeout(() => {
+      navigate("/"); // Redirect to the home page
+    }, 3000); // Redirect after 3 seconds
+  };
 
   const startGame = async () => {
     if (betAmount <= 0) {
@@ -28,8 +65,39 @@ const Poker = ({ username }) => {
     // Fetch the user's current balance
     const balance = await fetchBalance();
     if (balance === null) {
-      return; // Stop if balance couldn't be fetched
+      return;
     }
+
+    if (limitHit) {
+      handleLockOut();
+      return;
+    }
+
+    if (moneySpent + betAmount > moneyLimit) {
+      alert("You have reached your daily money limit!", {position: "top-center"});
+      return;
+    }
+
+    const newMoneySpent = moneySpent + betAmount;
+    setMoneySpent(newMoneySpent);
+
+    // Update money spent on the backend
+    try {
+      await fetch("http://localhost:5050/update-money-spent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          moneySpent: newMoneySpent,
+        }),
+      });
+    } catch (error) {
+      console.error("Error updating money spent on the backend:", error);
+    }
+
+    setGameStarted(true);
 
     // Check if the bet amount exceeds the user's balance
     if (betAmount > balance) {
@@ -93,6 +161,11 @@ const Poker = ({ username }) => {
   };
 
   const discardCards = async () => {
+    if (limitHit) {
+      handleLockOut();
+      return;
+    }
+
     if (discardsRemaining <= 0) {
       alert("No discards remaining.");
       return;
@@ -115,7 +188,35 @@ const Poker = ({ username }) => {
     setDiscardsRemaining(discardsRemaining - 1);
   };
 
+  const sortHand = async (sortBy) => {
+    try {
+      const response = await fetch("http://localhost:5050/poker/sort-hand", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gameID,
+          criteria: sortBy,
+          hand: playerHand
+        }),
+      });
+
+      const data = await response.json();
+      setPlayerHand(data.sortedHand);
+    } catch (error) {
+      console.error("Error sorting hand:", error);
+    }
+  };
+
   const playHand = async () => {
+    if (limitHit) {
+      handleLockOut();
+      return;
+    }
+
+    const startTime = Date.now();
+
     if (selectedCards.length === 0) {
         alert("No cards selected to play!");
         return;
@@ -213,6 +314,16 @@ const Poker = ({ username }) => {
 
         setPlayerHand([...remainingCards, ...drawData.newCards]);
         setSelectedCards([]);
+
+        const endTime = Date.now();
+        const timeSpent = Math.floor((endTime - startTime) / 1000); // Time in seconds
+        setTimePlayed((prevTimePlayed) => prevTimePlayed + timeSpent);
+
+        await updateTimeSpent(username, timeSpent);
+
+        if (timePlayed + timeSpent >= timeLimit) {
+          handleLockOut();
+        }
     } catch (error) {
         console.error("Error playing hand:", error);
     }
@@ -265,6 +376,21 @@ const Poker = ({ username }) => {
   return (
     <AuthRedirect username = {username}>
       <div className="poker-container">
+        <div className="Progress-Bars">
+          <ProgressBar
+            label="Time Played"
+            label2="Minutes:"
+            value={Math.floor(timePlayed / 60)}
+            max={Math.floor(timeLimit / 60) || 1}
+          />
+          <ProgressBar
+            disabled={false}
+            label="Money Spent"
+            label2="$"
+            value={moneySpent}
+            max={moneyLimit || 1}
+          />
+        </div>
         <div className="poker-card">
           {!gameStarted && (
             <>
@@ -281,9 +407,9 @@ const Poker = ({ username }) => {
                     setDifficulty(e.target.value);
                   }}
                 >
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
+                  <option value="easy">Easy - 1x Multiplier</option>
+                  <option value="medium">Medium - 2x Multiplier</option>
+                  <option value="hard">Hard - 3x Multiplier</option>
                 </select>
               </div>
               <div className="betting-selection">
@@ -353,11 +479,17 @@ const Poker = ({ username }) => {
         </div>
         {gameStarted && !gameOver && ( // Put this outside other divs so the buttons are below the cards
           <div className="action-buttons-poker">
-            <button onClick={discardCards} className="discard">
-              Discard
-            </button>
             <button onClick={playHand} className="play-hand">
               Play Hand
+            </button>
+            <button onClick={() => sortHand("rank")} className="sort-rank">
+              Sort by Rank
+            </button>
+            <button onClick={() => sortHand("suit")} className="sort-suit">
+              Sort by Suit
+            </button>
+            <button onClick={discardCards} className="discard">
+              Discard
             </button>
           </div>
         )}
