@@ -86,7 +86,7 @@ module.exports.GetLimits = async (req, res) => {
   if (error) {
     return res.status(status).json({ success: false, message: error });
   }
-  res.status(200).json({ success: true, moneyLimit: user.moneyLimit, timeLimit: user.timeLimit , timeSpent: user.dailyTimeSpent, moneySpent: user.dailyMoneySpent });
+  res.status(200).json({ success: true, moneyLimit: user.moneyLimit, timeLimit: user.timeLimit , timeSpent: user.dailyTimeSpent, moneySpent: user.dailyMoneySpent , balance: user.balance});
 };
 
 module.exports.GetStats = async (req, res) => {
