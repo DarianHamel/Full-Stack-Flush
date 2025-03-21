@@ -118,7 +118,7 @@ describe("WinLose Controller Integration Tests", () => {
 
     const response = await request(app)
       .post("/updateStats")
-      .send({ username: "testuser", wins: 2, losses: 3 });
+      .send({ username: "testuser", wins: 2, losses: 3, money: 0, game: "Poker" });
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("success", true);
@@ -129,7 +129,7 @@ describe("WinLose Controller Integration Tests", () => {
   test("POST /updateStats should return 404 if the user is not found", async () => {
     const response = await request(app)
       .post("/updateStats")
-      .send({ username: "unknownuser", wins: 2, losses: 3 });
+      .send({ username: "unknownuser", wins: 2, money: 0, losses: 3, game: "Poker" });
 
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty("success", false);
@@ -142,7 +142,7 @@ describe("WinLose Controller Integration Tests", () => {
 
     const response = await request(app)
       .post("/updateStats")
-      .send({ username: "testuser", wins: -2, losses: 3 });
+      .send({ username: "testuser", wins: -2, losses: 3, money: 0, game: "Blackjack" });
 
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("success", false);
@@ -152,7 +152,7 @@ describe("WinLose Controller Integration Tests", () => {
   test("POST /updateStats should return 400 if username is missing", async () => {
     const response = await request(app)
       .post("/updateStats")
-      .send({ wins: 2, losses: 3 });
+      .send({ wins: 2, losses: 3, money: 0, game: "Blackjack" });
 
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("message", "Invalid request. Provide a username.");
@@ -164,7 +164,7 @@ describe("WinLose Controller Integration Tests", () => {
 
     const response = await request(app)
       .post("/updateStats")
-      .send({ username: "testuser", wins: 2, losses: 3 });
+      .send({ username: "testuser", wins: 2, losses: 3, money: 0, game: "Blackjack" });
 
     expect(response.status).toBe(500);
     expect(response.body).toHaveProperty("success", false);
@@ -183,7 +183,7 @@ describe("WinLose Controller Integration Tests", () => {
 
     const response = await request(app)
       .post("/updateStats")
-      .send({ username: "testuser", wins: 2, losses: 3 });
+      .send({ username: "testuser", wins: 2, losses: 3, money: 0, game: "Poker" });
 
     expect(response.status).toBe(500);
     expect(response.body).toHaveProperty("success", false);
