@@ -91,3 +91,27 @@ module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
     res.status(500).json({ message: "Server error", success: false });
   }
 };
+
+module.exports.UpdateMoneySpent = async (req, res) => {
+  const { username, moneySpent } = req.body;
+
+  if (!username || moneySpent === undefined) {
+    return res.status(400).json({ success: false, message: "Invalid request data" });
+  }
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    user.updateMoneySpent(moneySpent);
+    await user.save();
+    console.log(user.moneySpent);
+
+    res.status(200).json({ success: true, message: "Money spent updated successfully" });
+  } catch (error) {
+    console.error("Error updating money spent:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
