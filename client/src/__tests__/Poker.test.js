@@ -6,14 +6,13 @@ import Poker from "../components/Poker";
 
 describe("Poker Component", () => {
   test("renders the Poker component", () => {
+    const mockUsername = "testUser";
     render(
       <Router>
-        <Poker />
+        <Poker username={mockUsername} />
       </Router>
     );
-    expect(screen.getByText("Coming Soon!")).toBeInTheDocument();
-    expect(screen.getByText("♠️ Poker Game ♥️")).toBeInTheDocument();
-    expect(screen.getByText(/We’re working hard to bring you an immersive poker experience/i)).toBeInTheDocument();
+    expect(screen.getByText("♠️ Poker Minigame ♥️")).toBeInTheDocument();
     expect(screen.getByText("Back to Home")).toBeInTheDocument();
   });
 });

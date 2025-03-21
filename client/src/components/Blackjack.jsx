@@ -1,11 +1,29 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import Card from "./Card.jsx";
 import "../design/Blackjack.css";
+import { toast } from "react-toastify";
+import { useNavigate, useParams } from "react-router-dom";
+import ProgressBar from "./ProgressBar";
 import AuthRedirect from "./AuthRedirect";
+import { checkAndResetDailyValues, updateTimeSpent , fetchUserBalance, fetchUserLimits} from "./helpers/userInfoHelper.js";
+
 
 export default function Blackjack({username}) {
 
   const [socket, setSocket] = useState(null);
+  const [betAmount, setBetAmount] = useState(1);
+  const [fakeMoney, setFakeMoney] = useState(false)
+  const [limitHit, setLimitHit] = useState(false);
+  const [timeLimit, setTimeLimit] = useState(0);
+  const [moneyLimit, setMoneyLimit] = useState(0);
+  const [timePlayed, setTimePlayed] = useState(0);
+  const [moneySpent, setMoneySpent] = useState(0);
+  const [lastTrendMessage, setTrendMessage] = useState(0);
+  const trendMessageTimer = 120000; // 2 minutes
+  const navigate = useNavigate();
+  var startTime = Date.now();
+  var newBalance = 0;
   const [gameState, setGameState] = useState({
     otherPlayers: [],
     dealerHand: [],
@@ -17,18 +35,93 @@ export default function Blackjack({username}) {
     bust: false,
     gameOver: false,
     result: null,
+    balance: 0, //Defaults to 0 until we get the user's balance
   });
+
+  useEffect(() => {
+    checkAndResetDailyValues(username);
+    getUserBalance(username);
+    getUserLimits(username);
+  }, [username]);
+
+  const getUserBalance = async (username) => {
+    try {
+      const balance = await fetchUserBalance(username);
+      console.log('Balance is:', balance); 
+      newBalance = balance;
+      setGameState((prevState) => ({
+        ...prevState,
+        balance: balance
+      }));
+    } catch (error) {
+      console.error('Error fetching user balance:', error);
+    }
+  }
+
+  const getUserLimits = async (username) => {
+    try {
+      const limits = await fetchUserLimits(username);
+      setTimeLimit(limits.timeLimit || 0);
+      setMoneyLimit(limits.moneyLimit || 0);
+      setTimePlayed(limits.timeSpent || 0);
+      setMoneySpent(limits.moneySpent || 0);
+      if(moneySpent >= moneyLimit){
+        handleLockOut();
+      }
+    } catch (error) {
+      console.error('Error fetching user limits:', error);
+    }
+  }
+
+  const handleLockOut = () => {
+    setLimitHit(true);
+    toast.error("You have reached your daily limit and are locked out from playing. Redirecting...", {position: "top-center"});
+    setTimeout(() => {
+    navigate('/'); //Redirect to home page
+    }, 3000); // Redirect after 3 seconds
+  }
+
+  const handleClick = (usingFakeMoney) => {
+    console.log(`Using fake money?: ${usingFakeMoney}`);
+    startGame(usingFakeMoney);
+  };
 
   /*
   Create the websocket to start the game
   */
-  async function startGame(){
+  async function startGame(usingFakeMoney){
+    console.log(usingFakeMoney);
+    if(usingFakeMoney){
+      setFakeMoney(true);
+      newBalance = 10000;
+      gameState.balance = 10000;
+    }else{
+      if (betAmount <= 0 || betAmount > gameState.balance) {
+        toast.info("Invalid bet amount", {position: "top-center"});
+        return;
+      }
+      if (limitHit){
+        console.log("Limit hit");
+        handleLockOut();
+        return;
+      }
+    }
+    if(gameState.balance == 0){
+      toast.info("Insufficient funds", {position: "top-center" });
+      setLimitHit(true);
+      return;
+    }
     try{
       const newSocket = new WebSocket('ws://localhost:5050/')
 
       newSocket.onopen = () => {
         console.log('Connected to websocket server');
-        newSocket.send(JSON.stringify({type: "JOIN"}));
+        startTime = Date.now();
+        if(betAmount+moneySpent <= moneyLimit){
+          newSocket.send(JSON.stringify({type: "JOIN" , username: username, bet: betAmount, usingFakeMoney: usingFakeMoney}));
+        }else{
+          toast.info("Bet exceeds money limit", {position: "top-center"});
+        }
       };
 
       newSocket.onmessage = (event) => {
@@ -38,6 +131,11 @@ export default function Blackjack({username}) {
 
       newSocket.onclose = () => {
         console.log('Disconnected from websocket server');
+        const endTime = Date.now();
+        const timeSpent = Math.floor((endTime - startTime)/1000); //Time in seconds
+        setTimePlayed(timePlayed + timeSpent);
+
+        updateTimeSpent(username, timeSpent);
         reset_state();
       }
 
@@ -64,9 +162,15 @@ export default function Blackjack({username}) {
         }));
         break;
       case "START":
+        if(gameState.balance < betAmount){
+          toast.info("Insufficient funds", {position: "top-center"});
+          break;
+        }
+        setBetAmount(document.getElementById("betAmount").value);
         setGameState((prevState) => ({
           ...prevState,
-          playing: true
+          playing: true,
+          balance: newBalance,
         }));
         break;
       case "DEAL":
@@ -92,11 +196,37 @@ export default function Blackjack({username}) {
         handle_dealer_card(message);
         break;
       case "GAME_OVER":
-        setGameState((prevState) => ({
-          ...prevState,
-          gameOver: true,
-          result: message.result
-        }));
+        const endTime = Date.now();
+        const timeSpent = Math.floor((endTime - startTime)/1000); //Time in seconds
+        updateTimeSpent(username, timeSpent);
+        setTimePlayed(timePlayed + timeSpent);
+        startTime = Date.now();
+        setGameState((prevState) => {
+          if(prevState.balance){
+            newBalance = prevState.balance;
+          }else{
+            newBalance = gameState.balance;
+          }
+          if (message.result === "WIN") {
+            newBalance += Number(document.getElementById("betAmount").value); // Double the bet amount if the player wins
+          }else if (message.result === "LOSE"){
+            newBalance -= Number(document.getElementById("betAmount").value); // Subtract the bet amount if the player
+            if(message.fakeMoney !== true){
+              setMoneySpent(prevMoneySpent => {
+                const newMoney = prevMoneySpent + Number(betAmount);
+                console.log("MoneySpent: ", prevMoneySpent); 
+                console.log("New money spent: ", newMoney);
+                return newMoney;
+              });
+            }
+          }
+          return {
+              ...prevState,
+              gameOver: true,
+              result: message.result,
+              balance: newBalance,
+            };
+        });
         break;
       case "OTHER_PLAYER_DEAL":
         handle_other_deal(message);
@@ -109,6 +239,27 @@ export default function Blackjack({username}) {
           ...prevState,
           playerTurn: false
         }));
+        break;
+      case "LOCKOUT":
+        handleLockOut();
+        break;
+      case "TREND_CHANGE":
+        if(message !== null){
+          setTrendMessage((prevTrendMessage) => {
+            if(prevTrendMessage - trendMessageTimer < Date.now()){
+              console.log("Trend message timer: ", prevTrendMessage - trendMessageTimer);
+              toast.info(message.message, {position: "top-center"});
+              return Date.now();
+            }
+            return prevTrendMessage;
+          });
+        }
+        break;
+      case "BET_EXCEEDS_LIMIT":
+        toast.info("Bet exceeds money limit", {position: "top-center"});
+        break;
+      case "NOT_ENOUGH_FUNDS":
+        toast.info("Bet exceeds balance", {position: "top-center"});
         break;
       default:
         console.log("Unknown message type");
@@ -205,7 +356,7 @@ export default function Blackjack({username}) {
   Sends the specified action to the server
   */
   function send_message(type){
-    socket.send(JSON.stringify({"type": "ACTION", "action": type}));
+    socket.send(JSON.stringify({"type": "ACTION", "action": type, "bet": betAmount, "usingFakeMoney": fakeMoney}));
 
     //If we're standing, set playerTurn back to false
     if (type === "STAND"){
@@ -221,6 +372,8 @@ export default function Blackjack({username}) {
   Tell the server we wish to play again and reset the state of the game
   */
   function play_again(){
+    startTime = Date.now();
+    setBetAmount(document.getElementById("betAmount").value);
     send_message("PLAY_AGAIN");
     setGameState({
       otherPlayers: [],
@@ -240,8 +393,9 @@ export default function Blackjack({username}) {
   Close the websocket and reset the game state
   */
   function quit(){
-    socket.close()
+    socket.close();
     reset_state();
+    navigate('/');
   }
 
   /*
@@ -259,6 +413,7 @@ export default function Blackjack({username}) {
       bust: false,
       gameOver: false,
       result: null,
+      balance: gameState.balance,
     });
   }
 
@@ -273,15 +428,51 @@ export default function Blackjack({username}) {
 
   return (
     <AuthRedirect username={username}>
+    <div className="Progress-Bars">
+      <ProgressBar label="Time Played" label2="Minutes:" value={Math.floor(timePlayed/60)} max={Math.floor(timeLimit/60) || 1} />
+      <ProgressBar disabled={fakeMoney} label="Money Spent" label2="$" value={moneySpent} max={moneyLimit || 1} />
+    </div>
     <div className="blackjack-container">
-      {!gameState.inGame && (
-        <button onClick={startGame}>Start Game</button>
+      <div className="bet-container">
+        <div className="balance-display">
+            Current Balance: ${gameState.balance}
+        </div>
+        <label htmlFor="betAmount">Bet Amount:</label>
+        <input disabled={gameState.playing && !gameState.gameOver}
+          type="number"
+          id="betAmount"
+          value={betAmount}
+          onChange={(bet) => setBetAmount(Number(bet.target.value))}
+          min="1"
+          max={Math.min(gameState.balance, moneyLimit-moneySpent) || 1}
+        />
+    </div>
+      {!gameState.inGame &&(
+        <div className="button-container">
+        <button className="start-button" onClick={() => handleClick(false)}>Start Game</button>
+        <button className="start-button-free" onClick={() => handleClick(true)} >Start Free Game</button>
+        </div>
       )}
       {(gameState.inGame && !gameState.playing && (
         <p>Waiting for other players...</p>
       ))}
       {(gameState.playing) && (
+        
         <div>
+          <h2>Dealer hand</h2>
+          <div className="card-row">
+            {gameState.dealerHand.map((card, index) => (
+              <Card key={index} rank={card.rank} suit={card.suit} delay={index * 0.3} />
+            ))}
+          </div>
+
+          <br/>
+          {gameState.bust && (
+            <div>
+              <br />
+              <p>You bust!</p>
+            </div>
+          )}
           <h2>Your hand</h2>
           <div className="card-row">
               {gameState.hand.map((card, index) => (
@@ -298,20 +489,7 @@ export default function Blackjack({username}) {
             </div>
           )}
 
-          {gameState.bust && (
-            <div>
-              <br />
-              <p>You bust!</p>
-            </div>
-          )}
-
           <br />
-          <h2>Dealer hand</h2>
-          <div className="card-row">
-            {gameState.dealerHand.map((card, index) => (
-              <Card key={index} rank={card.rank} suit={card.suit} delay={index * 0.3} />
-            ))}
-          </div>
 
           {gameState.otherPlayers.length > 0 && (
             <div>
@@ -335,8 +513,10 @@ export default function Blackjack({username}) {
               <p>Game result: {gameState.result}</p>
               <br />
               </div>
-              <div className="game-buttons">
-                <button onClick={play_again}>Play Again</button>
+              <div className="action-buttons">
+                <br/>
+                <button onClick={play_again} disabled={limitHit}>Play Again</button>
+                <br/>
                 <button onClick={quit}>Quit</button>
               </div>
             </div>

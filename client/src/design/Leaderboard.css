@@ -1,0 +1,21 @@
+.leaderboard {
+  /* margin-top: 50%; */
+  padding: 1.5rem;
+  width: clamp(700px, 80vw, 2000px);
+  /* max-width: 80vh; */
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 1s ease-in-out;
+}
+
+.leaderboard-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.leaderboard-container {
+  margin-top: 20px;
+}

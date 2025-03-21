@@ -22,6 +22,4 @@ describe("Login Component", () => {
     const { container } = render(<Login show={false} onClose={jest.fn()} setShowSignup={jest.fn()} />);
     expect(container.firstChild).toBeNull();
   });
-
-
 });

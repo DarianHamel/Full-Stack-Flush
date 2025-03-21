@@ -33,7 +33,7 @@ module.exports.applyFilters = (filter) => {
         filterCriteria = {moneySpent: {$gte: 1500}} //users that have spent exactly or over $1500 are considered high spenders
     }
     else if(filter === "longestPlayers"){
-        filterCriteria = {timeSpent: {$gte: 100}} //users that have spent exactly or over 100hrs are considered the longest players
+        filterCriteria = {timeSpent: {$gte: 100*3600}} //users that have spent exactly or over 100hrs are considered the longest players
     }
 
     return filterCriteria;
