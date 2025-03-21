@@ -76,27 +76,8 @@ const Poker = ({ username }) => {
     }
 
     if (moneySpent + betAmount > moneyLimit) {
-      alert("You have reached your daily money limit!", {position: "top-center"});
+      alert("You have reached your daily money limit!", { position: "top-center" });
       return;
-    }
-
-    const newMoneySpent = moneySpent + betAmount;
-    setMoneySpent(newMoneySpent);
-
-    // Update money spent on the backend so it tracks across both games
-    try {
-      await fetch("http://localhost:5050/update-money-spent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          moneySpent: newMoneySpent,
-        }),
-      });
-    } catch (error) {
-      console.error("Error updating money spent on the backend:", error);
     }
 
     setGameStarted(true);
@@ -143,6 +124,29 @@ const Poker = ({ username }) => {
     setSelectedCards([]);
     setCurrentScore(0);
     setTargetScore(data.targetScore);
+
+     // Update money spent on the backend
+     try {
+      const response = await fetch("http://localhost:5050/update-money-spent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          moneySpent: betAmount,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setMoneySpent(data.updatedDailyMoneySpent); // Update the frontend with the backend's value
+      } else {
+        console.error("Failed to update money spent:", data.message);
+      }
+    } catch (error) {
+      console.error("Error updating money spent on the backend:", error);
+    }
   };
 
   // track what cards a user is selecting to know what to discard/play and display animations
