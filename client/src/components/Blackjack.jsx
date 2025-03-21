@@ -65,7 +65,7 @@ export default function Blackjack({username}) {
       setMoneyLimit(limits.moneyLimit || 0);
       setTimePlayed(limits.timeSpent || 0);
       setMoneySpent(limits.moneySpent || 0);
-      if(moneySpent >= moneyLimit){
+      if(limits.moneySpent > limits.moneyLimit || limits.timeSpent >= limits.timeLimit){
         handleLockOut();
       }
     } catch (error) {
@@ -117,7 +117,7 @@ export default function Blackjack({username}) {
       newSocket.onopen = () => {
         console.log('Connected to websocket server');
         startTime = Date.now();
-        if(betAmount+moneySpent <= moneyLimit){
+        if(betAmount+moneySpent <= moneyLimit || usingFakeMoney){
           newSocket.send(JSON.stringify({type: "JOIN" , username: username, bet: betAmount, usingFakeMoney: usingFakeMoney}));
         }else{
           toast.info("Bet exceeds money limit", {position: "top-center"});
