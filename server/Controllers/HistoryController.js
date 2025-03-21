@@ -23,30 +23,35 @@ module.exports.GetHistory = async (req, res, next) => {
     }
 };
 
-// Will create a deposit history for the users 
-// Whenever they go to the profile page and deposit money onto their account, 
-// their records of depositing money will be recorded
+// Will create a transaction for a bet or deposit
+// This will be called whenever a deposit in UserProfile is made
+// or a Blackjack/Poker game is played and they have placed a bet
 
-module.exports.CreateDeposit = async (req, res, next) => {
+module.exports.MakeHistory = async (req, res, next) => {
     try {
-        const { username, transaction, day, deposit } = req.body;
+        const { username, transaction, day, game } = req.body;
 
-        if (username === undefined || transaction === undefined || deposit === undefined) {
+        if (username === undefined || transaction === undefined || game === undefined) {
             return res.status(404).json({ message: "Needed parameters needed" });
         }
 
         const existingUser = await User.findOne({ username });
         if (existingUser == undefined) {
             return res.status(400).json({ message: "Cannot locate user" });
-        }  
+        }
 
-        const user_history = await History.create({
+        if (game !== "deposit" && game !== "blackjack" && game !== "poker") {
+            return res.status(400).json({ message: "Game is not found" });
+        }
+
+        const userHistory = await History.create({
             username, 
             transaction, 
+            game,
             day,
         });
 
-        res.status(201).json({ message: "User history created" });
+        res.status(201).json({ message: "Added user transaction" });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Server error" });
