@@ -1,11 +1,11 @@
 const axios = require("axios");
 
-const handleWin = async (username, bet) => {
+const handleWin = async (username, bet, game) => {
     if (!username) return;
     try {
       const { data } = await axios.post(
         "http://localhost:5050/updateStats",
-        { username: username, wins: 1, losses: 0 , money: bet},
+        { username: username, wins: 1, losses: 0 , money: bet, game: game },
         { withCredentials: true}
       );
       //setWins(data.wins); // Fix: Update state correctly
@@ -14,12 +14,12 @@ const handleWin = async (username, bet) => {
     }
   };
 
-  const handleLose = async (username, bet) => {
+  const handleLose = async (username, bet, game) => {
     if (!username) return;
     try {
       const { data } = await axios.post(
         "http://localhost:5050/updateStats",
-        { username: username, wins: 0, losses: 1 , money: bet},
+        { username: username, wins: 0, losses: 1 , money: bet, game: game},
         { withCredentials: true}
       );
       //setLoses(data.losses); // Fix: Update state correctly

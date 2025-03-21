@@ -1,4 +1,5 @@
 const User = require("../Models/UserModel");
+const History = require("../Models/History");
 const bcrypt = require("bcryptjs");
 
 // Get User Balance by username
@@ -14,12 +15,10 @@ module.exports.GetBalance = async (req, res) => {
       res.status(500).json({ message: "Server error" });
     }
   };
-  
-  
 
 // Update balance for deposit or bet (POST request)
 module.exports.UpdateBalance = async (req, res) => {
-  const { username, amount, password } = req.body;
+  const { username, amount, password, day } = req.body;
   
   if (!username || typeof amount !== 'number') {
     return res.status(400).json({ message: "Invalid request. Provide username and amount as a number.", success: false });
@@ -43,6 +42,15 @@ module.exports.UpdateBalance = async (req, res) => {
 
     user.balance = newBalance; 
     await user.save();
+    const transaction = amount;
+    const game = "Deposit";
+    await History.create({
+      username, 
+      transaction,
+      game,
+      day,
+    });
+    
     res.status(200).json({ balance: user.balance, success: true });
 
   } catch (error) {

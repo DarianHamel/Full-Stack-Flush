@@ -165,12 +165,13 @@ class Game{
     */
     end_game(){
         const dealerHand = this.dealer.get_total();
+        const game = "Blackjack";
         
         for (const player of this.players){
             const playerHand = player.get_total();
             if (playerHand <= 21 && (dealerHand > 21 || playerHand > dealerHand)){
                 console.log(player.bet);
-                handleWin(player.username, 2*player.bet);
+                handleWin(player.username, 2*player.bet, game);
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
                     result: "WIN"
@@ -178,7 +179,7 @@ class Game{
             }
             else if (playerHand < dealerHand || playerHand > 21){
                 console.log(player.bet);
-                handleLose(player.username, player.bet);
+                handleLose(player.username, player.bet, game);
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
                     result: "LOSE",

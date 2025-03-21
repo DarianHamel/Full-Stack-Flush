@@ -40,7 +40,7 @@ module.exports.MakeHistory = async (req, res, next) => {
             return res.status(400).json({ message: "Cannot locate user" });
         }
 
-        if (game !== "deposit" && game !== "blackjack" && game !== "poker") {
+        if (game !== "Deposit" && game !== "Blackjack" && game !== "Poker") {
             return res.status(400).json({ message: "Game is not found" });
         }
 
