@@ -31,11 +31,18 @@ class Deck{
         }
     }
 
+    /*
+    Deals the first card from the deck
+    Returns a single card
+    */
     dealCard(numCards) {
         return this.cards.splice(0, numCards);
-      }
+    }
 
-    changeCard(card) {
+    /*
+    Changes the rank from a numeric value to the respective word value
+    */
+    changeCard(card) { 
         if (card.rank === 14) {
             card.rank = "Ace";
         } else if (card.rank === 11) {
@@ -46,11 +53,14 @@ class Deck{
             card.rank = "King";
         }
         return card;
-        }
+    }
 
+    /*
+    Deals the number of cards (numCards) and returns an array with the number of cards
+    */
     dealCard(numCards) {
         return this.cards.splice(0, numCards).map(this.changeCard);
-      }
+    }
 }
 
 module.exports = Deck;

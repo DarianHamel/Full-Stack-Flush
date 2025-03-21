@@ -1,5 +1,11 @@
 const User = require("../Models/UserModel");
 
+/*
+Handles the bet for games
+Takes the bet amount and confirms the user has the appropriate balance and their in a game
+Then it updates their balance so that a user can't leave a game and retain their money if the game was in a losing position
+Also sends back spending habits after the user has logged in enough times to determine habits of the users
+*/
 module.exports.bet = async (req, res) => {
     const { username, money } = req.body;
     var mess = "";

@@ -1,5 +1,9 @@
 const Tutorials = require("../Models/TutorialModel");
-  
+
+/*
+Get the tutorials from the database based on the input id
+Returns the tutorial or the error message and status
+*/
 module.exports.GetTutorials = async (req, res) => {
     const _id = req.query.id;
     if (_id) {

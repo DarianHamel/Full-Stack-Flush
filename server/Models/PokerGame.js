@@ -16,6 +16,9 @@ class PokerGame {
         this.targetScore = 200;
     }
 
+    /*
+    Start the game of poker
+    */
     startGame() {
         this.started = true;
         this.playerHand = this.deck.dealCard(8);
@@ -31,10 +34,16 @@ class PokerGame {
         }
     }
 
+    /*
+    Returns the array of cards in the players hand
+    */
     getPlayerHand() {
         return this.playerHand;
     }
 
+    /*
+    Returns the score of the hand played
+    */
     scoreHand(hand) {
       console.log(this.handsRemaining);
       if (this.handsRemaining <= 0) {
@@ -107,6 +116,9 @@ class PokerGame {
         }
     }
 
+    /*
+    Discard the input cards from the players hand
+    */
     discardCards(cardsToDiscard) {
         if (this.discardsRemaining <= 0) {
             return "No discards remaining.";

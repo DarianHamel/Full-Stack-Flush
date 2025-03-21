@@ -6,6 +6,9 @@ const blackjackState = {
     gameIdCounter: 0,
 };
 
+/*
+Handle connection between player and server, handles user limits and ensures bets are valid.
+*/
 async function handle_web_socket(ws, username){
 
     console.log(username + " websocket connected");

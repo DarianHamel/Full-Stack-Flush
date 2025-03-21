@@ -171,7 +171,7 @@ class Game{
             const playerHand = player.get_total();
             if (playerHand <= 21 && (dealerHand > 21 || playerHand > dealerHand)){
                 console.log(player.bet);
-                handleWin(player.username, 2*player.bet, game);
+                handleWin(player.username, 2*player.bet, game); //Update the state of the users bet and number of wins
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
                     result: "WIN"
@@ -179,7 +179,7 @@ class Game{
             }
             else if (playerHand < dealerHand || playerHand > 21){
                 console.log(player.bet);
-                handleLose(player.username, player.bet, game);
+                handleLose(player.username, player.bet, game); //Update the state of the users bet and number of losses
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
                     result: "LOSE",
@@ -235,7 +235,7 @@ class Game{
                     case "PLAY_AGAIN":
                         //Check if the game is over
                         if (this.gameOver){
-                            if(player.fakeMoney){
+                            if(player.fakeMoney){ //Handle if the user is playing with fake currency
                                 player.bet = 0;
                             }else{
                                 player.bet = bet;

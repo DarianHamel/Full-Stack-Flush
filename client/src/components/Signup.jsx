@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "../design/Signup.css"
@@ -12,6 +12,10 @@ const Signup = ({ show, onClose, setShowLogin }) => {
     username: "",
   });
   const { password, username } = inputValue;
+
+  /*
+  Handles the user input into the credential fields
+  */
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue({
@@ -20,15 +24,29 @@ const Signup = ({ show, onClose, setShowLogin }) => {
     });
   };
 
+  /*
+  Displays the error message in the bottom left
+  */
   const handleError = (err) =>
     toast.error(err, {
       position: "bottom-left",
-    });
+  });
+
+  /*
+  Displays the success message in the bottom right
+  */
   const handleSuccess = (msg) =>
     toast.success(msg, {
       position: "bottom-right",
-    });
+  });
 
+  /*
+  Handle the user hitting the submit button
+  Calls route /signup
+  Input: Username and Password
+  On success, navigates user to home and reloads the window
+  On failure, alert user that it was not successful
+  */  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -43,8 +61,9 @@ const Signup = ({ show, onClose, setShowLogin }) => {
       if (success) {
         handleSuccess(message);
         setTimeout(() => {
+          onClose();
           navigate("/");
-        }, 1000);
+        }, 500);
       } else {
         handleError(message);
       }

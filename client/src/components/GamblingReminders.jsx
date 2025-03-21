@@ -19,11 +19,15 @@ const GamblingReminders = () => {
     ];
 
     let lastFact = "";
+    /*
+    Gets a random fact from the predefined facts
+    Ensures we do not return the same fact twice in a row
+    */
     const getRandomFact = () => {
       let newFact;
       do {
         newFact = gamblingFacts[Math.floor(Math.random() * gamblingFacts.length)];
-      } while (newFact === lastFact);
+      } while (newFact === lastFact); //Ensures we don't return the same fact every time
       lastFact = newFact;
       return newFact;
     };
@@ -31,6 +35,7 @@ const GamblingReminders = () => {
     const showGamblingFact = () => {
       toast.info(getRandomFact(), { position: "top-center" });
     };
+    
     
     const intervalId = setInterval(showGamblingFact, remindTimer); // Show a fact every 60 seconds
 

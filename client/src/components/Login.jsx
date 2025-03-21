@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "../design/Login.css";
@@ -12,6 +12,10 @@ const Login = ({ show, onClose, setShowSignup }) => {
     password: "",
   });
   const { username, password } = inputValue;
+
+  /*
+  Handles the user input into the credential fields
+  */
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue({
@@ -20,15 +24,29 @@ const Login = ({ show, onClose, setShowSignup }) => {
     });
   };
 
+  /*
+  Displays the error message in the bottom left
+  */
   const handleError = (err) =>
     toast.error(err, {
       position: "bottom-left",
-    });
+  });
+
+  /*
+  Displays the success message in the bottom right
+  */
   const handleSuccess = (msg) =>
     toast.success(msg, {
       position: "bottom-right",
-    });
+  });
 
+  /*
+  Handle the user hitting the submit button
+  Calls route /login
+  Input: Username and Password
+  On success, navigates user to home and reloads the window
+  On failure, alert user that it was not successful
+  */  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

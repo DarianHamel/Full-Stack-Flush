@@ -27,11 +27,21 @@ const Poker = ({ username }) => {
   const [limitHit, setLimitHit] = useState(false);
   console.log(username);
 
+  /*
+  Calls the functions within on page launch
+  Checks the users limits and values and resets on new day
+  Gets the user limits and updates const for display
+  */
   useEffect(() => {
     checkAndResetDailyValues(username);
     getUserLimits(username);
   }, [username]);
-  
+
+  /*
+  Get the limits of the user (on page launch)
+  Sets them in their respective consts for checking and displaying
+  Locks the user and logs them out if they hit their limits
+  */
   const getUserLimits = async (username) => {
     try {
       const limits = await fetchUserLimits(username);
@@ -48,6 +58,10 @@ const Poker = ({ username }) => {
     }
   };
 
+  /*
+  Function to lock the user out of playing games as they hit their time to money limit
+  Alerts the user and redirects to home page
+  */
   const handleLockOut = () => {
     setLimitHit(true);
     alert("You have reached your daily limit and are locked out from playing. Redirecting...", {position: "top-center"});
@@ -56,6 +70,9 @@ const Poker = ({ username }) => {
     }, 3000); // Redirect after 3 seconds
   };
 
+  /*
+  Start the game of Poker
+  */
   const startGame = async () => {
     if (betAmount <= 0) {
       alert("Please place a valid bet!");
@@ -143,6 +160,10 @@ const Poker = ({ username }) => {
     setTargetScore(data.targetScore); // Set the target score from the backend
   };
 
+  /*
+  Handles user clicking on cards
+  Adds the selected card to the array of selected cards if there is room (max 5)
+  */
   const handleCardClick = (card) => {
     setSelectedCards((prevSelectedCards) => {
       const isSelected = prevSelectedCards.some(
@@ -160,6 +181,12 @@ const Poker = ({ username }) => {
     });
   };
 
+  /*
+  Discards the cards selected if user hits the discard card button
+  Calls the route /poker/draw
+  Input: gameID and the number of cards to be drawn
+  Then it sets the hand to be the new cards
+  */
   const discardCards = async () => {
     if (limitHit) {
       handleLockOut();
@@ -188,6 +215,12 @@ const Poker = ({ username }) => {
     setDiscardsRemaining(discardsRemaining - 1);
   };
 
+  /*
+  Sorts the players hand
+  Calls route /poker/sort-hand
+  Input: sortBy, either rank or suit
+  Returns the sorted hand to display to the player
+  */
   const sortHand = async (sortBy) => {
     try {
       const response = await fetch("http://localhost:5050/poker/sort-hand", {
@@ -209,6 +242,12 @@ const Poker = ({ username }) => {
     }
   };
 
+  /*
+  Plays the currently selected cards
+  Calls route /poker/score
+  Input: gameID and selected cards
+  Returns the score and displays it to the user
+  */
   const playHand = async () => {
     if (limitHit) {
       handleLockOut();
@@ -329,6 +368,9 @@ const Poker = ({ username }) => {
     }
   };
 
+  /*
+  Renders the hand of the user
+  */
   const renderHand = (hand) => {
     return (
       <div className="card-row">
@@ -349,6 +391,9 @@ const Poker = ({ username }) => {
     );
   };
 
+  /*
+  Gets the users balance to be tracked for the user's limits
+  */
   const fetchBalance = async () => {
     try {
       const response = await fetch(`http://localhost:5050/balance?username=${username}`, {
@@ -372,7 +417,7 @@ const Poker = ({ username }) => {
   console.log(gameOver);
 
 
-  // TODO: track time and money spent on poker
+  
   return (
     <AuthRedirect username = {username}>
       <div className="poker-container">

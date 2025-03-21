@@ -1,5 +1,9 @@
 import axios from "axios";
 
+/*
+Checks the last day logged in
+If it's a different day than last played, reset the daily limits
+*/
 export const checkAndResetDailyValues = async (username) => {
     try {
       const response = await axios.get(`http://localhost:5050/getLastLogin`, { params: {username}});
@@ -17,6 +21,11 @@ export const checkAndResetDailyValues = async (username) => {
     }
 };
 
+/*
+Update the timeSpent of the user
+Calls route /setTimeSpent
+Input: username, timeSpent
+*/
 export const updateTimeSpent = async (username, timeSpent) => {
   try{
     await axios.post('http://localhost:5050/setTimeSpent', {username, timeSpent});
@@ -26,6 +35,12 @@ export const updateTimeSpent = async (username, timeSpent) => {
   }
 };
 
+/*
+Returns the user balance
+Calls route /getBalance
+Input: username
+Returns: Users balance or an error if the user is not found
+*/
 export const fetchUserBalance = async (username) => {
   try {
     const response = await axios.get(`http://localhost:5050/getBalance`, {
@@ -37,6 +52,12 @@ export const fetchUserBalance = async (username) => {
   }
 };
 
+/*
+Returns the users limit
+Calls route /getLimits
+Input: username
+Returns: Limits and respective information to check limits
+*/
 export const fetchUserLimits = async (username) => {
   try {
     const response = await axios.get(`http://localhost:5050/getLimits`, {

@@ -4,8 +4,9 @@ const { TbHistory } = require("react-icons/tb");
 const User = require("../Models/UserModel");
 const History = require("../Models/History");
 
-// Get User Wins by username
-
+/* 
+Get User Wins by username
+*/
 module.exports.GetWins = async (req, res) => {
     const { username } = req.query; 
     try {
@@ -20,8 +21,9 @@ module.exports.GetWins = async (req, res) => {
   };
   
 
-// Get User Losses by username
-
+/*
+Get User Losses by username
+*/
 module.exports.GetLosses = async (req, res) => {
     const { username } = req.query; 
     try {
@@ -36,8 +38,10 @@ module.exports.GetLosses = async (req, res) => {
   };
 
 
-// Update Stats
-
+/* 
+Update the users stats and history of the input username
+Updates History, wins, losses, money spent and the balance
+*/
 module.exports.UpdateStats = async (req, res) => {
   try {
       const { username, wins, losses, money, game, day } = req.body;
