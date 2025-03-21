@@ -111,11 +111,12 @@ module.exports.UpdateMoneySpent = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    user.updateMoneySpent(moneySpent);
+    await user.updateMoneySpent(moneySpent);
     await user.save();
+
     console.log(user.moneySpent);
 
-    res.status(200).json({ success: true, message: "Money spent updated successfully" });
+    res.status(200).json({ success: true, message: "Money spent updated successfully", updatedDailyMoneySpent: user.moneySpent });
   } catch (error) {
     console.error("Error updating money spent:", error);
     res.status(500).json({ success: false, message: "Server error" });

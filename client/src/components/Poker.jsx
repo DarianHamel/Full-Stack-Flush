@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../design/Poker.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Card from "./Card.jsx";
 import AuthRedirect from "./AuthRedirect";
 import ProgressBar from "./ProgressBar";
@@ -25,6 +25,7 @@ const Poker = ({ username }) => {
   const [timePlayed, setTimePlayed] = useState(0);
   const [moneySpent, setMoneySpent] = useState(0);
   const [limitHit, setLimitHit] = useState(false);
+  const navigate = useNavigate();
   console.log(username);
 
   /*
@@ -67,8 +68,9 @@ const Poker = ({ username }) => {
     alert("You have reached your daily limit and are locked out from playing. Redirecting...", {position: "top-center"});
     setTimeout(() => {
       navigate("/"); // Redirect to the home page
-    }, 3000); // Redirect after 3 seconds
+    }, 1000); // Redirect after 3 seconds
   };
+
 
   /*
   Start the game of Poker
@@ -91,36 +93,11 @@ const Poker = ({ username }) => {
     }
 
     if (moneySpent + betAmount > moneyLimit) {
-      alert("You have reached your daily money limit!", {position: "top-center"});
+      alert("You have reached your daily money limit!", { position: "top-center" });
       return;
     }
-
-    const newMoneySpent = moneySpent + betAmount;
-    setMoneySpent(newMoneySpent);
-
-    // Update money spent on the backend
-    try {
-      await fetch("http://localhost:5050/update-money-spent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          moneySpent: newMoneySpent,
-        }),
-      });
-    } catch (error) {
-      console.error("Error updating money spent on the backend:", error);
-    }
-
     setGameStarted(true);
 
-    // Check if the bet amount exceeds the user's balance
-    if (betAmount > balance) {
-      alert("You cannot bet more than your available balance!");
-      return;
-    }
 
     console.log("Placing bet with:", {
       username,
@@ -154,11 +131,35 @@ const Poker = ({ username }) => {
     setHandsRemaining(data.handsRemaining || 0);
     setDiscardsRemaining(data.discardsRemaining || 0);
     setGameStarted(true);
-    setGameOver(false); // Reset game over state
-    setSelectedCards([]); // Reset selected cards
+    setGameOver(false);
+    setSelectedCards([]);
     setCurrentScore(0);
-    setTargetScore(data.targetScore); // Set the target score from the backend
+    setTargetScore(data.targetScore);
+
+     // Update money spent on the backend
+     try {
+      const response = await fetch("http://localhost:5050/update-money-spent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          moneySpent: betAmount,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setMoneySpent(data.updatedDailyMoneySpent); // Update the frontend with the backend's value
+      } else {
+        console.error("Failed to update money spent:", data.message);
+      }
+    } catch (error) {
+      console.error("Error updating money spent on the backend:", error);
+    }
   };
+
 
   /*
   Handles user clicking on cards
@@ -180,6 +181,7 @@ const Poker = ({ username }) => {
       }
     });
   };
+
 
   /*
   Discards the cards selected if user hits the discard card button
@@ -215,6 +217,7 @@ const Poker = ({ username }) => {
     setDiscardsRemaining(discardsRemaining - 1);
   };
 
+
   /*
   Sorts the players hand
   Calls route /poker/sort-hand
@@ -241,6 +244,7 @@ const Poker = ({ username }) => {
       console.error("Error sorting hand:", error);
     }
   };
+
 
   /*
   Plays the currently selected cards
@@ -296,7 +300,7 @@ const Poker = ({ username }) => {
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  username, // Pass the logged-in user's username
+                  username,
                   amount: winnings,
                 }),
               });
@@ -313,7 +317,7 @@ const Poker = ({ username }) => {
               }
 
             // Update stats in the backend
-            await fetch("http://localhost:5050/updateStats", {
+            const statsResponse = await fetch("http://localhost:5050/updateStats", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -322,9 +326,13 @@ const Poker = ({ username }) => {
                 username, // Pass the logged-in user's username
                 wins: gameResult ? 1 : 0,
                 losses: gameResult ? 0 : 1,
-                money: betAmount
+                money: betAmount,
+                game: "Poker"
               }),
             });
+
+            const statsData = await statsResponse.json();
+            console.log(statsData);
 
             return;
         }
@@ -417,7 +425,7 @@ const Poker = ({ username }) => {
   console.log(gameOver);
 
 
-  
+  // return the front end UI
   return (
     <AuthRedirect username = {username}>
       <div className="poker-container">
@@ -522,7 +530,7 @@ const Poker = ({ username }) => {
             </>
           )}
         </div>
-        {gameStarted && !gameOver && ( // Put this outside other divs so the buttons are below the cards
+        {gameStarted && !gameOver && ( // Put this outside other divs so the buttons are below the cards so it looks clean
           <div className="action-buttons-poker">
             <button onClick={playHand} className="play-hand">
               Play Hand
