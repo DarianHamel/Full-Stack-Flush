@@ -1,19 +1,24 @@
-.card-row {
+/*.card-row {
   margin-top: 1rem;
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
-  }
+  }*/
 
 .blackjack-container {
-  padding-top:10%;
-  margin-top: 25%;
+  /* padding-top:10%; */
+  margin-top: 100px;
   height: 100%; 
   width: 100%;
   color: white;
-  text-transform: uppercase;
-  font-size: 1rem;
+  text-align: center;
+  /* text-transform: uppercase; */
+  font-size: 1vw;
   }
+
+.blackjack-container h1 {
+  font-size: 3.5em;
+}
   
 .game-buttons {
   position: fixed;
@@ -26,7 +31,7 @@
   z-index: 1000; 
 }
 
-.game-buttons button {
+/*.game-buttons button {
   padding: 12px 20px;
   background-color: #007BFF;
   color: white;
@@ -45,111 +50,115 @@
 
 .game-buttons button:active {
   transform: scale(0.98);
-}
+}*/
 
 .action-buttons {
   position: fixed;
-  top: 50%;
-  right: 20px; 
-  transform: translateY(-50%);
+  top:clamp(270px, 20vw, 600px);
+  right: 10vw; 
+  /* transform: translateY(-50%); */
   display: flex;
   flex-direction: column;
-  gap: 15px; 
+  gap: 1em; 
   z-index: 1000; 
 }
 
 .action-buttons button {
-  padding: 12px 20px;
-  background-color: #007BFF;
-  color: white;
+  padding: 0.7em 1em;
+  background-color: #fff;
+  color: #000;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 0.5em;
+  font-family: Sancreek, Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 2em;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .action-buttons button:hover {
-  background-color: #0056b3;
+  /* background-color: #0056b3; */
   transform: scale(1.05);
 }
 
-.action-buttons button:active {
+/*.action-buttons button:active {
   transform: scale(0.98);
-}
+}*/
 
 .game-outcome {
   position: fixed;
-  top: 20%;
-  left: 20px;
+  top: 100px;
+  left: 2vw;
   background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
-  padding: 15px;
+  border-radius: 0.5em;
+  padding: 1em;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   text-align: left;
 }
 
 .game-outcome p {
-  margin: 10px 0;
-  font-size: 24px;
+  margin: 0.5em 0;
+  font-size: 2em;
   font-weight: bold;
-  color: #333;
+  color: #222;
 }
 
 .bet-container {
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
   text-align: center;
-  margin-bottom: 25%;
+  margin-bottom: 5em;
 }
 
 .bet-container label {
-  font-size: 30px;
+  font-size: 2em;
   margin-right: 10px;
 }
 
 .bet-container input {
-  width: 100px;
-  padding: 5px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 30px;
-  padding-left: 10px;
+  /* width: 100px; */
+  /* padding: 5px; */
+  font-size: 1.5em;
+  /* border: 1px solid #ccc; */
+  border-radius: 0.2em;
+  /* font-size: 30px; */
+  padding-left: 0.5em;
   background-color: white;
 }
 
 .balance-display {
-  font-size: 25px;
-  margin-bottom: 10px;
+  font-size: 2em;
+  /* margin-bottom: 10px; */
 }
 
-.button-container {
+/*.button-container {
 
-}
+}*/
 
-.start-button {
-  background-color: #4CAF50; /* Green */
-  border: 2px solid #4CAF50;
-  color: white;
-  padding: 15px 32px;
+.start-button,
+.start-button-free {
+  background-color: #fff; /* Green */
+  border: none;
+  color: #000;
+  padding: 0.5em 1em;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
+  font-family: Sancreek, Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 1.5em;
+  /* margin: 4px 2px; */
+  border-radius: 0.5em;
   cursor: pointer;
-  transition-duration: 0.4s;
+  transition: transform 0.2s;
 }
 
-.start-button:hover {
-  background-color: white;
-  color: black;
-  border: 2px solid #4CAF50;
+.start-button:hover,
+.start-button-free:hover {
+  transform: scale(1.10);
+  cursor: pointer;
 }
 
-.start-button-free {
+/*.start-button-free {
   background-color: #FFBF00;
   border: 2px solid #FFBF00;
   padding: 15px 32px;
@@ -159,15 +168,14 @@
   margin: 4px 2px;
   transition-duration: 0.4s;
   cursor: pointer;
-}
+}*/
 
-.start-button-free:hover {
-  background-color: white;
-  color: black;
-  border: 2px solid #FFBF00;
-}
+/*.start-button-free:hover {
+  transform: scale(1.10);
+  cursor: pointer;
+}*/
 
-.Progress-Bars{
+/*.Progress-Bars{
   position: fixed;
   top: 15%;
   right:5%;
@@ -178,5 +186,11 @@
   gap: 20px;
   display: flex;
   flex-direction: column;
-}
+}*/
 
+.other-players-container{
+  position: fixed;
+  top: 200px;
+  left: 2vw;
+  padding: 1em;
+}

@@ -12,13 +12,13 @@
   body {
     background: linear-gradient(135deg, #1e3c72, #2a5298);
     min-height: 100vh;
-    font-family: 'Arial', sans-serif;
+    /* font-family: 'Arial', sans-serif; */
   }
   
   .resources_page h1 {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #2c3e50;
+    color: #000;
   }
   
   .section {
@@ -28,7 +28,7 @@
   
   .section h2 {
     font-size: 1.8rem;
-    color: #1e3c72;
+    color: #222;
     margin-bottom: 1rem;
   }
   
@@ -40,13 +40,13 @@
   .section ul li {
     margin-bottom: 0.75rem;
     font-size: 1.1rem;
-    color: #2c3e50;
+    color: #333;
   }
   
   .back-to-home {
     display: inline-block;
     padding: 1rem 2rem;
-    background-color: #1e3c72;
+    /* background-color: hsl(219, 58%, 28%); */
     color: #fff;
     border-radius: 8px;
     text-decoration: none;
@@ -55,7 +55,9 @@
   }
   
   .back-to-home:hover {
-    background-color: #2a5298;
+    /* background-color: #2a5298; */
+    transform: scale(1.10);
+    cursor: pointer;
   }
 
   @keyframes fadeIn {
