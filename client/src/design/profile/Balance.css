@@ -15,6 +15,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    font-size: clamp(10px, 3vw, 7vh);
   }
 
   .deposit-form p {
@@ -44,15 +45,14 @@
   .deposit-form button {
     background-color: #4CAF50;
     color: white;
-    /* padding: 10px; */
     border: none;
     cursor: pointer;
     border-radius: 8px;
     /* margin-top: 17px; */
     width: auto;
     font-size: clamp(10px, 2vw, 5vh);
-    /* padding-left: 20px; */
-    /* padding-right: 22px; */
+    padding-left: 20px; 
+    padding-right: 22px; 
   }
   
   .error {
