@@ -78,6 +78,12 @@ const Poker = ({ username }) => {
       return;
     }
 
+    // Check if the bet amount exceeds the user's balance
+    if (betAmount > balance) {
+      alert("You cannot bet more than your available balance!");
+      return;
+    }
+
     const newMoneySpent = moneySpent + betAmount;
     setMoneySpent(newMoneySpent);
 
@@ -97,13 +103,8 @@ const Poker = ({ username }) => {
       console.error("Error updating money spent on the backend:", error);
     }
 
-    setGameStarted(true);
+    //setGameStarted(true);
 
-    // Check if the bet amount exceeds the user's balance
-    if (betAmount > balance) {
-      alert("You cannot bet more than your available balance!");
-      return;
-    }
 
     console.log("Placing bet with:", {
       username,
