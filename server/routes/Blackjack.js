@@ -107,13 +107,13 @@ async function handle_message(message, ws, username, bet){
     if (message.type === "ACTION"){
         if(message.action === "PLAY_AGAIN"){
             const response = await axios.get('http://localhost:5050/getLimits', {params: {username}});
-                const {timeLimit, moneyLimit, dailyTimeSpent, dailyMoneySpent, balance} = response.data;
-                if(dailyTimeSpent >= timeLimit || dailyMoneySpent >= moneyLimit){
+                const {timeLimit, moneyLimit, timeSpent, moneySpent, balance} = response.data;
+                if(timeSpent >= timeLimit || moneySpent >= moneyLimit){
                     console.log("User has reached their limit, closing connection");
                     ws.send(JSON.stringify({type: "LOCKOUT"}));
                     ws.close();
                     return;
-                }else if(dailyMoneySpent + Number(bet) > moneyLimit){
+                }else if(moneySpent + Number(bet) > moneyLimit){
                     console.log("Money spent + bet: ", moneySpent + Number(bet))
                     console.log("In handle message");
                     ws.send(JSON.stringify({type: "BET_EXCEEDS_LIMIT"}));
