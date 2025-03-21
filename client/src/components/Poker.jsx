@@ -79,14 +79,8 @@ const Poker = ({ username }) => {
       alert("You have reached your daily money limit!", { position: "top-center" });
       return;
     }
-
     setGameStarted(true);
 
-    // Check if the bet amount exceeds the user's balance
-    if (betAmount > balance) {
-      alert("You cannot bet more than your available balance!");
-      return;
-    }
 
     console.log("Placing bet with:", {
       username,

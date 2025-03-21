@@ -433,6 +433,9 @@ export default function Blackjack({username}) {
       <ProgressBar disabled={fakeMoney} label="Money Spent" label2="$" value={moneySpent} max={moneyLimit || 1} />
     </div>
     <div className="blackjack-container">
+      {!gameState.inGame &&(
+        <h1>♠️ Blackjack ♥️</h1>
+      )}
       <div className="bet-container">
         <div className="balance-display">
             Current Balance: ${gameState.balance}
@@ -492,7 +495,7 @@ export default function Blackjack({username}) {
           <br />
 
           {gameState.otherPlayers.length > 0 && (
-            <div>
+            <div className="other-players-container">
               <br />
               <h2>Other player's hands</h2>
               {gameState.otherPlayers.map((otherPlayer, index) => (
