@@ -1,23 +1,36 @@
-const Game = require("../models/Game.js");
+const axios = require("axios");
+const Game = require("../Models/Game.js");
 
 const blackjackState = {
     games: [],
     gameIdCounter: 0,
 };
 
-function handle_web_socket(ws, username){
+async function handle_web_socket(ws, username){
 
     console.log(username + " websocket connected");
     
-    ws.on('message', (msg) => {
-        console.log('Received: '+ msg + " from " + username);
+    ws.on('message', async (msg) => {
+        console.log('Received: '+ msg + " from " + username, "bet amount: ",  JSON.parse(msg).bet);
         try{
             if (JSON.parse(msg).type == "JOIN"){
-                assign_player(ws, username);
-                ws.send(JSON.stringify({type: "JOIN"}));
+                const response = await axios.get('http://localhost:5050/getLimits', {params: {username}});
+                const {timeLimit, moneyLimit, timeSpent, moneySpent} = response.data;
+                if(timeSpent >= timeLimit || moneySpent >= moneyLimit){
+                    console.log("User has reached their limit, closing connection");
+                    ws.send(JSON.stringify({type: "LOCKOUT"}));
+                    ws.close();
+                    return;
+                }else if(moneySpent + JSON.parse(msg).bet <= moneyLimit){
+                    console.log("Bet amount: ", JSON.parse(msg).bet);
+                    assign_player(ws, username, JSON.parse(msg).bet);
+                    ws.send(JSON.stringify({type: "JOIN"}));
+                }else{
+                    ws.send(JSON.stringify({type: "BET_EXCEEDS_LIMIT"}));
+                }
             }
             else{
-                handle_message(JSON.parse(msg), ws);
+                handle_message(JSON.parse(msg), ws, username, JSON.parse(msg).bet);
             }
         }
         catch (error){
@@ -41,7 +54,7 @@ function handle_web_socket(ws, username){
 /*
 Assign new players to a game, make a new one if none available
 */
-function assign_player(ws, username){
+function assign_player(ws, username, bet){
     let game;
     //Search the games for a viable one to join
     for (const g of blackjackState.games){
@@ -55,7 +68,7 @@ function assign_player(ws, username){
         blackjackState.gameIdCounter++;
         blackjackState.games.push(game);
     }
-    game.add_player(ws, username);    
+    game.add_player(ws, username, bet);    
 
     return game;
 
@@ -76,14 +89,24 @@ function remove_player(ws){
 /*
 Pass the action and websocket to every game, the game will deal with it if needed
 */
-function handle_message(message, ws){
+async function handle_message(message, ws, username, bet){
     if (message.type === "ACTION"){
+        if(message.action === "PLAY_AGAIN"){
+            const response = await axios.get('http://localhost:5050/getLimits', {params: {username}});
+                const {timeLimit, moneyLimit, timeSpent, moneySpent} = response.data;
+                if(timeSpent >= timeLimit || moneySpent >= moneyLimit){
+                    console.log("User has reached their limit, closing connection");
+                    ws.send(JSON.stringify({type: "LOCKOUT"}));
+                    ws.close();
+                    return;
+                }
+        }
         for (const g of blackjackState.games){
-            g.handle_action(message.action, ws);
+            g.handle_action(message.action, ws, bet);
         }
     }
     else{
-        console.log("Unkown message");
+        console.log("Unknown message");
         ws.close();
     }
 }

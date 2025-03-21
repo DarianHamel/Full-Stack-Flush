@@ -5,6 +5,7 @@ const User = require("../Models/UserModel");
 const { GetLeaderboard, applyFilters, calculateWinLossRatio, sortLeaderboard } = require("../Controllers/LeaderboardController");
 
 let mongoServer;
+jest.setTimeout(30000);
 
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
@@ -27,8 +28,6 @@ const mockResponse = () => {
   res.json = jest.fn().mockReturnValue(res);
   return res;
 };
-
-// ========================================================================
 
 describe("GetLeaderboard API Tests", () => {
 
@@ -104,7 +103,7 @@ describe("GetLeaderboard API Tests", () => {
 describe("ApplyFilters API Tests", () => {
     test("ApplyFilters should return correct filter criteria", async () => {
         expect(applyFilters("highSpenders")).toEqual({moneySpent: {$gte: 1500}});
-        expect(applyFilters("longestPlayers")).toEqual({timeSpent: {$gte: 100}});
+        expect(applyFilters("longestPlayers")).toEqual({timeSpent: {$gte: 100*3600}});
         expect(applyFilters("")).toEqual({});
     });
 });

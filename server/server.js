@@ -12,21 +12,38 @@ const winloseRoute = require("./routes/WinLoseRoute");
 const leaderboardRoute = require("./routes/LeaderboardRoute");
 const userInfoRoute = require("./routes/ProfileRoute");
 const tutorialRoutes = require("./routes/TutorialRoute.js");
+const pokerRoute = require("./routes/PokerRoute.js");
+const betRoutes = require("./routes/BetRoute.js");
+const historyRoutes = require("./routes/HistoryRoute");
 
-const { ATLAS_URI, PORT } = process.env;
+const { ATLAS_URI , PORT} = process.env;
 const app = express();
 expressWs(app);
 
-mongoose
-  .connect(ATLAS_URI)
-  .then(() => console.log("MongoDB is  connected successfully"))
-  .catch((err) => console.error(err));
+if(process.env.NODE_ENV !== 'test'){
+  mongoose
+    .connect(ATLAS_URI)
+    .then(() => console.log("MongoDB is  connected successfully"))
+    .catch((err) => console.error(err));
 
-
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
 //app.use("/api/blackjack", blackjack);
 
 
-expressWs(app);
+}
+
+//app.use("/api/blackjack", blackjack);
 
 app.ws('/', (ws, req) => {
   console.log(req.headers.cookie);
@@ -43,13 +60,6 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is listening on port ${PORT}`);
 });
 
-app.use(
-  cors({
-    origin: ["http://localhost:5173"],
-    credentials: true,
-  })
-);
-
 app.use(express.json());
 app.use(cookieParser());
 app.use("/", authRoute);
@@ -58,3 +68,8 @@ app.use("/", winloseRoute);
 app.use("/", leaderboardRoute);
 app.use("/", userInfoRoute);
 app.use("/", tutorialRoutes);
+app.use("/", betRoutes);
+app.use("/", pokerRoute);
+app.use("/", historyRoutes)
+
+module.exports = app;
