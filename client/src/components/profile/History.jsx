@@ -7,6 +7,10 @@ const History = () => {
   const [cookies] = useCookies(["username", "token"]);
   const [history, setHistory] = useState([]);
 
+  /*
+  Gets the history of user on page launch
+  Sets the history in const "history"
+  */
   useEffect(() => {
     if (!cookies.username) return;
 

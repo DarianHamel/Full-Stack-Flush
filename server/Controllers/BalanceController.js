@@ -2,7 +2,9 @@ const User = require("../Models/UserModel");
 const History = require("../Models/History");
 const bcrypt = require("bcryptjs");
 
-// Get User Balance by username
+/*
+Get User Balance by username
+*/
 module.exports.GetBalance = async (req, res) => {
     const { username } = req.query; 
     try {
@@ -16,7 +18,9 @@ module.exports.GetBalance = async (req, res) => {
     }
   };
 
-// Update balance for deposit or bet (POST request)
+/*
+Update balance for deposit or bet (POST request)
+*/
 module.exports.UpdateBalance = async (req, res) => {
   const { username, amount, password, day } = req.body;
   
@@ -59,8 +63,10 @@ module.exports.UpdateBalance = async (req, res) => {
   }
 };
 
-// Update balance without requiring a password (for game results)
-// added this to deal with unable to update balance after a win because password is required in other method 
+/* 
+Update balance without requiring a password (for game results)
+added this to deal with unable to update balance after a win because password is required in other method 
+*/
 module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
   const { username, amount } = req.body;
 

@@ -1,5 +1,9 @@
 const User = require("../Models/UserModel");
 
+/*
+Get the leaderboard
+Returns the results in the appropriate sorting after calculating the win loss ratios
+*/
 module.exports.GetLeaderboard = async(req, res) => {
     try {
         const {sortBy = "wins", order = "desc", filter = ""} = req.query; //sort by wins as default
@@ -25,7 +29,9 @@ module.exports.GetLeaderboard = async(req, res) => {
     }
 };
 
-// filtering leaderboard
+/*
+Filtering leaderboard
+*/
 module.exports.applyFilters = (filter) => {
     let filterCriteria = {};
 
@@ -37,9 +43,11 @@ module.exports.applyFilters = (filter) => {
     }
 
     return filterCriteria;
-  };
+};
 
-// calculating the win - loss ratio
+/*
+Calculating the win - loss ratio
+*/
 module.exports.calculateWinLossRatio = (users) => {
     return users.map(user => ({
         ...user,
@@ -47,9 +55,11 @@ module.exports.calculateWinLossRatio = (users) => {
         ? (user.wins/user.losses).toFixed(2)
         : user.wins
     }));
-  };
+};
 
-// sorting and ordering the leaderboard 
+/*
+Sorting and ordering the leaderboard 
+*/
 module.exports.sortLeaderboard = (users, sortBy, order) => {
     return users.sort((user1, user2) => {
         if(sortBy === "username"){
@@ -62,4 +72,4 @@ module.exports.sortLeaderboard = (users, sortBy, order) => {
         ? user1[sortBy] - user2[sortBy] 
         : user2[sortBy] - user1[sortBy];
     });
-  };
+};

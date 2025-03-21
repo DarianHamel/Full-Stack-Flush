@@ -9,10 +9,18 @@ const TutorialPage = () => {
   const navigate = useNavigate(); // Initialize navigation
   const API_BASE_URL = "http://localhost:5050/api/tutorials"; 
 
+  /*
+  Load the tutorials on page launch
+  */
   useEffect(() => {
     loadTutorials();
   }, []);
 
+  /*
+  Load the tutorials
+  Calls route /api/tutorials
+  Returns the list of tutorials
+  */
   const loadTutorials = async () => {
     try {
       const response = await axios.get(API_BASE_URL);

@@ -38,12 +38,21 @@ export default function Blackjack({username}) {
     balance: 0, //Defaults to 0 until we get the user's balance
   });
 
+  /*
+  Calls the functions within on page launch
+  Checks the users limits and values and resets on new day
+  Gets the user balance and limits and updates const for display
+  */
   useEffect(() => {
     checkAndResetDailyValues(username);
     getUserBalance(username);
     getUserLimits(username);
   }, [username]);
 
+  /*
+  Gets the user balance (on page launch)
+  Sets it in the gameState and the newBalance variable
+  */
   const getUserBalance = async (username) => {
     try {
       const balance = await fetchUserBalance(username);
@@ -58,6 +67,11 @@ export default function Blackjack({username}) {
     }
   }
 
+  /*
+  Get the limits of the user (on page launch)
+  Sets them in their respective consts for checking and displaying
+  Locks the user and logs them out if they hit their limits
+  */
   const getUserLimits = async (username) => {
     try {
       const limits = await fetchUserLimits(username);
@@ -73,6 +87,10 @@ export default function Blackjack({username}) {
     }
   }
 
+  /*
+  Function to lock the user out of playing games as they hit their time to money limit
+  Alerts the user and redirects to home page
+  */
   const handleLockOut = () => {
     setLimitHit(true);
     toast.error("You have reached your daily limit and are locked out from playing. Redirecting...", {position: "top-center"});
@@ -81,6 +99,9 @@ export default function Blackjack({username}) {
     }, 3000); // Redirect after 3 seconds
   }
 
+  /*
+  Function to control if the user clicked Free game or regular game
+  */
   const handleClick = (usingFakeMoney) => {
     console.log(`Using fake money?: ${usingFakeMoney}`);
     startGame(usingFakeMoney);
@@ -198,8 +219,8 @@ export default function Blackjack({username}) {
       case "GAME_OVER":
         const endTime = Date.now();
         const timeSpent = Math.floor((endTime - startTime)/1000); //Time in seconds
-        updateTimeSpent(username, timeSpent);
-        setTimePlayed(timePlayed + timeSpent);
+        updateTimeSpent(username, timeSpent); //Update the time spent playing
+        setTimePlayed(timePlayed + timeSpent); //Update the const for display
         startTime = Date.now();
         setGameState((prevState) => {
           if(prevState.balance){
@@ -208,14 +229,12 @@ export default function Blackjack({username}) {
             newBalance = gameState.balance;
           }
           if (message.result === "WIN") {
-            newBalance += Number(document.getElementById("betAmount").value); // Double the bet amount if the player wins
+            newBalance += Number(document.getElementById("betAmount").value); // Add the bet amount to the balance
           }else if (message.result === "LOSE"){
             newBalance -= Number(document.getElementById("betAmount").value); // Subtract the bet amount if the player
             if(message.fakeMoney !== true){
               setMoneySpent(prevMoneySpent => {
-                const newMoney = prevMoneySpent + Number(betAmount);
-                console.log("MoneySpent: ", prevMoneySpent); 
-                console.log("New money spent: ", newMoney);
+                const newMoney = prevMoneySpent + Number(betAmount); //Convert to number or JS does weird things...
                 return newMoney;
               });
             }
@@ -244,9 +263,9 @@ export default function Blackjack({username}) {
         handleLockOut();
         break;
       case "TREND_CHANGE":
-        if(message !== null){
-          setTrendMessage((prevTrendMessage) => {
-            if(prevTrendMessage - trendMessageTimer < Date.now()){
+        if(message !== null){ //Validates if there is a message
+          setTrendMessage((prevTrendMessage) => { 
+            if(prevTrendMessage - trendMessageTimer < Date.now()){ //Only update and show the message if it has been at least 2 minutes
               console.log("Trend message timer: ", prevTrendMessage - trendMessageTimer);
               toast.info(message.message, {position: "top-center"});
               return Date.now();
