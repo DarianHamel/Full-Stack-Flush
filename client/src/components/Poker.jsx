@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../design/Poker.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Card from "./Card.jsx";
 import AuthRedirect from "./AuthRedirect";
 import ProgressBar from "./ProgressBar";
@@ -25,6 +25,7 @@ const Poker = ({ username }) => {
   const [timePlayed, setTimePlayed] = useState(0);
   const [moneySpent, setMoneySpent] = useState(0);
   const [limitHit, setLimitHit] = useState(false);
+  const navigate = useNavigate();
   console.log(username);
 
   useEffect(() => {
@@ -53,9 +54,10 @@ const Poker = ({ username }) => {
     alert("You have reached your daily limit and are locked out from playing. Redirecting...", {position: "top-center"});
     setTimeout(() => {
       navigate("/"); // Redirect to the home page
-    }, 3000); // Redirect after 3 seconds
+    }, 1000); // Redirect after 3 seconds
   };
 
+  // method to start the game from front end when use clicks start game
   const startGame = async () => {
     if (betAmount <= 0) {
       alert("Please place a valid bet!");
@@ -74,36 +76,10 @@ const Poker = ({ username }) => {
     }
 
     if (moneySpent + betAmount > moneyLimit) {
-      alert("You have reached your daily money limit!", {position: "top-center"});
+      alert("You have reached your daily money limit!", { position: "top-center" });
       return;
     }
-
-    // Check if the bet amount exceeds the user's balance
-    if (betAmount > balance) {
-      alert("You cannot bet more than your available balance!");
-      return;
-    }
-
-    const newMoneySpent = moneySpent + betAmount;
-    setMoneySpent(newMoneySpent);
-
-    // Update money spent on the backend
-    try {
-      await fetch("http://localhost:5050/update-money-spent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          moneySpent: newMoneySpent,
-        }),
-      });
-    } catch (error) {
-      console.error("Error updating money spent on the backend:", error);
-    }
-
-    //setGameStarted(true);
+    setGameStarted(true);
 
 
     console.log("Placing bet with:", {
@@ -138,12 +114,36 @@ const Poker = ({ username }) => {
     setHandsRemaining(data.handsRemaining || 0);
     setDiscardsRemaining(data.discardsRemaining || 0);
     setGameStarted(true);
-    setGameOver(false); // Reset game over state
-    setSelectedCards([]); // Reset selected cards
+    setGameOver(false);
+    setSelectedCards([]);
     setCurrentScore(0);
-    setTargetScore(data.targetScore); // Set the target score from the backend
+    setTargetScore(data.targetScore);
+
+     // Update money spent on the backend
+     try {
+      const response = await fetch("http://localhost:5050/update-money-spent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          moneySpent: betAmount,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setMoneySpent(data.updatedDailyMoneySpent); // Update the frontend with the backend's value
+      } else {
+        console.error("Failed to update money spent:", data.message);
+      }
+    } catch (error) {
+      console.error("Error updating money spent on the backend:", error);
+    }
   };
 
+  // track what cards a user is selecting to know what to discard/play and display animations
   const handleCardClick = (card) => {
     setSelectedCards((prevSelectedCards) => {
       const isSelected = prevSelectedCards.some(
@@ -161,6 +161,7 @@ const Poker = ({ username }) => {
     });
   };
 
+  // method for discarding cards, get rid of them from hand and draw new ones from remaining cards in shuffled deck
   const discardCards = async () => {
     if (limitHit) {
       handleLockOut();
@@ -189,6 +190,7 @@ const Poker = ({ username }) => {
     setDiscardsRemaining(discardsRemaining - 1);
   };
 
+  // send sort hand request to backend to get cards sorted based on rank or suit
   const sortHand = async (sortBy) => {
     try {
       const response = await fetch("http://localhost:5050/poker/sort-hand", {
@@ -210,6 +212,7 @@ const Poker = ({ username }) => {
     }
   };
 
+  // play the hand and give user a score based on scoring engine in back end
   const playHand = async () => {
     if (limitHit) {
       handleLockOut();
@@ -258,7 +261,7 @@ const Poker = ({ username }) => {
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  username, // Pass the logged-in user's username
+                  username,
                   amount: winnings,
                 }),
               });
@@ -275,7 +278,7 @@ const Poker = ({ username }) => {
               }
 
             // Update stats in the backend
-            await fetch("http://localhost:5050/updateStats", {
+            const statsResponse = await fetch("http://localhost:5050/updateStats", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -284,9 +287,13 @@ const Poker = ({ username }) => {
                 username, // Pass the logged-in user's username
                 wins: gameResult ? 1 : 0,
                 losses: gameResult ? 0 : 1,
-                money: betAmount
+                money: betAmount,
+                game: "Poker"
               }),
             });
+
+            const statsData = await statsResponse.json();
+            console.log(statsData);
 
             return;
         }
@@ -330,6 +337,7 @@ const Poker = ({ username }) => {
     }
   };
 
+  // display the cards properly with the right images and suit/rank
   const renderHand = (hand) => {
     return (
       <div className="card-row">
@@ -372,8 +380,7 @@ const Poker = ({ username }) => {
   console.log("Selected Cards:", selectedCards);
   console.log(gameOver);
 
-
-  // TODO: track time and money spent on poker
+  // return the front end UI
   return (
     <AuthRedirect username = {username}>
       <div className="poker-container">
@@ -478,7 +485,7 @@ const Poker = ({ username }) => {
             </>
           )}
         </div>
-        {gameStarted && !gameOver && ( // Put this outside other divs so the buttons are below the cards
+        {gameStarted && !gameOver && ( // Put this outside other divs so the buttons are below the cards so it looks clean
           <div className="action-buttons-poker">
             <button onClick={playHand} className="play-hand">
               Play Hand

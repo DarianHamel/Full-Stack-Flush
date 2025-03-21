@@ -68,5 +68,20 @@
 .profile-table td {
     /* padding: 20px; */
     /* border-bottom: 1px solid #ddd; */
-    font-size: clamp(10px, 2vw, 5vh);
+    font-size: clamp(10px, 30px, 5vh);
+}
+
+.profile-table .edit_button {
+    font-size: 30px;
+    text-align: center;
+    padding-left: 20px;
+    margin: 0px;
+    cursor: pointer;
+}
+
+.profile-flex-container input {
+    font-size: 30px;
+    padding: 5px;
+    width: 150px;
+    text-align: center;
 }
