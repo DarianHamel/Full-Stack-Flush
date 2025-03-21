@@ -21,17 +21,17 @@ class Game{
     /*
     Add a player to this game if it's not started yet or stick them in the queue
     */
-    add_player(ws, username, betAmount){
+    add_player(ws, username, betAmount, fakeMoney){
 
         //Now start the game or let the player know the current state
         if (!this.started){
-            this.players.push(new Player(ws, this.playerIdCounter, username, betAmount));
+            this.players.push(new Player(ws, this.playerIdCounter, username, betAmount, fakeMoney));
             this.playerIdCounter++;
             handleBet(username, betAmount);
             this.start_game();
         }
         else{
-            this.playerQueue.push(new Player(ws, this.playerIdCounter, username, betAmount));
+            this.playerQueue.push(new Player(ws, this.playerIdCounter, username, betAmount, fakeMoney));
             this.playerIdCounter++;
         }
         
@@ -165,12 +165,13 @@ class Game{
     */
     end_game(){
         const dealerHand = this.dealer.get_total();
+        const game = "Blackjack";
         
         for (const player of this.players){
             const playerHand = player.get_total();
             if (playerHand <= 21 && (dealerHand > 21 || playerHand > dealerHand)){
                 console.log(player.bet);
-                handleWin(player.username, 2*player.bet);
+                handleWin(player.username, 2*player.bet, game);
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
                     result: "WIN"
@@ -178,11 +179,13 @@ class Game{
             }
             else if (playerHand < dealerHand || playerHand > 21){
                 console.log(player.bet);
-                handleLose(player.username, player.bet);
+                handleLose(player.username, player.bet, game);
                 player.ws.send(JSON.stringify({
                     type: "GAME_OVER",
-                    result: "LOSE"
-                }));
+                    result: "LOSE",
+                    fakeMoney: player.fakeMoney,
+                }))
+                
             }
             else if (playerHand == dealerHand){
                 player.ws.send(JSON.stringify({
@@ -232,7 +235,11 @@ class Game{
                     case "PLAY_AGAIN":
                         //Check if the game is over
                         if (this.gameOver){
-                            player.bet = bet;
+                            if(player.fakeMoney){
+                                player.bet = 0;
+                            }else{
+                                player.bet = bet;
+                            }
                             const message = await handleBet(player.username, player.bet);
                             player.ws.send(JSON.stringify({type: "TREND_CHANGE", message: message || null}));
                             this.play_again();

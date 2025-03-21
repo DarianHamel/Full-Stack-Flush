@@ -4,27 +4,21 @@
     flex-direction: column;
     align-items: center; /* Center content */
     margin-top: 5rem; /* Prevents content from overlapping with fixed heading */
+    background-color: #1a1a1a;
+    border-radius: 8px;
   }
   
   /* Game Tutorials Heading */
   .tutorials-heading {
-    font-size: 2rem; /* Smaller font size */
+    font-size: 2rem;
     font-weight: 700;
     text-align: center;
-    position: fixed; /* Keeps it at the top */
-    top: 10rem; /* Space from the top */
-    left: 50%;
-    transform: translateX(-50%); /* Centers the text */
     color: #ffffff;
-      background: linear-gradient(
-      90deg,
-      rgb(20, 7, 7) 0%,
-      rgb(77, 16, 16) 35%,
-      rgb(114, 11, 11) 100%
-    );
-    width: 100%; /* Stretch across screen */
-    padding: 0.5rem 0; /* Space around text */
-    z-index: 10; /* Ensures it stays on top */
+    width: 100%;
+    padding: 0.5rem 0;
+    margin-bottom: 2rem; /* Add spacing below the title */
+    position: relative; /* Change from fixed to relative */
+    z-index: 10;
   }
   
   /* Add Tutorial Button - Now styled like tutorial buttons */
@@ -76,6 +70,7 @@
   
   .tutorial-link:hover {
     background-color: #e5e7eb;
+    transform: scale(1.05);
   }
   
   .tutorial-details-container {

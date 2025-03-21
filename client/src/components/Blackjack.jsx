@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Card from "./Card.jsx";
 import "../design/Blackjack.css";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ProgressBar from "./ProgressBar";
 import AuthRedirect from "./AuthRedirect";
 import { checkAndResetDailyValues, updateTimeSpent , fetchUserBalance, fetchUserLimits} from "./helpers/userInfoHelper.js";
@@ -13,6 +13,7 @@ export default function Blackjack({username}) {
 
   const [socket, setSocket] = useState(null);
   const [betAmount, setBetAmount] = useState(1);
+  const [fakeMoney, setFakeMoney] = useState(false)
   const [limitHit, setLimitHit] = useState(false);
   const [timeLimit, setTimeLimit] = useState(0);
   const [moneyLimit, setMoneyLimit] = useState(0);
@@ -64,6 +65,9 @@ export default function Blackjack({username}) {
       setMoneyLimit(limits.moneyLimit || 0);
       setTimePlayed(limits.timeSpent || 0);
       setMoneySpent(limits.moneySpent || 0);
+      if(limits.moneySpent > limits.moneyLimit || limits.timeSpent >= limits.timeLimit){
+        handleLockOut();
+      }
     } catch (error) {
       console.error('Error fetching user limits:', error);
     }
@@ -77,17 +81,34 @@ export default function Blackjack({username}) {
     }, 3000); // Redirect after 3 seconds
   }
 
+  const handleClick = (usingFakeMoney) => {
+    console.log(`Using fake money?: ${usingFakeMoney}`);
+    startGame(usingFakeMoney);
+  };
+
   /*
   Create the websocket to start the game
   */
-  async function startGame(){
-    if (betAmount <= 0 || betAmount > gameState.balance) {
-      toast.info("Invalid bet amount", {position: "top-center"});
-      return;
+  async function startGame(usingFakeMoney){
+    console.log(usingFakeMoney);
+    if(usingFakeMoney){
+      setFakeMoney(true);
+      newBalance = 10000;
+      gameState.balance = 10000;
+    }else{
+      if (betAmount <= 0 || betAmount > gameState.balance) {
+        toast.info("Invalid bet amount", {position: "top-center"});
+        return;
+      }
+      if (limitHit){
+        console.log("Limit hit");
+        handleLockOut();
+        return;
+      }
     }
-    if (limitHit){
-      console.log("Limit hit");
-      handleLockOut();
+    if(gameState.balance == 0){
+      toast.info("Insufficient funds", {position: "top-center" });
+      setLimitHit(true);
       return;
     }
     try{
@@ -96,8 +117,8 @@ export default function Blackjack({username}) {
       newSocket.onopen = () => {
         console.log('Connected to websocket server');
         startTime = Date.now();
-        if(betAmount+moneySpent <= moneyLimit){
-          newSocket.send(JSON.stringify({type: "JOIN" , username: username, bet: betAmount}));
+        if(betAmount+moneySpent <= moneyLimit || usingFakeMoney){
+          newSocket.send(JSON.stringify({type: "JOIN" , username: username, bet: betAmount, usingFakeMoney: usingFakeMoney}));
         }else{
           toast.info("Bet exceeds money limit", {position: "top-center"});
         }
@@ -190,12 +211,14 @@ export default function Blackjack({username}) {
             newBalance += Number(document.getElementById("betAmount").value); // Double the bet amount if the player wins
           }else if (message.result === "LOSE"){
             newBalance -= Number(document.getElementById("betAmount").value); // Subtract the bet amount if the player
-            setMoneySpent(prevMoneySpent => {
-              const newMoney = prevMoneySpent + Number(betAmount);
-              console.log("MoneySpent: ", prevMoneySpent); 
-              console.log("New money spent: ", newMoney);
-              return newMoney;
-            });
+            if(message.fakeMoney !== true){
+              setMoneySpent(prevMoneySpent => {
+                const newMoney = prevMoneySpent + Number(betAmount);
+                console.log("MoneySpent: ", prevMoneySpent); 
+                console.log("New money spent: ", newMoney);
+                return newMoney;
+              });
+            }
           }
           return {
               ...prevState,
@@ -234,7 +257,10 @@ export default function Blackjack({username}) {
         break;
       case "BET_EXCEEDS_LIMIT":
         toast.info("Bet exceeds money limit", {position: "top-center"});
-
+        break;
+      case "NOT_ENOUGH_FUNDS":
+        toast.info("Bet exceeds balance", {position: "top-center"});
+        break;
       default:
         console.log("Unknown message type");
     }
@@ -330,7 +356,7 @@ export default function Blackjack({username}) {
   Sends the specified action to the server
   */
   function send_message(type){
-    socket.send(JSON.stringify({"type": "ACTION", "action": type, "bet": betAmount}));
+    socket.send(JSON.stringify({"type": "ACTION", "action": type, "bet": betAmount, "usingFakeMoney": fakeMoney}));
 
     //If we're standing, set playerTurn back to false
     if (type === "STAND"){
@@ -404,11 +430,13 @@ export default function Blackjack({username}) {
     <AuthRedirect username={username}>
     <div className="Progress-Bars">
       <ProgressBar label="Time Played" label2="Minutes:" value={Math.floor(timePlayed/60)} max={Math.floor(timeLimit/60) || 1} />
-      <ProgressBar label="Money Spent" label2="$" value={moneySpent} max={moneyLimit || 1} />
+      <ProgressBar disabled={fakeMoney} label="Money Spent" label2="$" value={moneySpent} max={moneyLimit || 1} />
     </div>
     <div className="blackjack-container">
       <div className="bet-container">
-      
+        <div className="balance-display">
+            Current Balance: ${gameState.balance}
+        </div>
         <label htmlFor="betAmount">Bet Amount:</label>
         <input disabled={gameState.playing && !gameState.gameOver}
           type="number"
@@ -418,14 +446,11 @@ export default function Blackjack({username}) {
           min="1"
           max={Math.min(gameState.balance, moneyLimit-moneySpent) || 1}
         />
-        <div className="balance-display">
-          Current Balance: ${gameState.balance}
-        </div>
     </div>
       {!gameState.inGame &&(
-        <div>
-        <button className="start-button" onClick={startGame}>Start Game</button>
-        <button className="start-button-free" onClick={startGame}>Start Free Game</button>
+        <div className="button-container">
+        <button className="start-button" onClick={() => handleClick(false)}>Start Game</button>
+        <button className="start-button-free" onClick={() => handleClick(true)} >Start Free Game</button>
         </div>
       )}
       {(gameState.inGame && !gameState.playing && (

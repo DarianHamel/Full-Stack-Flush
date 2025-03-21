@@ -102,7 +102,9 @@
   }
   
   .poker-container .play-hand,
-  .poker-container .discard {
+  .poker-container .discard,
+  .poker-container .sort-suit,
+  .poker-container .sort-rank {
     display: inline-block;
     padding: 1.5rem 3rem;
     font-size: 18px;
@@ -130,6 +132,26 @@
   
   .poker-container .discard:hover {
     background-color: #c0392b;
+    transform: scale(1.05);
+  }
+
+  .poker-container .sort-suit {
+    background-color: #1221f3;
+    color: white;
+  }
+
+  .poker-container .sort-suit:hover {
+    background-color: #232ec5;
+    transform: scale(1.05);
+  }
+
+  .poker-container .sort-rank {
+    background-color: #1221f3;
+    color: white;
+  }
+
+  .poker-container .sort-rank:hover {
+    background-color: #232ec5;
     transform: scale(1.05);
   }
   

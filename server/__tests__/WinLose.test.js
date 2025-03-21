@@ -135,7 +135,7 @@ describe("UpdateStats API Tests", () => {
     test("UpdateStats will update wins and losses successfully", async () => {
         await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
 
-        const req = { body: { username: "mockUser", wins: 2, losses: 3 } };
+        const req = { body: { username: "mockUser", wins: 2, losses: 3, game: "Poker" } };
         const res = mockResponse();
 
         await UpdateStats(req, res);
@@ -148,7 +148,7 @@ describe("UpdateStats API Tests", () => {
     // 8 -- Returns 400 if username is not found 
 
     test("UpdateStats will return 404 if user is not found", async () => {
-        const req = { body: { username: "badUser", wins: 2, losses: 3 } };
+        const req = { body: { username: "badUser", wins: 2, losses: 3, game: "Blackjack" } };
         const res = mockResponse();
 
         await UpdateStats(req, res);
@@ -163,7 +163,7 @@ describe("UpdateStats API Tests", () => {
     test("UpdateStats will return a 400 if wins is negative", async () => {
         await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
 
-        const req = { body: { username: "mockUser", wins: -2, losses: 3 } };
+        const req = { body: { username: "mockUser", wins: -2, losses: 3, game: "Poker" } };
         const res = mockResponse();
 
         await UpdateStats(req, res);
@@ -178,7 +178,7 @@ describe("UpdateStats API Tests", () => {
     test("UpdateStats will return a 400 if losses is negative", async () => {
         await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
 
-        const req = { body: { username: "mockUser", wins: 2, losses: -3 } };
+        const req = { body: { username: "mockUser", wins: 2, losses: -3, game: "Blackjack" } };
         const res = mockResponse();
 
         await UpdateStats(req, res);
@@ -194,7 +194,7 @@ describe("UpdateStats API Tests", () => {
         await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
         jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database error"));
 
-        const req = { body: { username: "mockUser", wins: 2, losses: 3 } };
+        const req = { body: { username: "mockUser", wins: 2, losses: 3, game: "Poker" } };
         const res = mockResponse();
 
         await UpdateStats(req, res);
@@ -213,7 +213,7 @@ describe("UpdateStats API Tests", () => {
         jest.spyOn(User, "findOne").mockResolvedValue(mockUser);
         jest.spyOn(mockUser, "save").mockRejectedValue(new Error("Database save error"));
     
-        const req = { body: { username: "mockUser", wins: 2, losses: 3 } };
+        const req = { body: { username: "mockUser", wins: 2, losses: 3, game: "Blackjack" } };
         const res = mockResponse();
     
         await UpdateStats(req, res);
@@ -231,7 +231,7 @@ describe("UpdateStats API Tests", () => {
     test("UpdateStats will increment wins even if losses isn't provided", async () => {
         await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
 
-        const req = { body: { username: "mockUser", wins: 5 } };
+        const req = { body: { username: "mockUser", wins: 5, game: "Poker" } };
         const res = mockResponse();
 
         await UpdateStats(req, res);
@@ -246,7 +246,7 @@ describe("UpdateStats API Tests", () => {
     test("UpdateStats will increment losses even if wins isn't provided", async () => {
         await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
 
-        const req = { body: { username: "mockUser", losses: 2 } };
+        const req = { body: { username: "mockUser", losses: 2, game: "Blackjack" } };
         const res = mockResponse();
 
         await UpdateStats(req, res);
@@ -261,7 +261,7 @@ describe("UpdateStats API Tests", () => {
     test("UpdateStats will not work if a username is missing", async () => {
         await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
 
-        const req = { body: { wins: 1, losses: 2 } };
+        const req = { body: { wins: 1, losses: 2, game: "Poker" } };
         const res = mockResponse();
 
         await UpdateStats(req, res);

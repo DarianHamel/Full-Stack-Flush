@@ -14,6 +14,7 @@ const userInfoRoute = require("./routes/ProfileRoute");
 const tutorialRoutes = require("./routes/TutorialRoute.js");
 const pokerRoute = require("./routes/PokerRoute.js");
 const betRoutes = require("./routes/BetRoute.js");
+const historyRoutes = require("./routes/HistoryRoute");
 
 const { ATLAS_URI , PORT} = process.env;
 const app = express();
@@ -45,7 +46,7 @@ app.ws('/', (ws, req) => {
 });
 
 // start the Express server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is listening on port ${PORT}`);
 });
 
@@ -59,6 +60,7 @@ app.use("/", userInfoRoute);
 app.use("/", tutorialRoutes);
 app.use("/", betRoutes);
 app.use("/", pokerRoute);
+app.use("/", historyRoutes)
 
 // Export the app for testing
 module.exports = app;

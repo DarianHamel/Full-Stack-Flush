@@ -3,8 +3,9 @@ const PokerGame = require('../Models/PokerGame');
 let activeGames = {};
 
 module.exports.StartPoker = (req, res) => {
+    const { difficulty } = req.body;
     const gameID = Date.now(); // should change to username tracking probably ?
-    const newGame = new PokerGame(gameID);
+    const newGame = new PokerGame(gameID, difficulty);
     newGame.startGame();
 
     console.log(gameID);
@@ -12,7 +13,12 @@ module.exports.StartPoker = (req, res) => {
 
     res.json({
         gameID,
-        playerHand: newGame.getPlayerHand()
+        playerHand: newGame.getPlayerHand(),
+        handsRemaining: newGame.handsRemaining,
+        discardsRemaining: newGame.discardsRemaining,
+        gameOver: newGame.gameOver,
+        difficulty: newGame.difficulty,
+        targetScore: newGame.targetScore
     });
 };
 
@@ -39,5 +45,43 @@ module.exports.ScoreHand = (req, res) => {
     const game = activeGames[gameID];
     const score = game.scoreHand(selectedCards);
 
-    res.json({ score, currentScore: game.currentScore });
+    res.json({ score, currentScore: game.currentScore, handsRemaining: game.handsRemaining, discardsRemaining: game.discardsRemaining, gameOver: game.gameOver });
+};
+
+module.exports.sortHand = (req, res) => {
+    const { hand, criteria } = req.body;
+
+    if (!hand || !criteria) {
+        return res.status(400).json({ message: "Invalid request. Hand and criteria are required." });
+    }
+
+    const rankOrder = {
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5,
+        "6": 6,
+        "7": 7,
+        "8": 8,
+        "9": 9,
+        "10": 10,
+        "Jack": 11,
+        "Queen": 12,
+        "King": 13,
+        "Ace": 1, // ace is low to see straights easily
+    };
+
+    // Sort the hand based on the criteria
+    const sortedHand = [...hand].sort((a, b) => {
+        if (criteria === "rank") {
+            return rankOrder[a.rank] - rankOrder[b.rank]; // Sort by rank
+        } else if (criteria === "suit") {
+            if (a.suit > b.suit) return 1;
+            if (a.suit < b.suit) return -1;
+            return 0;
+        }
+        return 0;
+    });
+
+    res.status(200).json({ sortedHand });
 };

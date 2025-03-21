@@ -4,7 +4,6 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "../design/Signup.css"
 
-
 const Signup = ({ show, onClose, setShowLogin }) => {
   if (!show) return null;
   const navigate = useNavigate();

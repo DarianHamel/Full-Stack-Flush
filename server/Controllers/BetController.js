@@ -1,9 +1,9 @@
 const User = require("../Models/UserModel");
 
-
 module.exports.bet = async (req, res) => {
     const { username, money } = req.body;
     var mess = "";
+    console.log(req.body);
     try {
         const user = await User.findOne({ username });
         if (!user) {    
@@ -11,6 +11,9 @@ module.exports.bet = async (req, res) => {
         }
         if(money > user.balance){
             return res.status(400).json({ message: "Insufficient balance" });
+        }
+        if (!game) {
+            return res.status(400).json({ message: "No game was found" });
         }
         user.balance -= Number(money); // Remove money from user account so they cannot leave the game before it completes
         user.markModified("balance");
@@ -29,5 +32,6 @@ module.exports.bet = async (req, res) => {
     }
     catch (error) {
         res.status(500).json({ message: "Server error" });
+        console.log(error);
     }
 };
