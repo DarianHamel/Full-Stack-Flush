@@ -19,6 +19,7 @@ import TutorialPage from "../components/TutorialPage";
 jest.mock("axios");
 
 describe("Home Component - Integration Tests", () => {
+  const mockUsername = "testUser";
   const renderWithRouter = (initialRoute = "/") => {
     return render(
       <Router initialEntries = {[initialRoute]}>
@@ -29,7 +30,7 @@ describe("Home Component - Integration Tests", () => {
           <Route path = "/resources" element = {<Resources />} />
           <Route path = "/tutorials" element = {<TutorialPage />} />
           <Route path = "/blackjack" element = {<Blackjack />} />
-          <Route path = "/poker" element = {<Poker />} />
+          <Route path = "/poker" element = {<Poker username={mockUsername} />} />
           <Route path = "/leaderboard" element = {<Leaderboard />} />
           <Route path = "/profile" element = {<Profile />} />
         </Routes>
