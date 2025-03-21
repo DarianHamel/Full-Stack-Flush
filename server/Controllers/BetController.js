@@ -4,6 +4,7 @@ const User = require("../Models/UserModel");
 module.exports.bet = async (req, res) => {
     const { username, money } = req.body;
     var mess = "";
+    console.log(req.body);
     try {
         const user = await User.findOne({ username });
         if (!user) {    
@@ -29,5 +30,6 @@ module.exports.bet = async (req, res) => {
     }
     catch (error) {
         res.status(500).json({ message: "Server error" });
+        console.log(error);
     }
 };
