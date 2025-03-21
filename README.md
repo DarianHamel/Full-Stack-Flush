@@ -2,7 +2,7 @@
 
 ## Short Description
 
-* Full Stack Flush is a gambling web application designed to set a new standard for gambling platforms through its integrated ethical features.
+* Full Stack Flush is a gambling web application designed to set a new standard for gambling platforms through its integrated ethical features
 
 ## Wiki Page
 
