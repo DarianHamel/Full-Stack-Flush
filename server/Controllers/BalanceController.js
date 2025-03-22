@@ -68,7 +68,7 @@ Update balance without requiring a password (for game results)
 added this to deal with unable to update balance after a win because password is required in other method 
 */
 module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
-  const { username, amount } = req.body;
+  const { username, amount, day } = req.body;
 
   if (!username || typeof amount !== "number") {
     return res.status(400).json({
@@ -92,6 +92,14 @@ module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
     await user.save();
     console.log(newBalance);
     console.log(user.balance);
+    const transaction = amount;
+    const game = "Poker";
+    await History.create({
+      username, 
+      transaction,
+      game,
+      day,
+    });
 
     res.status(200).json({ balance: user.balance, success: true });
   } catch (error) {

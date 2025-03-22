@@ -104,7 +104,7 @@ const Poker = ({ username }) => {
       amount: betAmount,
     });
 
-    const betResponse = await fetch("http://localhost:5050/bet", {
+    const betResponse = await fetch("http://localhost:5050/Bet", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -159,6 +159,20 @@ const Poker = ({ username }) => {
       console.error("Error updating money spent on the backend:", error);
     }
 
+    const game = "Poker";
+    const transaction = await fetch("http://localhost:5050/handleTransaction", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username, // Pass the logged-in user's username
+        transaction: betAmount * -1, // Deduct the bet amount
+        game,
+      }),
+    });
+    const transactionResp = await transaction.json();
+    console.log("Transaction Response:", transactionResp); // Debugging
   };
 
 
