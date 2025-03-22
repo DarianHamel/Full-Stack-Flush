@@ -20,6 +20,9 @@
 
 * View our branching strategy and coding conventions here: [Branching Strategy and Coding Conventions](https://github.com/DarianHamel/Full-Stack-Flush/blob/main/Documents/conventions.md)
 
+## Testing Plan
+
+* View our testing plan here: [Testing Plan](https://github.com/DarianHamel/Full-Stack-Flush/blob/main/Documents/Full_Stack_Flush-Test_Plan.pdf)
 
 ## How to Run
 
