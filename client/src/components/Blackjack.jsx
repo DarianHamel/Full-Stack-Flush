@@ -179,7 +179,8 @@ export default function Blackjack({username}) {
       case "JOIN":
         setGameState((prevState) => ({
           ...prevState,
-          inGame: true
+          inGame: true,
+          balance: gameState.balance,
         }));
         break;
       case "START":
