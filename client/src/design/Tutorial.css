@@ -121,3 +121,7 @@
     background-color: #0056b3;
   }
   
+  .viewed-indicator {
+    color: green;
+    margin-left: 5px;
+  }
