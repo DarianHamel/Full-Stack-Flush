@@ -42,19 +42,19 @@ const Profile = ({ username }) => {
         <div>
           <h2>@{username}</h2>
           <div>
-            <button onClick={() => loadPanelData("profile")}>
+            <button className="profile-button" onClick={() => loadPanelData("profile")}>
               <FaUser /> My Profile
             </button>
-            <button onClick={() => loadPanelData("balance")}>
+            <button className="profile-button" onClick={() => loadPanelData("balance")}>
               <FaWallet /> Balance
             </button>
-            <button onClick={() => loadPanelData("stats")}>
+            <button className="profile-button" onClick={() => loadPanelData("stats")}>
               <FaChartBar /> Stats
             </button>
-            <button onClick={() => loadPanelData("support")}>
+            <button className="profile-button" onClick={() => loadPanelData("support")}>
               <FaHeadset /> Support
             </button>
-            <button onClick={() => loadPanelData("history")}>
+            <button className="profile-button" onClick={() => loadPanelData("history")}>
               <FaHistory /> History
             </button>
           </div>

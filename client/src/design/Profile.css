@@ -1,87 +1,81 @@
 .left-panel {
     display: flex;
-    /* align-items: 20px; */
+    font-size: clamp(5px, 2vw, 4vh);
 }
 
 .left-panel h2 {
-    /* margin-bottom: 20px; */
     color: white;
-    font-size: clamp(16px, 3vw, 7vh);
+    font-size: 1.6em;
 }
 
-.left-panel button {
+.profile-button {
     display: flex;
     align-items: center;
-    margin: clamp(5px, 1vw, 2vh) 0;
+    margin: 0.5em 0;
     background-color: #f0f0f0;
     border: none;
     cursor: pointer;
-    font-size: clamp(10px, 2vw, 5vh);
+    font-size: 1em;
     font-family: Sancreek, Verdana, Geneva, Tahoma, sans-serif;
-    width: 15vw;
-    max-width: 40vh;
-    height: 5vw;
-    max-height: 12vh;
-    padding-left: 20px; 
+    width: 8em;
+    height: 2.5em;
+    padding-left: 0.3em; 
+    border-radius: 0.2em;
 }
 
-.left-panel button:hover {
+.profile-button:hover,
+.edit_button:hover {
     background-color: #ddd;
 }
 
-.left-panel button svg {
-    margin-right: clamp(5px, 1vw, 2vh); 
-    width: 2vw;
-    max-width: 5vh;
+.profile-button svg {
+    margin-right: 0.5em;
+    width: 1em;
 }
 
 .right-panel {
-    /* flex: 1; */
-    margin-left: clamp(10px, 2vw, 5vh);
-    padding: clamp(10px, 3vw, 7vh);
+    margin-left: 1em;
+    padding: 1.3em;
     background-color: white;
-    width: 45vw;
-    max-width: 112vh;
-    height: 45vw;
-    max-height: 85vh;
-}
-
-.profile-container {
-    width: 100%;
-    /* max-width: 450px; */
-    /* font-family: Arial, sans-serif; */
-    margin: 0 auto;
-    /* text-align: left; */
+    border-radius: 0.3em;
+    width: 25em;
+    height: 22em;
 }
   
 .profile-label {
     text-align: center;
-    /* margin-bottom: 20px; */
-    font-size: clamp(16px, 3vw, 7vh);
+    font-size: 1.6em;
 }
   
-/*.profile-table {
-    width: 100%;
-    border-collapse: separate;
-}*/
+.profile-table {
+    font-size: 1.1em;
+}
   
 .profile-table td {
-    /* padding: 20px; */
-    /* border-bottom: 1px solid #ddd; */
-    font-size: clamp(10px, 30px, 5vh);
+    padding: 0.5em;
 }
 
-.profile-table .edit_button {
-    font-size: 30px;
-    text-align: center;
-    padding-left: 20px;
-    margin: 0px;
+.profile-table .button-group {
+    padding: 0;
+    margin-top: 1em;
+    gap: 0;
+}
+.edit_button {
+    background-color: #f0f0f0;
+    border: none;
     cursor: pointer;
+    font-size: 0.7em;
+    font-family: Sancreek, Verdana, Geneva, Tahoma, sans-serif;
+    width: 4em;
+    height: 2.5em;
+    border-radius: 0.2em;
+    margin-left: 1em;
+    margin-right: 1em;
 }
 
 .profile-flex-container input {
-    font-size: 30px;
-    padding: 5px;
-    width: 150px;
+    font-size: 1em;
+    padding: 0.1em;
+    width: 10em;
     text-align: center;
 }

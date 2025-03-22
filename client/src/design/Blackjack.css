@@ -1,11 +1,16 @@
+
+.blackjack-card {
+  animation: fadeIn 1s ease-in-out;
+}
+
 .blackjack-container {
   margin-top: 100px;
   height: 100%; 
   width: 100%;
   color: white;
   text-align: center;
-  font-size: 1vw;
-  animation: fadeIn 1s ease-in-out;
+  font-size: clamp(5px, 1.3vw, 2vh);
+  /* animation: fadeIn 1s ease-in-out; */
   }
 
 .blackjack-container h1 {
@@ -25,8 +30,8 @@
 
 .action-buttons {
   position: fixed;
-  top:clamp(270px, 20vw, 600px);
-  right: 10vw; 
+  top:clamp(100px + 20em, 20em, 600px);
+  right: 10em; 
   display: flex;
   flex-direction: column;
   gap: 1em; 
@@ -115,7 +120,7 @@
 
 .other-players-container{
   position: fixed;
-  top: 200px;
+  top: clamp(70px + 1em, 1em, 600px);
   left: 2vw;
   padding: 1em;
 }
