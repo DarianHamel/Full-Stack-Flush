@@ -126,7 +126,7 @@ class PokerGame {
             handType = "Two Pair";
             multiplier = 3;
             const pairRanks = Object.keys(rankCounts).filter((rank) => rankCounts[rank] === 2);
-            contributingCards = hand.filter((card) => pairRanks.includes(card.rank.toString()));
+            contributingCards = hand.filter((card) => pairRanks.includes(rankMap[card.rank].toString()));
         } else if (ranks.includes(2)) {
             handType = "Pair";
             multiplier = 2;
@@ -149,6 +149,8 @@ class PokerGame {
         const handScore = chipValue * multiplier;
         this.currentScore += handScore;
         this.handsRemaining--;
+
+        console.log(handScore);
 
         return `${handType} (Score: ${handScore})`;
     }
