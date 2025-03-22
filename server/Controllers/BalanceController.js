@@ -90,6 +90,8 @@ module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
 
     user.balance = newBalance;
     await user.save();
+    console.log(newBalance);
+    console.log(user.balance);
 
     res.status(200).json({ balance: user.balance, success: true });
   } catch (error) {
