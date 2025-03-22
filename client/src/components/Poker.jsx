@@ -288,11 +288,12 @@ const Poker = ({ username }) => {
 
             const gameResult = finalScore >= targetScore;
 
-            let multiplier = 1;
-            if (difficulty === "medium") { multiplier = 2;
-            } else if (difficulty === "hard") { multiplier = 3; }
+            let multiplier = 2;
+            if (difficulty === "medium") { multiplier = 3;
+            } else if (difficulty === "hard") { multiplier = 4; }
 
             const winnings = gameResult ? betAmount * multiplier : 0;
+            console.log(winnings);
 
             if (gameResult) {
               const balanceResponse = await fetch("http://localhost:5050/update-balance-no-password", {
@@ -306,6 +307,7 @@ const Poker = ({ username }) => {
                 }),
               });
               const balanceData = await balanceResponse.json();
+              console.log(balanceData);
 
               if (!balanceData.success) {
                 alert(balanceData.message);
@@ -460,9 +462,9 @@ const Poker = ({ username }) => {
                     setDifficulty(e.target.value);
                   }}
                 >
-                  <option value="easy">Easy - 1x Multiplier</option>
-                  <option value="medium">Medium - 2x Multiplier</option>
-                  <option value="hard">Hard - 3x Multiplier</option>
+                  <option value="easy">Easy - 2x Multiplier</option>
+                  <option value="medium">Medium - 3x Multiplier</option>
+                  <option value="hard">Hard - 4x Multiplier</option>
                 </select>
               </div>
               <div className="betting-selection">
