@@ -1,29 +1,28 @@
 .history-container {
     width: 90%;
-    max-width: 700px;
-    margin: 20px auto;
+    margin: 1em auto;
     box-sizing: border-box;
   }
   
   .title {
-    font-size: 50px;
+    font-size: 1.5em;
     font-weight: bold;
-    margin-bottom: 30px;
+    margin-bottom: 0.4em;
     text-align: center;
   }
   
   .history-list {
-    max-height: 550px;
+    max-height: 16em;
     overflow-y: auto;
     border: 1px solid #ccc;
     background-color: #f9f9f9;
-    border-radius: 10px;
+    border-radius: 0.3em;
   }
   
   .history-item {
     display: flex;
     justify-content: space-between;
-    padding: 20px;
+    padding: 0.5em;
     border-bottom: 1px solid #ddd;
   }
   
@@ -37,46 +36,27 @@
   }
   
   .game-name {
-    font-weight: bold;
-    font-size: 25px;
+    font-size: 0.8em;
+    margin: 0;
+    padding-bottom: 0.4em;
   }
   
   .date {
-    font-size: 18px;
+    font-size: 0.5em;
     color: #666;
+    margin: 0;
   }
   
   .transaction-number {
-    font-size: 20px;
+    font-size: 1em;
     color: #444;
+    margin: 0;
+    padding-right: 1em;
   }
   
   .no-history {
     text-align: center;
     color: #888;
-    font-size: 25px;
-  }
-
-  @media (max-width: 1500px) {
-    .title {
-      font-size: 30px;
-    }
-  
-    .game-name {
-      font-size: 18px;
-    }
-  
-    .date,
-    .transaction-number {
-      font-size: 14px;
-    }
-  
-    .history-item {
-      padding: 10px;
-    }
-
-    .history-list {
-      height: 250px;
-    }
+    font-size: 1em;
   }
   
