@@ -15,6 +15,7 @@ const tutorialRoutes = require("./routes/TutorialRoute.js");
 const pokerRoute = require("./routes/PokerRoute.js");
 const betRoutes = require("./routes/BetRoute.js");
 const historyRoutes = require("./routes/HistoryRoute");
+const userTutorialRoute = require("./routes/UserTutorialRoute");
 
 const { ATLAS_URI , PORT} = process.env;
 const app = express();
@@ -61,6 +62,7 @@ app.use("/", tutorialRoutes);
 app.use("/", betRoutes);
 app.use("/", pokerRoute);
 app.use("/", historyRoutes)
+app.use("/", userTutorialRoute);
 
 // Export the app for testing
 module.exports = app;

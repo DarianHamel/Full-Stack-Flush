@@ -104,7 +104,7 @@ const Poker = ({ username }) => {
       amount: betAmount,
     });
 
-    const betResponse = await fetch("http://localhost:5050/bet", {
+    const betResponse = await fetch("http://localhost:5050/Bet", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -159,6 +159,20 @@ const Poker = ({ username }) => {
       console.error("Error updating money spent on the backend:", error);
     }
 
+    const game = "Poker";
+    const transaction = await fetch("http://localhost:5050/handleTransaction", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username, // Pass the logged-in user's username
+        transaction: betAmount * -1, // Deduct the bet amount
+        game,
+      }),
+    });
+    const transactionResp = await transaction.json();
+    console.log("Transaction Response:", transactionResp); // Debugging
   };
 
 
@@ -288,11 +302,12 @@ const Poker = ({ username }) => {
 
             const gameResult = finalScore >= targetScore;
 
-            let multiplier = 1;
-            if (difficulty === "medium") { multiplier = 2;
-            } else if (difficulty === "hard") { multiplier = 3; }
+            let multiplier = 2;
+            if (difficulty === "medium") { multiplier = 3;
+            } else if (difficulty === "hard") { multiplier = 4; }
 
             const winnings = gameResult ? betAmount * multiplier : 0;
+            console.log(winnings);
 
             if (gameResult) {
               const balanceResponse = await fetch("http://localhost:5050/update-balance-no-password", {
@@ -306,6 +321,7 @@ const Poker = ({ username }) => {
                 }),
               });
               const balanceData = await balanceResponse.json();
+              console.log(balanceData);
 
               if (!balanceData.success) {
                 alert(balanceData.message);
@@ -460,9 +476,9 @@ const Poker = ({ username }) => {
                     setDifficulty(e.target.value);
                   }}
                 >
-                  <option value="easy">Easy - 1x Multiplier</option>
-                  <option value="medium">Medium - 2x Multiplier</option>
-                  <option value="hard">Hard - 3x Multiplier</option>
+                  <option value="easy">Easy - 2x Multiplier</option>
+                  <option value="medium">Medium - 3x Multiplier</option>
+                  <option value="hard">Hard - 4x Multiplier</option>
                 </select>
               </div>
               <div className="betting-selection">
@@ -497,8 +513,10 @@ const Poker = ({ username }) => {
             <>
               <h1>Your Hand</h1>
               <div className="hand">{renderHand(playerHand)}</div>
-              <h2>Current Score: {currentScore}</h2>
-              <h2>Target Score: {targetScore}</h2>
+              <div className="poker-score-container">
+                <h2>Current Score: {currentScore}</h2>
+                <h2>Target Score: {targetScore}</h2>
+              </div>
               <p>Hands Remaining: {handsRemaining}</p>
               <p>Discards Remaining: {discardsRemaining}</p>
             </>
