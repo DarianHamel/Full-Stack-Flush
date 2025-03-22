@@ -1,6 +1,6 @@
 .blackjack-card-container {
-  width: 7vw;
-  height: 10vw;
+  width: 7em;
+  height: 10em;
   perspective: 1000px;
   animation: slide-in 0.5s forwards ease-in-out;
 }

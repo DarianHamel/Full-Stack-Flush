@@ -447,104 +447,107 @@ export default function Blackjack({username}) {
 
   return (
     <AuthRedirect username={username}>
-    <div className="Progress-Bars">
-      <ProgressBar label="Time Played" label2="Minutes:" value={Math.floor(timePlayed/60)} max={Math.floor(timeLimit/60) || 1} />
-      <ProgressBar disabled={fakeMoney} label="Money Spent" label2="$" value={moneySpent} max={moneyLimit || 1} />
-    </div>
+    
     <div className="blackjack-container">
-      {!gameState.inGame &&(
-        <h1>♠️ Blackjack ♥️</h1>
-      )}
-      <div className="bet-container">
-        <div className="balance-display">
-            Current Balance: ${gameState.balance}
-        </div>
-        <label htmlFor="betAmount">Bet Amount:</label>
-        <input disabled={gameState.playing && !gameState.gameOver}
-          type="number"
-          id="betAmount"
-          value={betAmount}
-          onChange={(bet) => setBetAmount(Number(bet.target.value))}
-          min="1"
-          max={Math.min(gameState.balance, moneyLimit-moneySpent) || 1}
-        />
-    </div>
-      {!gameState.inGame &&(
-        <div className="button-container">
-        <button className="start-button" onClick={() => handleClick(false)}>Start Game</button>
-        <button className="start-button-free" onClick={() => handleClick(true)} >Start Free Game</button>
-        </div>
-      )}
-      {(gameState.inGame && !gameState.playing && (
-        <p>Waiting for other players...</p>
-      ))}
-      {(gameState.playing) && (
-        
-        <div>
-          <h2>Dealer hand</h2>
-          <div className="card-row">
-            {gameState.dealerHand.map((card, index) => (
-              <Card key={index} rank={card.rank} suit={card.suit} delay={index * 0.3} />
-            ))}
+      <div className="Progress-Bars">
+        <ProgressBar label="Time Played" label2="Minutes:" value={Math.floor(timePlayed/60)} max={Math.floor(timeLimit/60) || 1} />
+        <ProgressBar disabled={fakeMoney} label="Money Spent" label2="$" value={moneySpent} max={moneyLimit || 1} />
+      </div>
+      <div className="blackjack-card">
+        {!gameState.inGame &&(
+          <h1>♠️ Blackjack ♥️</h1>
+        )}
+        <div className="bet-container">
+          <div className="balance-display">
+              Current Balance: ${gameState.balance}
           </div>
-
-          <br/>
-          {gameState.bust && (
-            <div>
-              <br />
-              <p>You bust!</p>
-            </div>
-          )}
-          <h2>Your hand</h2>
-          <div className="card-row">
-              {gameState.hand.map((card, index) => (
+          <label htmlFor="betAmount">Bet Amount:</label>
+          <input disabled={gameState.playing && !gameState.gameOver}
+            type="number"
+            id="betAmount"
+            value={betAmount}
+            onChange={(bet) => setBetAmount(Number(bet.target.value))}
+            min="1"
+            max={Math.min(gameState.balance, moneyLimit-moneySpent) || 1}
+          />
+        </div>
+        {!gameState.inGame &&(
+          <div className="button-container">
+          <button className="start-button" onClick={() => handleClick(false)}>Start Game</button>
+          <button className="start-button-free" onClick={() => handleClick(true)} >Start Free Game</button>
+          </div>
+        )}
+        {(gameState.inGame && !gameState.playing && (
+          <p>Waiting for other players...</p>
+        ))}
+        {(gameState.playing) && (
+          
+          <div>
+            <h2>Dealer hand</h2>
+            <div className="card-row">
+              {gameState.dealerHand.map((card, index) => (
                 <Card key={index} rank={card.rank} suit={card.suit} delay={index * 0.3} />
               ))}
             </div>
-        
-          {gameState.playerTurn && (
-            <div className= "action-buttons">
-              <br />
-              <button onClick={() => send_message("HIT")}>Hit</button>
-              <br />
-              <button onClick={() => send_message("STAND")}>Stand</button>
-            </div>
-          )}
 
-          <br />
-
-          {gameState.otherPlayers.length > 0 && (
-            <div className="other-players-container">
-              <br />
-              <h2>Other player's hands</h2>
-              {gameState.otherPlayers.map((otherPlayer, index) => (
-                <div key={index} className="card-row">
-                {otherPlayer.hand.map((card, j) => (
-                  <Card key={j} rank={card.rank} suit={card.suit} delay={j * 0.3} />
+            <br/>
+            {gameState.bust && (
+              <div>
+                <br />
+                <p>You bust!</p>
+              </div>
+            )}
+            <h2>Your hand</h2>
+            <div className="card-row">
+                {gameState.hand.map((card, index) => (
+                  <Card key={index} rank={card.rank} suit={card.suit} delay={index * 0.3} />
                 ))}
               </div>
-              ))}
-            </div>
-          )}
           
-          {gameState.gameOver && (
-            <div>
-              <div className="game-outcome">
-              <br />
-              <p>Game Over!</p>
-              <p>Game result: {gameState.result}</p>
-              <br />
+            {gameState.playerTurn && (
+              <div className= "action-buttons">
+                <br />
+                <button onClick={() => send_message("HIT")}>Hit</button>
+                <br />
+                <button onClick={() => send_message("STAND")}>Stand</button>
               </div>
-              <div className="action-buttons">
-                <br/>
-                <button onClick={play_again} disabled={limitHit}>Play Again</button>
-                <br/>
-                <button onClick={quit}>Quit</button>
+            )}
+
+            <br />
+
+            {gameState.otherPlayers.length > 0 && (
+              <div className="other-players-container">
+                <br />
+                <h2>Other player's hands</h2>
+                {gameState.otherPlayers.map((otherPlayer, index) => (
+                  <div key={index} className="card-row">
+                  {otherPlayer.hand.map((card, j) => (
+                    <Card key={j} rank={card.rank} suit={card.suit} delay={j * 0.3} />
+                  ))}
+                </div>
+                ))}
               </div>
-            </div>
-          )}
-        </div>
-      )}
+            )}
+            
+            {gameState.gameOver && (
+              <div>
+                <div className="game-outcome">
+                <br />
+                <p>Game Over!</p>
+                <p>Game result: {gameState.result}</p>
+                <br />
+                </div>
+                <div className="action-buttons">
+                  <br/>
+                  <button onClick={play_again} disabled={limitHit}>Play Again</button>
+                  <br/>
+                  <button onClick={quit}>Quit</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
     </AuthRedirect>
   );

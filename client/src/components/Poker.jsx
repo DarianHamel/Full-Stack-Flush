@@ -497,8 +497,10 @@ const Poker = ({ username }) => {
             <>
               <h1>Your Hand</h1>
               <div className="hand">{renderHand(playerHand)}</div>
-              <h2>Current Score: {currentScore}</h2>
-              <h2>Target Score: {targetScore}</h2>
+              <div className="poker-score-container">
+                <h2>Current Score: {currentScore}</h2>
+                <h2>Target Score: {targetScore}</h2>
+              </div>
               <p>Hands Remaining: {handsRemaining}</p>
               <p>Discards Remaining: {discardsRemaining}</p>
             </>

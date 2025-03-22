@@ -6,16 +6,18 @@
     align-items: center;
     color: #fff;
     text-align: center;
-    font-size: 1vw;
+    font-size: clamp(5px, 1vw, 2vh);
+    /* background-color: #fff; */
   }
   
   .poker-card {
     text-align: center;
     color: #fff;
-    max-width: 65vw;
+    /* max-width: 65vw; */
     padding: 1em;
     border-radius: 1em;
     animation: fadeIn 1s ease-in-out;
+    width: 62em;
   }
   
   .poker-card h1 {
@@ -24,7 +26,8 @@
   }
 
   .poker-card h2 {
-    font-size: 2em;
+    font-size: 2.2em;
+    margin: 0;
   }
   
   .poker-card p {
@@ -40,6 +43,18 @@
   .difficulty-selection,
   .betting-selection {
     font-size: 2em;
+  }
+
+  .poker-score-container{
+    position: fixed;
+    top: 120px;
+    left:5%;
+    width: 17em;
+    z-index: 900;
+    color: white;
+    gap: 1em;
+    display: flex;
+    flex-direction: column; 
   }
   
   .start-game,
@@ -76,10 +91,10 @@
     gap: 1em;
   }
   
-  .hand {
-    width: 60vw;
+  /*.hand {
+    width: 60em;
     height: 10vw;
-  }
+  }*/
 
   .poker-container .play-hand,
   .poker-container .discard,
