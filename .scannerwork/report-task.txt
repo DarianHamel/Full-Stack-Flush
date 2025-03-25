@@ -1,0 +1,7 @@
+organization=fullstackflush
+projectKey=DarianHamel_Full-Stack-Flush
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.61049
+dashboardUrl=https://sonarcloud.io/dashboard?id=DarianHamel_Full-Stack-Flush
+ceTaskId=AZXPgiaVWOtXqp3QLYBP
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZXPgiaVWOtXqp3QLYBP
