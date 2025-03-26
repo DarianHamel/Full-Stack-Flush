@@ -11,6 +11,7 @@ const MyProfile = () => {
   const [moneyLimit, setMoneyLimit] = useState(0);
   const [isEditingTime, setIsEditingTime] = useState(false);
   const [isEditingMoney, setIsEditingMoney] = useState(false);
+  const [error, setError] = useState("");
 
   /*
   Gets the user info on page launch
@@ -27,10 +28,11 @@ const MyProfile = () => {
         );
         setUsername(data.username);
         setPassword("********");
-        setTimeLimit(data.timeLimit/60);
+        setTimeLimit(data.timeLimit / 60);
         setMoneyLimit(data.moneyLimit);
       } catch (error) {
         console.error("Error fetching user profile:", error);
+        setError("Error fetching user profile.");
       }
     };
 
@@ -44,20 +46,21 @@ const MyProfile = () => {
   */
   const handleSaveTimeLimit = async () => {
     try {
-      var newLimit = timeLimit*60;
+      var newLimit = timeLimit * 60;
       await axios.post(
         "http://localhost:5050/SetTimeLimit",
-        { username: cookies.username, newLimit},
+        { username: cookies.username, newLimit },
         { withCredentials: true }
       );
       setIsEditingTime(false);
     } catch (error) {
       console.error("Error setting time limit:", error);
+      setError("Error setting time limit.");
     }
   };
 
   /*
-  Allows the user to set their time limit
+  Allows the user to set their money limit
   Calls route /SetMoneyLimit
   Input: username and new money limit (moneyLimit)
   */
@@ -71,12 +74,14 @@ const MyProfile = () => {
       setIsEditingMoney(false);
     } catch (error) {
       console.error("Error setting money limit:", error);
+      setError("Error setting money limit.");
     }
   };
 
   return (
     <div className="profile-container">
       <h1 className="profile-label">User Profile</h1>
+      {error && <p className="error">{error}</p>}
       <table className="profile-table">
         <tbody>
           <tr>
