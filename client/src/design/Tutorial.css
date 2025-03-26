@@ -2,7 +2,7 @@
   .tutorial-details-container { /* Outer div */
     padding: 1.5em;
     width: 60em;
-    height: 35em;
+    padding-bottom: 5em;
     text-align: center;
     background-color: rgba(255, 255, 255, 0.85);
     color: #000;
@@ -37,10 +37,6 @@
   .tutorial-link:hover {
     background-color: #e5e7eb;
     transform: scale(1.05);
-  }
-  
-  .tutorial-details-container {
-    height: 40em;
   }
 
   .tutorial-details-heading {
