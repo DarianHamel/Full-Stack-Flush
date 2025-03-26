@@ -28,6 +28,7 @@ const Poker = ({ username }) => {
   const [scoreVisible, setScoreVisible] = useState(false);
   const [handScore, setHandScore] = useState("");
   const [winnings, setWinnings] = useState(0); //Used on the game over screen to display winning or losses
+  const [startTime, setStartTime] = useState(-1);
   const navigate = useNavigate();
   console.log(username);
   const HAND_SCORE_TIMER = 2000; //How long the scored hand is displayed on-screen
@@ -139,6 +140,8 @@ const Poker = ({ username }) => {
     setSelectedCards([]);
     setCurrentScore(0);
     setTargetScore(data.targetScore);
+    setStartTime(Date.now());
+    console.log("Set startTime: ", startTime);
 
      // Update money spent on the backend
      try {
@@ -277,7 +280,6 @@ const Poker = ({ username }) => {
       return;
     }
 
-    const startTime = Date.now();
 
     if (selectedCards.length === 0) {
         alert("No cards selected to play!");
@@ -386,12 +388,15 @@ const Poker = ({ username }) => {
         setSelectedCards([]);
 
         const endTime = Date.now();
+        console.log("Starttime: ", startTime);
+        console.log("EndTime: ", endTime);
         const timeSpent = Math.floor((endTime - startTime) / 1000); // Time in seconds
         setTimePlayed((prevTimePlayed) => prevTimePlayed + timeSpent);
-        console.log("Time played:" + timePlayed);
+        setStartTime(Date.now());
+        console.log("Time spent:" + timeSpent);
         await updateTimeSpent(username, timeSpent);
 
-        if (timePlayed + timeSpent >= timeLimit) {
+        if (timePlayed >= timeLimit) {
           handleLockOut();
         }
     } catch (error) {
