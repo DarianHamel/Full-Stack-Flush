@@ -298,6 +298,15 @@ const Poker = ({ username }) => {
             }),
         });
 
+        const endTime = Date.now();
+        console.log("Starttime: ", startTime);
+        console.log("EndTime: ", endTime);
+        const timeSpent = Math.floor((endTime - startTime) / 1000); // Time in seconds
+        setTimePlayed((prevTimePlayed) => prevTimePlayed + timeSpent);
+        setStartTime(Date.now());
+        console.log("Time spent:" + timeSpent);
+        await updateTimeSpent(username, timeSpent);
+
         const data = await response.json();
 
         if (data.handsRemaining === 0) {
@@ -387,14 +396,6 @@ const Poker = ({ username }) => {
         setPlayerHand([...remainingCards, ...drawData.newCards]);
         setSelectedCards([]);
 
-        const endTime = Date.now();
-        console.log("Starttime: ", startTime);
-        console.log("EndTime: ", endTime);
-        const timeSpent = Math.floor((endTime - startTime) / 1000); // Time in seconds
-        setTimePlayed((prevTimePlayed) => prevTimePlayed + timeSpent);
-        setStartTime(Date.now());
-        console.log("Time spent:" + timeSpent);
-        await updateTimeSpent(username, timeSpent);
 
         if (timePlayed >= timeLimit) {
           handleLockOut();
