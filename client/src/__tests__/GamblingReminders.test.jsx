@@ -10,7 +10,7 @@ jest.mock("react-toastify", () => ({
   }
 }));
 
-describe("GamblingReminders Component", () => {
+describe("GamblingReminders Component - Unit tests", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.clearAllMocks();

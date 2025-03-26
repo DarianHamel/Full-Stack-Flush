@@ -5,7 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import AboutUs from "../components/AboutUs";
 
 
-describe("AboutUs Component", () => {
+describe("AboutUs Component - Unit tests", () => {
   test("renders the AboutUs component", () => {
     render(
     <Router>

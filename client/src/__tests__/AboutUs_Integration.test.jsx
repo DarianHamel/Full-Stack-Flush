@@ -4,7 +4,7 @@ import { MemoryRouter as Router } from "react-router-dom";
 import "@testing-library/jest-dom";
 import AboutUs from "../components/AboutUs";
 
-describe("AboutUs Integration Tests", () => {
+describe("AboutUs - Integration Tests", () => {
   test("renders AboutUs component within the app", () => {
     render(
       <Router>
