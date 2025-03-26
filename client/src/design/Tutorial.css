@@ -1,68 +1,34 @@
-  .tutorials-container { /* Outer div */
-    padding: 1.5rem; /* Equivalent to p-6 */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center content */
-    margin-top: 5rem; /* Prevents content from overlapping with fixed heading */
-    background-color: #1a1a1a;
-    border-radius: 8px;
+  .tutorials-container,
+  .tutorial-details-container { /* Outer div */
+    padding: 1.5em;
+    width: 60em;
+    height: 35em;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #000;
+    border-radius: 0.5em;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 1s ease-in-out;
+    font-size: clamp(5px, 1vw, 2vh);
   }
   
   /* Game Tutorials Heading */
   .tutorials-heading {
-    font-size: 2rem;
-    font-weight: 700;
-    text-align: center;
-    color: #ffffff;
-    width: 100%;
-    padding: 0.5rem 0;
-    margin-bottom: 2rem; /* Add spacing below the title */
-    position: relative; /* Change from fixed to relative */
-    z-index: 10;
+    font-size: 3em;
   }
   
-  /* Add Tutorial Button - Now styled like tutorial buttons */
-  .add-tutorial-button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 5rem; /* Ensure it appears below the fixed heading */
-  }
-  
-  .add-tutorial-button {
-    background-color: #f3f4f6; /* Matching tutorial buttons */
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    text-align: center;
-    font-size: 1.125rem;
-    font-weight: 600;
-    transition: background-color 0.15s ease-in-out;
-    cursor: pointer;
-    border: none;
-    width: 16rem; /* Matching tutorial buttons */
-    text-decoration: none;
-    color: black; /* Ensure text is visible */
-  }
-  
-  .add-tutorial-button:hover {
-    background-color: #e5e7eb; /* Matching hover effect */
-  }
-  
-  /* Tutorial Links */
   .tutorials-list {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 2.5em;
   }
   
   .tutorial-link {
     background-color: #f3f4f6;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    text-align: center;
-    width: 16rem;
-    font-size: 1.125rem;
-    font-weight: 600;
+    padding: 0.5em 0.7em;
+    border-radius: 0.25em;
+    font-size: 2em;
     transition: background-color 0.15s ease-in-out;
     text-decoration: none;
     color: inherit;
@@ -74,26 +40,16 @@
   }
   
   .tutorial-details-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #1a1a1a; /* Dark background */
-    color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
+    height: 40em;
   }
-  
+
   .tutorial-details-heading {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-bottom: 15px;
+    font-size: 2.5em;
   }
   
   .tutorial-details-content {
-    font-size: 1.2rem;
+    font-size: 1.5em;
     line-height: 1.6;
-    color: #cccccc; /* Light gray text */
   }
   
   .tutorial-details-actions {
@@ -103,15 +59,12 @@
     gap: 15px;
   }
   
-  .tutorial-watch-video, .tutorial-delete-button {
-    padding: 10px 20px;
-    border-radius: 5px;
+  .tutorial-watch-video {
+    padding: 1em 1em;
+    border-radius: 0.3em;
     cursor: pointer;
     text-decoration: none;
-    font-size: 1rem;
-  }
-  
-  .tutorial-watch-video {
+    font-size: 1.5em;
     background-color: #007bff;
     color: white;
     border: none;
@@ -123,5 +76,17 @@
   
   .viewed-indicator {
     color: green;
-    margin-left: 5px;
+    /* margin-left: 1em; */
+    font-size: 2em;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(200px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
