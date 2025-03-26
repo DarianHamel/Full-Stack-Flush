@@ -160,4 +160,24 @@ describe('Leaderboard Integration Tests', () => {
       expect(screen.getByText('100')).toBeInTheDocument();
     });
   });
+
+  test('displays formatted numbers in leaderboard', async () => {
+    const testData = [{
+      _id: '1',
+      username: 'testuser',
+      wins: 10,
+      losses: 2,
+      winLossRatio: 5,
+      moneySpent: 1500000, // 1.5M
+      timeSpent: 6000 // 100 hours
+    }];
+    
+    axios.get.mockResolvedValue({ data: testData });
+    render(<Leaderboard />);
+    
+    await waitFor(() => {
+      expect(screen.getByText('1.5M')).toBeInTheDocument();
+      expect(screen.getByText('100')).toBeInTheDocument();
+    });
+  });
 });
