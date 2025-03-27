@@ -358,7 +358,7 @@ describe("Update Money Spent API Tests", () => {
 
   });
 
-  // Username does not exist in the database
+  // 20 -- Username does not exist in the database
 
   test("UpdateMoneySpent returns 400 if username is missing.", async () => {
     const req = { body: { username: "mockUser", moneySpent: 60 } };
@@ -372,7 +372,7 @@ describe("Update Money Spent API Tests", () => {
 
   });
 
-  // Simulate a server/database error and verify the response 
+  // 21 -- Simulate a server/database error and verify the response 
 
   test("UpdateMoneySpent returns server error if User.save() fails", async () => {
     const mockUser = new User({ username: "mockUser", password: await bcrypt.hash("gr12-fff", 12) });
