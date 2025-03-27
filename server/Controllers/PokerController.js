@@ -1,6 +1,6 @@
 const PokerGame = require('../Models/PokerGame');
 
-let activeGames = {};
+global.activeGames = {};
 
 /*
 Start the poker game
@@ -29,53 +29,46 @@ module.exports.StartPoker = (req, res) => {
 Draw the number of cards required for the user
 */
 module.exports.DrawCards = (req, res) => {
-    try {
-        const { gameID, count } = req.query;
-        console.log("DrawCards Request:", { gameID, count });
+    const { gameID, count } = req.query;
+    console.log("DrawCards Request:", { gameID, count });
 
-        const game = global.activeGames[gameID];
-        if (!game) {
-            return res.status(404).json({ error: "Game not found" });
-        }
-
-        const cardCount = parseInt(count, 10);
-        if (isNaN(cardCount) || cardCount <= 0) {
-            return res.status(400).json({ error: "Invalid count parameter" });
-        }
-
-        const newCards = game.deck.dealCard(cardCount);
-        res.json({ newCards });
-    } catch (error) {
-        console.error("Error in DrawCards:", error);
-        res.status(500).json({ error: "Internal server error" });
+    const game = global.activeGames[gameID];
+    if (!game) {
+        return res.status(404).json({ error: "Game not found" });
     }
+
+    const cardCount = parseInt(count, 10);
+    if (isNaN(cardCount) || cardCount <= 0) {
+        return res.status(400).json({ error: "Invalid count parameter" });
+    }
+
+    const newCards = game.deck.dealCard(cardCount);
+    res.json({ newCards });
 };
 
 /*
 Calculate the score of the hand played
 */
 module.exports.ScoreHand = (req, res) => {
-    try {
-        const { gameID, selectedCards } = req.body;
+    const { gameID, selectedCards } = req.body;
 
-        const game = global.activeGames[gameID];
-        if (!game) {
-            return res.status(404).json({ error: "Game not found" });
-        }
+    console.log("ScoreHand Request:", { gameID, selectedCards });
+    console.log("Active Games:", global.activeGames);
 
-        const score = game.scoreHand(selectedCards);
-
-        res.json({
-            score,
-            currentScore: game.currentScore,
-            handsRemaining: game.handsRemaining,
-            discardsRemaining: game.discardsRemaining,
-            gameOver: game.gameOver,
-        });
-    } catch (error) {
-        console.error("Error in ScoreHand:", error);
-        res.status(500).json({ error: "Internal server error" });
+    const game = global.activeGames[gameID];
+    if (!game) {
+        return res.status(404).json({ error: "Game not found" });
     }
+
+    const score = game.scoreHand(selectedCards);
+
+    res.json({
+        score,
+        currentScore: game.currentScore,
+        handsRemaining: game.handsRemaining,
+        discardsRemaining: game.discardsRemaining,
+        gameOver: game.gameOver,
+    });
 };
 
 /*
