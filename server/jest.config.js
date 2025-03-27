@@ -3,4 +3,7 @@ module.exports = {
         "^.+\\.jsx?$": "babel-jest"
     },
     testEnvironment: "node",
+    collectCoverage: true,
+    coverageReporters: ['text', 'html'],
+    coverageDirectory: 'coverage',
 }
