@@ -95,7 +95,7 @@ describe("MyProfile Component", () => {
     });
 
     // Mock API response for setting time limit
-    mock.onPost(/SetTimeLimit/).reply(200);
+    mock.onPost(/setTimeLimit/).reply(200);
 
     render(
       <CookiesProvider cookies={cookies}>
@@ -135,7 +135,7 @@ describe("MyProfile Component", () => {
     });
 
     // Mock API response for setting time limit failure
-    mock.onPost(/SetTimeLimit/).reply(500);
+    mock.onPost(/setTimeLimit/).reply(500);
 
     render(
       <CookiesProvider cookies={cookies}>
@@ -175,7 +175,7 @@ describe("MyProfile Component", () => {
     });
 
     // Mock API response for setting money limit
-    mock.onPost(/SetMoneyLimit/).reply(200);
+    mock.onPost(/setMoneyLimit/).reply(200);
 
     render(
       <CookiesProvider cookies={cookies}>
@@ -215,7 +215,7 @@ describe("MyProfile Component", () => {
     });
 
     // Mock API response for setting money limit failure
-    mock.onPost(/SetMoneyLimit/).reply(500);
+    mock.onPost(/setMoneyLimit/).reply(500);
 
     render(
       <CookiesProvider cookies={cookies}>
