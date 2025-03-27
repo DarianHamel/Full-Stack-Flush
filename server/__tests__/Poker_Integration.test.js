@@ -1,20 +1,17 @@
 const request = require("supertest");
 const app = require("../server");
 
-let gameID;
-
-beforeAll(async () => {
-    // Start a new poker game
-    const response = await request(app)
-        .post("/poker/start")
-        .send({ difficulty: "easy" });  // Adjust difficulty as needed
-
-    gameID = response.body.gameID;   // Store the gameID for use in tests
-    global.gameID = gameID;           // Assign it to global.gameID for your tests
-});
-
-
 describe("Poker API Integration Tests", () => {
+
+    let gameID;
+
+    beforeAll(async () => {
+        const response = await request(app)
+            .post("/poker/start")
+            .send({ difficulty: "easy" });  
+    
+        gameID = response.body.gameID;          
+    });
 
     test("Start a new poker game", async () => {
         const response = await request(app)
@@ -31,24 +28,54 @@ describe("Poker API Integration Tests", () => {
         global.gameID = response.body.gameID;
     });
 
-    test("Draw cards from the deck", async () => {   
+    test("Draw cards from the deck", async () => {
+        global.activeGames = {
+            testGameID: {
+                deck: {
+                    dealCard: jest.fn().mockReturnValue([
+                        { rank: "Ace", suit: "Spades" },
+                        { rank: "King", suit: "Hearts" },
+                    ]),
+                },
+            },
+        };
+    
         const response = await request(app)
             .get("/poker/draw")
-            .query({ gameID: global.gameID, count: 2 });
-
+            .query({ gameID: "testGameID", count: "2" });
+    
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("newCards");
         expect(response.body.newCards.length).toBe(2);
     });
 
     test("Score a poker hand", async () => {
+        global.activeGames = {
+            testGameID: {
+                scoreHand: jest.fn().mockReturnValue(100),
+                currentScore: 100,
+                handsRemaining: 3,
+                discardsRemaining: 2,
+                gameOver: false,
+            },
+        };
+    
         const response = await request(app)
             .post("/poker/score")
-            .send({ gameID: global.gameID, selectedCards: [{ rank: "Ace", suit: "Spades" }] });
-
+            .send({
+                gameID: "testGameID",
+                selectedCards: [
+                    { rank: "Ace", suit: "Spades" },
+                    { rank: "King", suit: "Hearts" },
+                ],
+            });
+    
         expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty("score");
-        expect(response.body).toHaveProperty("currentScore");
+        expect(response.body).toHaveProperty("score", 100);
+        expect(response.body).toHaveProperty("currentScore", 100);
+        expect(response.body).toHaveProperty("handsRemaining", 3);
+        expect(response.body).toHaveProperty("discardsRemaining", 2);
+        expect(response.body).toHaveProperty("gameOver", false);
     });
 
     test("Sort a hand by rank", async () => {
