@@ -6,35 +6,30 @@ import Home from "../components/Home";
 import Blackjack from "../components/Blackjack";
 import Poker from "../components/Poker";
 import Leaderboard from "../components/Leaderboard";
-import Login from "../components/Login";
-import Signup from "../components/Signup";
-import { ToastContainer } from "react-toastify";
-import axios from "axios";
 import AboutUs from "../components/AboutUs";
-import Profile from "../components/Profile";
 import Resources from "../components/Resources";
 import TutorialPage from "../components/TutorialPage";
+import Profile from "../components/Profile";
 
 // Mock Axios
 jest.mock("axios");
 
 describe("Home Component - Integration Tests", () => {
   const mockUsername = "testUser";
+
   const renderWithRouter = (initialRoute = "/") => {
     return render(
-      <Router initialEntries = {[initialRoute]}>
+      <Router initialEntries={[initialRoute]}>
         <Routes>
-          <Route path = "/" element = {<Home />} />
-          <Route path = "/profile" element = {<Home />} />
-          <Route path = "/about-us" element = {<AboutUs />} />
-          <Route path = "/resources" element = {<Resources />} />
-          <Route path = "/tutorials" element = {<TutorialPage />} />
-          <Route path = "/blackjack" element = {<Blackjack />} />
-          <Route path = "/poker" element = {<Poker username={mockUsername} />} />
-          <Route path = "/leaderboard" element = {<Leaderboard />} />
-          <Route path = "/profile" element = {<Profile />} />
+          <Route path="/" element={<Home username={mockUsername} setUsername={jest.fn()} />} />
+          <Route path="/profile" element={<Profile username={mockUsername} />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/resources" element={<Resources />} />
+          <Route path="/tutorials" element={<TutorialPage username={mockUsername} />} />
+          <Route path="/blackjack" element={<Blackjack username={mockUsername} />} />
+          <Route path="/poker" element={<Poker username={mockUsername} />} />
+          <Route path="/leaderboard" element={<Leaderboard username={mockUsername} />} />
         </Routes>
-        <ToastContainer />
       </Router>
     );
   };
@@ -56,8 +51,8 @@ describe("Home Component - Integration Tests", () => {
     fireEvent.click(screen.getByText(/blackjack/i));
 
     await waitFor(() => {
-      expect(screen.getByRole('button'));
-    });      
+      expect(screen.getByText("♠️ Blackjack ♥️")).toBeInTheDocument();
+    });
   });
 
   test("navigates to About-Us when the link is clicked", async () => {
@@ -86,14 +81,14 @@ describe("Home Component - Integration Tests", () => {
     fireEvent.click(screen.getByText(/tutorials/i));
 
     await waitFor(() => {
-        expect(screen.getByText("Game Tutorials")).toBeInTheDocument();
+      expect(screen.getByText("Game Tutorials")).toBeInTheDocument();
     });
   });
 
   test("navigates to Poker when the link is clicked", async () => {
     renderWithRouter();
 
-    fireEvent.click(screen.getByText(/poker/i));
+    fireEvent.click(screen.getByText(/Poker/i));
 
     await waitFor(() => {
       expect(screen.getByText(/♠️ Poker Minigame ♥️/i)).toBeInTheDocument();
@@ -109,26 +104,4 @@ describe("Home Component - Integration Tests", () => {
       expect(screen.getByText(/Leaderboard/i)).toBeInTheDocument();
     });
   });
-
-  /*
-  test("fetches user data from API on mount", async () => {
-    axios.get.mockImplementation((url) => {
-        if (url === "http://localhost:5050/profile") {
-          return Promise.resolve({ data: { username: "testuser" } });
-        } else if (url === "http://localhost:5050/api/tutorials") {
-          return Promise.resolve({ data: [] }); // Mock response for tutorials
-        } else if (url === "http://localhost:5050/leaderboard?sortBy=wins&order=desc&filter=") {
-          return Promise.resolve({ data: [] }); // Mock response for leaderboard
-        }
-        return Promise.reject(new Error("Unexpected API call"));
-      });      
-  
-    renderWithRouter();
-  
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith("http://localhost:5050/profile");
-      expect(screen.getByText("@testuser")).toBeInTheDocument();
-    });
-  });
-  */
 });

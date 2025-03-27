@@ -10,4 +10,7 @@ export default {
     transformIgnorePatterns: [
       '/node_modules/',
     ],
+    collectCoverage: true,
+    coverageReporters: ['text', 'html'],
+    coverageDirectory: 'coverage',
   };

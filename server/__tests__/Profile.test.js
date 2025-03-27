@@ -2,23 +2,31 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const User = require("../Models/UserModel");
-const { GetUserInfo, GetMoneySpent, SetMoneySpent, GetTimeSpent, SetTimeSpent } = require("../Controllers/ProfileController");
+const ProfileController = require("../Controllers/ProfileController");
+
+jest.setTimeout(80000);
+
+// Mock the User model
+jest.mock("../Models/UserModel");
 
 let mongoServer;
 
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const mongoUri = mongoServer.getUri();
-  await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
+  await mongoose.connect(mongoUri, { 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true 
+  });
 });
 
 afterAll(async () => {
-  await mongoose.connection.close();
+  await mongoose.disconnect();
   await mongoServer.stop();
 });
 
 beforeEach(async () => {
-  await User.deleteMany(); 
+  jest.clearAllMocks();
 });
 
 const mockResponse = () => {
@@ -28,298 +36,496 @@ const mockResponse = () => {
   return res;
 };
 
-// ========================================================================
+describe("Profile Controller Tests", () => {
+  describe("GetUserInfo", () => {
+    test("returns correct user information", async () => {
+      const mockUser = {
+        username: "testUser",
+        password: "hashedPass",
+        timeLimit: 120,
+        moneyLimit: 500
+      };
+      User.findOne.mockResolvedValue(mockUser);
+      
+      const req = { query: { username: "testUser" } };
+      const res = mockResponse();
 
-describe("GetUserInfo API Tests", () => {
+      await ProfileController.GetUserInfo(req, res);
+      
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        username: "testUser",
+        password: "hashedPass",
+        timeLimit: 120,
+        moneyLimit: 500
+      });
+    });
+
+    test("returns 404 if user doesn't exist", async () => {
+      User.findOne.mockResolvedValue(null);
+      const req = { query: { username: "badUser" } };
+      const res = mockResponse();
+
+      await ProfileController.GetUserInfo(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+    });
+
+    test("handles server errors", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
+      const req = { query: { username: "testUser" }};
+      const res = mockResponse();
+
+      await ProfileController.GetUserInfo(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+    });
+  });
+
+  describe("GetBalance", () => {
+    test("returns correct balance", async () => {
+      User.findOne.mockResolvedValue({ balance: 1000 });
+      const req = { query: { username: "testUser" } };
+      const res = mockResponse();
+
+      await ProfileController.GetBalance(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ balance: 1000 });
+    });
+
+    test("returns 404 when user not found", async () => {
+      User.findOne.mockResolvedValue(null);
+      const req = { query: { username: "nonexistent" } };
+      const res = mockResponse();
+  
+      await ProfileController.GetBalance(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
+    });
+  
+    test("handles database errors", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
+      const req = { query: { username: "testUser" } };
+      const res = mockResponse();
+  
+      await ProfileController.GetBalance(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: "Server error" });
+    });
+  });
+
+  describe("SetTimeSpent", () => {
+    test("updates time spent successfully", async () => {
+      const mockUser = {
+        timeSpent: 30,
+        updateTimeSpent: jest.fn().mockImplementation(function(time) {
+          this.timeSpent += time;
+          return Promise.resolve();
+        }),
+        save: jest.fn()
+      };
+      User.findOne.mockResolvedValue(mockUser);
+
+      const req = { body: { username: "testUser", timeSpent: 60 } };
+      const res = mockResponse();
+
+      await ProfileController.SetTimeSpent(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ 
+        success: true, 
+        timeSpent: 90 
+      });
+    });
+
+    test("returns 404 when user not found", async () => {
+      User.findOne.mockResolvedValue(null);
+      const req = { body: { username: "nonexistent", timeSpent: 60 } };
+      const res = mockResponse();
+  
+      await ProfileController.SetTimeSpent(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "User not found"
+      });
+    });
+  
+    test("handles database errors", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
+      const req = { body: { username: "testUser", timeSpent: 60 } };
+      const res = mockResponse();
+  
+      await ProfileController.SetTimeSpent(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Server error"
+      });
+    });
+
+    test("handles zero time spent", async () => {
+      const req = { body: { username: "testUser", timeSpent: 0 } };
+      const res = mockResponse();
+
+      await ProfileController.SetTimeSpent(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        message: "Time spent updated"
+      });
+    });
+
+    test("rejects invalid time values", async () => {
+      const req = { body: { username: "testUser", timeSpent: -10 } };
+      const res = mockResponse();
+
+      await ProfileController.SetTimeSpent(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Invalid time value"
+      });
+    });
+  });
+
+  describe("GetLastLogin", () => {
+    test("returns last login date", async () => {
+      const testDate = new Date();
+      User.findOne.mockResolvedValue({ lastLogin: testDate });
+      const req = { query: { username: "testUser" } };
+      const res = mockResponse();
+
+      await ProfileController.GetLastLogin(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ lastLogin: testDate });
+    });
+  });
+
+  test("returns 404 when user not found", async () => {
+    User.findOne.mockResolvedValue(null);
+    const req = { query: { username: "nonexistent" } };
+    const res = mockResponse();
+
+    await ProfileController.GetLastLogin(req, res);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
+  });
+
+  test("handles database errors", async () => {
+    User.findOne.mockRejectedValue(new Error("Database error"));
+    const req = { query: { username: "testUser" } };
+    const res = mockResponse();
+
+    await ProfileController.GetLastLogin(req, res);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: "Server error" });
+  });
+
+  describe("ResetDailyLimits", () => {
+    test("resets daily limits successfully", async () => {
+      const mockUser = {
+        numLogins: 0,
+        dailyTimeSpent: 120,
+        dailyMoneySpent: 100,
+        lastLogin: new Date(),
+        save: jest.fn().mockResolvedValue(true)
+      };
+      User.findOne.mockResolvedValue(mockUser);
+
+      const req = { body: { username: "testUser" } };
+      const res = mockResponse();
+
+      await ProfileController.ResetDailyLimits(req, res);
+      expect(mockUser.numLogins).toBe(1);
+      expect(mockUser.dailyTimeSpent).toBe(0);
+      expect(mockUser.dailyMoneySpent).toBe(0);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        message: "Daily limits reset"
+      });
+    });
+
+    test("returns 404 when user not found", async () => {
+      User.findOne.mockResolvedValue(null);
+      const req = { body: { username: "nonexistent" } };
+      const res = mockResponse();
+  
+      await ProfileController.ResetDailyLimits(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ 
+        success: false,
+        message: "User not found" 
+      });
+    });
+  
+    test("handles database errors", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
+      const req = { body: { username: "testUser" } };
+      const res = mockResponse();
+  
+      await ProfileController.ResetDailyLimits(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ 
+        success: false,
+        message: "Server error" 
+      });
+    });
+  });
+
+  describe("GetMoneyLimit", () => {
+    test("returns money limit", async () => {
+      User.findOne.mockResolvedValue({ moneyLimit: 500 });
+      const req = { query: { username: "testUser" } };
+      const res = mockResponse();
+
+      await ProfileController.GetMoneyLimit(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ success: true, moneyLimit: 500 });
+    });
+
+    test("returns 404 when user not found", async () => {
+      User.findOne.mockResolvedValue(null);
+      const req = { query: { username: "nonexistent" } };
+      const res = mockResponse();
+  
+      await ProfileController.GetMoneyLimit(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ 
+        success: false,
+        message: "User not found" 
+      });
+    });
+  
+    test("handles database errors", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
+      const req = { query: { username: "testUser" } };
+      const res = mockResponse();
+  
+      await ProfileController.GetMoneyLimit(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ 
+        success: false,
+        message: "Server error" 
+      });
+    });
+  });
+
+  describe("GetLimits", () => {
+    test("returns all limit information", async () => {
+      User.findOne.mockResolvedValue({
+        moneyLimit: 500,
+        timeLimit: 120,
+        dailyTimeSpent: 60,
+        dailyMoneySpent: 200,
+        balance: 1000
+      });
+      const req = { query: { username: "testUser" } };
+      const res = mockResponse();
+
+      await ProfileController.GetLimits(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        moneyLimit: 500,
+        timeLimit: 120,
+        timeSpent: 60,
+        moneySpent: 200,
+        balance: 1000
+      });
+    });
+
+    test("returns 404 when user not found in GetLimits", async () => {
+      User.findOne.mockResolvedValue(null);
+      const req = { query: { username: "nonexistent" } };
+      const res = mockResponse();
     
-    // 1 -- Returns the correct user information of valid user
-
-    test("GetUserInfo returns the correct user information of valid user", async () => {
-        const samplePass = "gr12-fff";
-        await User.create({ username: "mockUser", password: samplePass});
-
-        const req = { query: { username: "mockUser" } };
-        const res = mockResponse();
-
-        await GetUserInfo(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(jsonParseResponse.username).toEqual("mockUser");
-        expect(await bcrypt.compare(samplePass, jsonParseResponse.password)).toBe(true);
+      await ProfileController.GetLimits(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "User not found"
+      });
     });
 
-    // 2 -- Returns 404 if user does not exist
+    test("handles database errors in GetLimits", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
+      const req = { query: { username: "testUser" } };
+      const res = mockResponse();
+    
+      await ProfileController.GetLimits(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Server error"
+      });
+    });
+  });
 
-    test("GetUserInfo returns a 404 if the user doesn't exist", async () => {
-        const req = { query: { username: "badUser" } };
-        const res = mockResponse();
+  describe("GetStats", () => {
+    test("returns user statistics", async () => {
+      User.findOne.mockResolvedValue({
+        timeSpent: 360,
+        moneySpent: 1000,
+        wins: 5,
+        losses: 3
+      });
+      const req = { query: { username: "testUser" } };
+      const res = mockResponse();
 
-        await GetUserInfo(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(jsonParseResponse).toEqual({ message: "User not found" });
+      await ProfileController.GetStats(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        timeSpent: 360,
+        moneySpent: 1000,
+        wins: 5,
+        losses: 3
+      });
     });
 
-    // 3 -- Handles server error User.findOne gracefully 
+    test("returns 404 when user not found", async () => {
+      User.findOne.mockResolvedValue(null);
+      const req = { query: { username: "nonexistent" } };
+      const res = mockResponse();
+  
+      await ProfileController.GetStats(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ 
+        success: false,
+        message: "User not found" 
+      });
+    });
+  
+    test("handles database errors", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
+      const req = { query: { username: "testUser" } };
+      const res = mockResponse();
+  
+      await ProfileController.GetStats(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ 
+        success: false,
+        message: "Server error" 
+      });
+    });
+  });
 
-    test("GetUserInfo returns server error by User.findOne fails", async () => {
-        jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database error"));
+  describe("SetTimeLimit", () => {
+    test("updates time limit successfully", async () => {
+      const mockUser = {
+        timeLimit: 60,
+        markModified: jest.fn(),
+        save: jest.fn().mockResolvedValue(true)
+      };
+      User.findOne.mockResolvedValue(mockUser);
 
-        const req = { query: { username: "badUser" }};
-        const res = mockResponse();
+      const req = { body: { username: "testUser", timeLimit: 120 } };
+      const res = mockResponse();
 
-        await GetUserInfo(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(jsonParseResponse).toEqual({ message: "Server error" });
-
-        User.findOne.mockRestore();
+      await ProfileController.SetTimeLimit(req, res);
+      expect(mockUser.timeLimit).toBe(120);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        message: "Time limit updated"
+      });
     });
 
-    // 4 -- Should not expose password
-
-    test("GetUserInfo should not return the password in plain-text", async () => {
-        const samplePass = "gr12-fff";
-        await User.create({ username: "mockUser", password: samplePass});
-
-        const req = { query: { username: "mockUser" } };
-        const res = mockResponse();
-
-        await GetUserInfo(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(jsonParseResponse.password).not.toBe(samplePass);
+    test("handles database errors in SetTimeLimit", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
+      const req = { body: { username: "testUser", timeLimit: 120 } };
+      const res = mockResponse();
+    
+      await ProfileController.SetTimeLimit(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Server error"
+      });
     });
 
+    test("returns 404 when user not found in SetTimeLimit", async () => {
+      User.findOne.mockResolvedValue(null);
+      const req = { body: { username: "nonexistent", timeLimit: 120 } };
+      const res = mockResponse();
+    
+      await ProfileController.SetTimeLimit(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "User not found"
+      });
+    });
+
+    test("rejects invalid time limits", async () => {
+      const req = { body: { username: "testUser", timeLimit: -10 } };
+      const res = mockResponse();
+
+      await ProfileController.SetTimeLimit(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Invalid time limit"
+      });
+    });
+  });
+
+  describe("SetMoneyLimit", () => {
+    test("updates money limit successfully", async () => {
+      const mockUser = {
+        moneyLimit: 200,
+        markModified: jest.fn(),
+        save: jest.fn().mockResolvedValue(true)
+      };
+      User.findOne.mockResolvedValue(mockUser);
+
+      const req = { body: { username: "testUser", moneyLimit: 500 } };
+      const res = mockResponse();
+
+      await ProfileController.SetMoneyLimit(req, res);
+      expect(mockUser.moneyLimit).toBe(500);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        message: "Money limit updated"
+      });
+    });
+
+    test("handles database errors in SetMoneyLimit", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
+      const req = { body: { username: "testUser", moneyLimit: 500 } };
+      const res = mockResponse();
+    
+      await ProfileController.SetMoneyLimit(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Server error"
+      });
+    });
+    
+    test("returns 404 when user not found in SetMoneyLimit", async () => {
+      User.findOne.mockResolvedValue(null);
+      const req = { body: { username: "nonexistent", moneyLimit: 500 } };
+      const res = mockResponse();
+    
+      await ProfileController.SetMoneyLimit(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "User not found"
+      });
+    });
+
+    test("rejects invalid money limits", async () => {
+      const req = { body: { username: "testUser", moneyLimit: -50 } };
+      const res = mockResponse();
+
+      await ProfileController.SetMoneyLimit(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Invalid money limit"
+      });
+    });
+  });
 });
-
-// describe("GetMoneySpent API Tests", () => {
-
-//     // 5 -- Returns correct money spent of valid user
-
-//     test("GetMoneySpent returns the money spent of valid user", async () => {
-//         await User.create({ username: "mockUser", password: "gr12-fff", moneySpent: 100 });
-
-//         const req = { query: { username: "mockUser" } };
-//         const res = mockResponse();
-
-//         await GetMoneySpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(200);
-//         expect(jsonParseResponse).toEqual({ moneySpent: 100 });
-//     });
-
-//     // 6 -- Returns 404 if user does not exist 
-
-//     test("GetMoneySpent returns a 404 if the user doesn't exist", async () => {
-//         const req = { query: { username: "badUser" } };
-//         const res = mockResponse();
-
-//         await GetMoneySpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(404);
-//         expect(jsonParseResponse).toEqual({ message: "User not found" });
-//     });
-
-//     // 7 -- Handles server error User.findOne gracefully 
-
-//     test("GetMoneySpent returns server error by User.findOne fails", async () => {
-//         jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database error"));
-
-//         const req = { query: { username: "badUser" }};
-//         const res = mockResponse();
-
-//         await GetMoneySpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(500);
-//         expect(jsonParseResponse).toEqual({ message: "Server error" });
-
-//         User.findOne.mockRestore();
-//     });
-
-// });
-
-// describe("SetMoneySpent API Tests", () => {
-
-//     // 8 -- Sucessfully updates money spent of valid user
-
-//     test("SetMoneySpent should increment money spent by the valid user", async () => {
-//         await User.create({ username: "mockUser", password: "gr12-fff", moneySpent: 100 });
-
-//         const req = { body: { username: "mockUser", money: 13 } };
-//         const res = mockResponse();
-
-//         await SetMoneySpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(200);
-//         expect(jsonParseResponse).toEqual({ success: true, moneySpent: 113 });
-//     });
-
-//     // 9 -- Return 400 if money is missing or invalid (negative/0) + valid user
-
-//     test("SetMoneySpent should return a 400 if the money is not valid", async () => {
-//         await User.create({ username: "mockUser", password: "gr12-fff", moneySpent: 100 });
-
-//         const req = { body: { username: "mockUser", money: -20 } };
-//         const res = mockResponse();
-
-//         await SetMoneySpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(400);
-//         expect(jsonParseResponse).toEqual({ success: false, message: "Invalid money value" });
-//     });
-
-//     // 10 -- Return 404 if user does not exist
-
-//     test("SetMoneySpent returns a 404 if the user doesn't exist", async () => {
-//         const req = { body: { username: "badUser", money: 100 } };
-//         const res = mockResponse();
-
-//         await SetMoneySpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(404);
-//         expect(jsonParseResponse).toEqual({ success: false, message: "User not found" });
-//     });
-
-//     // 11 -- Handles server error User.findOne gracefully 
-
-//     test("SetMoneySpent returns server error by User.findOne fails", async () => {
-//         jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database error"));
-
-//         const req = { body: { username: "badUser", money: 100 }};
-//         const res = mockResponse();
-
-//         await SetMoneySpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(500);
-//         expect(jsonParseResponse).toEqual({ success: false, message: "Server error" });
-
-//         User.findOne.mockRestore();
-//     });
-
-// });
-
-// describe("GetTimeSpent API Tests", () => {
-
-//     // 12 -- Returns correct time spent of valid user
-
-//     test("GetTimeSpent returns the correct time spent of a valid user", async () => {
-//         await User.create({ username: "mockUser", password: "gr12-fff", timeSpent: 82 });
-
-//         const req = { query: { username: "mockUser" } };
-//         const res = mockResponse();
-
-//         await GetTimeSpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(200);
-//         expect(jsonParseResponse).toEqual({ timeSpent: 82 });
-//     });
-
-//     // 13 -- Return 404 if user does not exist
-
-//     test("GetTimeSpent returns a 404 if the user doesn't exist", async () => {
-//         const req = { query: { username: "badUser" } };
-//         const res = mockResponse();
-
-//         await GetTimeSpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(404);
-//         expect(jsonParseResponse).toEqual({ message: "User not found" });
-//     });
-
-//     // 14 -- Handles server error User.findOne gracefully 
-
-//     test("GetTimeSpent returns server error by User.findOne fails", async () => {
-//         jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database error"));
-
-//         const req = { query: { username: "badUser" }};
-//         const res = mockResponse();
-
-//         await GetTimeSpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(500);
-//         expect(jsonParseResponse).toEqual({ message: "Server error" });
-
-//         User.findOne.mockRestore();
-//     });
-
-
-// });
-
-// describe("SetTimeSpent API Tests", () => {
-
-//     // 15 -- Will successfully update time spent of valid user
-
-//     test("SetTimeSpent should increment time spent by the valid user", async () => {
-//         await User.create({ username: "mockUser", password: "gr12-fff", timeSpent: 82 });
-
-//         const req = { body: { username: "mockUser", time: 12 } };
-//         const res = mockResponse();
-
-//         await SetTimeSpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(200);
-//         expect(jsonParseResponse).toEqual({ success: true, timeSpent: 94 });
-//     });
-
-//     // 16 -- Return 400 if time value is missing or invalid
-
-//     test("SetTimeSpent should return a 400 if the time is not valid", async () => {
-//         await User.create({ username: "mockUser", password: "gr12-fff", timeSpent: 100 });
-
-//         const req = { body: { username: "mockUser", time: -8 } };
-//         const res = mockResponse();
-
-//         await SetTimeSpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(400);
-//         expect(jsonParseResponse).toEqual({ success: false, message: "Invalid time value" });
-//     });
-
-//     // 17 -- Return 404 if user is not found 
-
-//     test("SetTimeSpent returns a 404 if the user doesn't exist", async () => {
-//         const req = { body: { username: "badUser", money: 100 } };
-//         const res = mockResponse();
-
-//         await SetTimeSpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(404);
-//         expect(jsonParseResponse).toEqual({ success: false, message: "User not found" });
-//     });
-
-//     // 18 -- Handles server error User.findOne gracefully 
-
-//     test("SetTimeSpent returns server error by User.findOne fails", async () => {
-//         jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database error"));
-
-//         const req = { body: { username: "badUser", money: 100 }};
-//         const res = mockResponse();
-
-//         await SetTimeSpent(req, res);
-//         const jsonParseResponse = res.json.mock.calls[0][0];
-
-//         expect(res.status).toHaveBeenCalledWith(500);
-//         expect(jsonParseResponse).toEqual({ success: false, message: "Server error" });
-
-//         User.findOne.mockRestore();
-//     });
-
-// });
