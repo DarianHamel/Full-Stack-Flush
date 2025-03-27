@@ -10,6 +10,7 @@ const MyProfile = () => {
   const [wins, setWins] = useState(0);
   const [losses, setLosses] = useState(0);
   const [ratio, setRatio] = useState(0);
+  const [error, setError] = useState("");
 
     /*
     Gets the users stats on page launch
@@ -32,6 +33,7 @@ const MyProfile = () => {
         setLosses(data.losses);
       } catch (error) {
         console.error("Error fetching user stats:", error);
+        setError(`Error fetching user stats for: ${cookies.username}`);
       }
     };
     fetchUserStats();
@@ -50,6 +52,7 @@ const MyProfile = () => {
   return (
     <div className="profile-container">
       <h1 className="profile-label">User Stats</h1>
+      {error && <p className="error">{error}</p>}
       <table className="profile-table">
         <tbody>
           <tr>
