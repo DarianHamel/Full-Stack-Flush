@@ -1,11 +1,11 @@
-const PokerGame = require('../Models/PokerGame');
+const PokerGame = require('../Models/PokerGameModel');
 
 let activeGames = {};
 
 /*
 Start the poker game
 */
-module.exports.StartPoker = (req, res) => {
+module.exports.startPoker = (req, res) => {
     const { difficulty } = req.body;
     const gameID = Date.now(); // should change to username tracking probably ?
     const newGame = new PokerGame(gameID, difficulty);
@@ -28,7 +28,7 @@ module.exports.StartPoker = (req, res) => {
 /*
 Draw the number of cards required for the user
 */
-module.exports.DrawCards = (req, res) => {
+module.exports.drawCards = (req, res) => {
     const { gameID, count } = req.query;
 
     if (!activeGames[gameID]) {
@@ -44,7 +44,7 @@ module.exports.DrawCards = (req, res) => {
 /*
 Calculate the score of the hand played
 */
-module.exports.ScoreHand = (req, res) => {
+module.exports.scoreHand = (req, res) => {
     const { gameID, selectedCards } = req.body;
 
     if (!activeGames[gameID]) {

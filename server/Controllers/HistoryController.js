@@ -1,11 +1,11 @@
 const User = require("../Models/UserModel");
-const History = require("../Models/History");
+const History = require("../Models/HistoryModel");
 
 /* 
 This will retrieve their transaction history with all the names 
 inside the History database
 */
-module.exports.GetHistory = async (req, res, next) => {
+module.exports.getHistory = async (req, res, next) => {
     try {
         const { username } = req.query;
 
@@ -29,7 +29,7 @@ Will create a transaction for a bet or deposit
 This will be called whenever a deposit in UserProfile is made
 or a Blackjack/Poker game is played and they have placed a bet
 */
-module.exports.MakeHistory = async (req, res, next) => {
+module.exports.makeHistory = async (req, res, next) => {
     try {
         const { username, transaction, day, game } = req.body;
 

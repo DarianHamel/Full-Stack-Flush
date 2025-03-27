@@ -1,11 +1,11 @@
 const User = require("../Models/UserModel");
-const History = require("../Models/History");
+const History = require("../Models/HistoryModel");
 const bcrypt = require("bcryptjs");
 
 /*
 Get User Balance by username
 */
-module.exports.GetBalance = async (req, res) => {
+module.exports.getBalance = async (req, res) => {
     const { username } = req.query; 
     try {
       const user = await User.findOne({ username }); 
@@ -21,7 +21,7 @@ module.exports.GetBalance = async (req, res) => {
 /*
 Update balance for deposit or bet (POST request)
 */
-module.exports.UpdateBalance = async (req, res) => {
+module.exports.updateBalance = async (req, res) => {
   const { username, amount, password, day } = req.body;
   
   if (!username || typeof amount !== 'number') {
@@ -67,7 +67,7 @@ module.exports.UpdateBalance = async (req, res) => {
 Update balance without requiring a password (for game results)
 added this to deal with unable to update balance after a win because password is required in other method 
 */
-module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
+module.exports.updateBalanceWithoutPassword = async (req, res) => {
   const { username, amount, day } = req.body;
 
   if (!username || typeof amount !== "number") {
@@ -108,7 +108,7 @@ module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
   }
 };
 
-module.exports.UpdateMoneySpent = async (req, res) => {
+module.exports.updateMoneySpent = async (req, res) => {
   const { username, moneySpent } = req.body;
 
   if (!username || moneySpent === undefined) {

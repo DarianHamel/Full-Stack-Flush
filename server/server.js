@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const { handle_web_socket } = require("./routes/Blackjack.js");
+const { handleWebSocket } = require("./routes/BlackjackRoute");
 const expressWs = require("express-ws");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
@@ -43,7 +43,7 @@ app.ws('/', (ws, req) => {
   console.log(match[1]);
 
   //Pass the websocket to blackjack.js to deal with
-  handle_web_socket(ws, match[1]);
+  handleWebSocket(ws, match[1]);
 });
 
 // start the Express server

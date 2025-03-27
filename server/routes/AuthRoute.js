@@ -1,10 +1,10 @@
 // Routes for API
-const { Signup, Login } = require("../Controllers/AuthController");
+const { signup, login } = require("../Controllers/AuthController");
 const { userVerification } = require("../Middleware/AuthMiddleware");
 const router = require("express").Router();
 
-router.post("/signup", Signup);
-router.post("/login", Login);
+router.post("/signup", signup);
+router.post("/login", login);
 router.post("/", userVerification);
 
 module.exports = router;

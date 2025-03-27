@@ -19,7 +19,7 @@ const findUserByUsername = async (username) => {
 /*
 Get the username and password along with time and money limits
 */
-module.exports.GetUserInfo = async (req, res) => {
+module.exports.getUserInfo = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
   if (error) {
@@ -31,7 +31,7 @@ module.exports.GetUserInfo = async (req, res) => {
 /*
 Get the balance of the user
 */
-module.exports.GetBalance = async (req, res) => {
+module.exports.getBalance = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
   if (error) {
@@ -43,7 +43,7 @@ module.exports.GetBalance = async (req, res) => {
 /*
 Set the time spent playing of the user
 */
-module.exports.SetTimeSpent = async (req, res) => {
+module.exports.setTimeSpent = async (req, res) => {
   const { username, timeSpent } = req.body;
   if (timeSpent != undefined && timeSpent > 0) {
     const { user, error, status } = await findUserByUsername(username);
@@ -63,7 +63,7 @@ module.exports.SetTimeSpent = async (req, res) => {
 Get the last day logged in
 This is called in order to determine user limit resets
 */
-module.exports.GetLastLogin = async (req, res) => {
+module.exports.getLastLogin = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
   if (error) {
@@ -77,7 +77,7 @@ Reset the limits of the user
 This is called if the user logged in a different day 
 and resets the users limits to allow for betting again
 */
-module.exports.ResetDailyLimits = async (req, res) => {
+module.exports.resetDailyLimits = async (req, res) => {
   const { username } = req.body;
   const { user, error, status } = await findUserByUsername(username);
   if (error) {
@@ -95,7 +95,7 @@ module.exports.ResetDailyLimits = async (req, res) => {
 Get the money limit of the user
 Money limit restricts the user to a dollar spend amount of {moneyLimit}
 */
- module.exports.GetMoneyLimit = async (req, res) => {
+ module.exports.getMoneyLimit = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
   if (error) {
@@ -107,7 +107,7 @@ Money limit restricts the user to a dollar spend amount of {moneyLimit}
 /*
 Get the limits of the user and related information to check if user hit their limits
 */
-module.exports.GetLimits = async (req, res) => {
+module.exports.getLimits = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
   if (error) {
@@ -119,7 +119,7 @@ module.exports.GetLimits = async (req, res) => {
 /*
 Get the users stats; timeSpent, moneySpent, Wins, Losses
 */
-module.exports.GetStats = async (req, res) => {
+module.exports.getStats = async (req, res) => {
   const { username } = req.query;
   const { user, error, status } = await findUserByUsername(username);
   if (error) {
@@ -132,14 +132,14 @@ module.exports.GetStats = async (req, res) => {
 Set the time limit of the user
 Time limit restricts the user to a playtime of {timeLimit}
 */
-module.exports.SetTimeLimit = async (req, res) => {
-  const { username, timeLimit } = req.body;
-  if (timeLimit != undefined && timeLimit > 0) {
+module.exports.setTimeLimit = async (req, res) => {
+  const { username, newLimit } = req.body;
+  if (newLimit != undefined && newLimit > 0) {
     const { user, error, status } = await findUserByUsername(username);
     if (error) {
       return res.status(status).json({ success: false, message: error });
     }
-    user.timeLimit = timeLimit;
+    user.timeLimit = newLimit;
     user.markModified("timeLimit");
     await user.save();
     res.status(200).json({ success: true, message: "Time limit updated" });
@@ -152,7 +152,7 @@ module.exports.SetTimeLimit = async (req, res) => {
 Set the money limit of the user
 Money limit restricts the user to a dollar spend amount of {moneyLimit}
 */
-module.exports.SetMoneyLimit = async (req, res) => {
+module.exports.setMoneyLimit = async (req, res) => {
   const { username, moneyLimit } = req.body;
   if (moneyLimit != undefined && moneyLimit > 0) {
     const { user, error, status } = await findUserByUsername(username);

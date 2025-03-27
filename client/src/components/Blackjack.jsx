@@ -147,7 +147,7 @@ export default function Blackjack({username}) {
 
       newSocket.onmessage = (event) => {
         console.log('Received: ', event.data);
-        handle_message(JSON.parse(event.data));
+        handleMessage(JSON.parse(event.data));
       };
 
       newSocket.onclose = () => {
@@ -157,7 +157,7 @@ export default function Blackjack({username}) {
         setTimePlayed(timePlayed + timeSpent);
 
         updateTimeSpent(username, timeSpent);
-        reset_state();
+        resetState();
       }
 
       newSocket.onerror = (error) => {
@@ -174,7 +174,7 @@ export default function Blackjack({username}) {
   /*
   Handle all of the messages the server could send to the player
   */
-  function handle_message(message){
+  function handleMessage(message){
     switch (message.type){
       case "JOIN":
         setGameState((prevState) => ({
@@ -196,7 +196,7 @@ export default function Blackjack({username}) {
         }));
         break;
       case "DEAL":
-        handle_deal(message);
+        handleDeal(message);
         break;
       case "PLAYER_TURN":
         setGameState((prevState) => ({
@@ -205,7 +205,7 @@ export default function Blackjack({username}) {
         }));
         break;
       case "DEAL_SINGLE":
-        handle_deal_single(message);
+        handleDealSingle(message);
         break;
       case "BUST":
         setGameState((prevState) => ({
@@ -215,7 +215,7 @@ export default function Blackjack({username}) {
         }));
         break;
       case "DEALER_CARD":
-        handle_dealer_card(message);
+        handleDealerCard(message);
         break;
       case "GAME_OVER":
         const endTime = Date.now();
@@ -249,10 +249,10 @@ export default function Blackjack({username}) {
         });
         break;
       case "OTHER_PLAYER_DEAL":
-        handle_other_deal(message);
+        handleOtherDeal(message);
         break;
       case "OTHER_PLAYER_DEAL_SINGLE":
-        handle_other_deal_single(message);
+        handleOtherDealSingle(message);
         break;
       case "TWENTY_ONE":
         setGameState((prevState) => ({
@@ -289,10 +289,10 @@ export default function Blackjack({username}) {
   /*
   Changes the player's hand to what they were dealt
   */
-  function handle_deal(message){
+  function handleDeal(message){
 
     for (const card of message.cards){
-      change_card(card);
+      changeCard(card);
     }
     setGameState((prevState) => ({
       ...prevState,
@@ -304,9 +304,9 @@ export default function Blackjack({username}) {
   /*
   Adds the single card the player was dealt to their hand
   */
-  function handle_deal_single(message){
+  function handleDealSingle(message){
 
-    change_card(message.card);
+    changeCard(message.card);
     setGameState((prevState) => ({
       ...prevState,
       hand: [...prevState.hand, message.card]
@@ -316,8 +316,8 @@ export default function Blackjack({username}) {
   /*
   Adds the single card to the dealer's hand
   */
-  function handle_dealer_card(message){
-    change_card(message.card);
+  function handleDealerCard(message){
+    changeCard(message.card);
     setGameState((prevState) => ({
       ...prevState,
       dealerHand: [...prevState.dealerHand, message.card]
@@ -327,10 +327,10 @@ export default function Blackjack({username}) {
   /*
   Adds the other player's hand to the gamestate to display
   */
-  function handle_other_deal(message){
+  function handleOtherDeal(message){
 
     for (const card of message.cards){
-      change_card(card);
+      changeCard(card);
     }
     setGameState((prevState) => ({
       ...prevState,
@@ -341,8 +341,8 @@ export default function Blackjack({username}) {
   /*
   Adds the new card to the player with the given id
   */
-  function handle_other_deal_single(message){
-    change_card(message.card);
+  function handleOtherDealSingle(message){
+    changeCard(message.card);
 
     setGameState((prevState) => ({
       ...prevState,
@@ -357,7 +357,7 @@ export default function Blackjack({username}) {
   /*
   Change the numerical value of the card to the face card name
   */
-  function change_card(card){
+  function changeCard(card){
     if (card.rank === 14){
       card.rank = "Ace"
     }
@@ -375,7 +375,7 @@ export default function Blackjack({username}) {
   /*
   Sends the specified action to the server
   */
-  function send_message(type){
+  function sendMessage(type){
     socket.send(JSON.stringify({"type": "ACTION", "action": type, "bet": betAmount, "usingFakeMoney": fakeMoney}));
 
     //If we're standing, set playerTurn back to false
@@ -391,10 +391,10 @@ export default function Blackjack({username}) {
   /*
   Tell the server we wish to play again and reset the state of the game
   */
-  function play_again(){
+  function playAgain(){
     startTime = Date.now();
     setBetAmount(document.getElementById("betAmount").value);
-    send_message("PLAY_AGAIN");
+    sendMessage("PLAY_AGAIN");
     setGameState({
       otherPlayers: [],
       dealerHand: [],
@@ -414,14 +414,14 @@ export default function Blackjack({username}) {
   */
   function quit(){
     socket.close();
-    reset_state();
+    resetState();
     navigate('/');
   }
 
   /*
   Reset the game state
   */
-  function reset_state(){
+  function resetState(){
     setGameState({
       otherPlayers: [],
       dealerHand: [],
@@ -508,9 +508,9 @@ export default function Blackjack({username}) {
             {gameState.playerTurn && (
               <div className= "action-buttons">
                 <br />
-                <button onClick={() => send_message("HIT")}>Hit</button>
+                <button onClick={() => sendMessage("HIT")}>Hit</button>
                 <br />
-                <button onClick={() => send_message("STAND")}>Stand</button>
+                <button onClick={() => sendMessage("STAND")}>Stand</button>
               </div>
             )}
 
@@ -540,7 +540,7 @@ export default function Blackjack({username}) {
                 </div>
                 <div className="action-buttons">
                   <br/>
-                  <button onClick={play_again} disabled={limitHit}>Play Again</button>
+                  <button onClick={playAgain} disabled={limitHit}>Play Again</button>
                   <br/>
                   <button onClick={quit}>Quit</button>
                 </div>

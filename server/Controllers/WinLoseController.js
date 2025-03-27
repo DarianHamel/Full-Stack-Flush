@@ -2,12 +2,12 @@
 
 const { TbHistory } = require("react-icons/tb");
 const User = require("../Models/UserModel");
-const History = require("../Models/History");
+const History = require("../Models/HistoryModel");
 
 /* 
 Get User Wins by username
 */
-module.exports.GetWins = async (req, res) => {
+module.exports.getWins = async (req, res) => {
     const { username } = req.query; 
     try {
       const user = await User.findOne({ username }); 
@@ -24,7 +24,7 @@ module.exports.GetWins = async (req, res) => {
 /*
 Get User Losses by username
 */
-module.exports.GetLosses = async (req, res) => {
+module.exports.getLosses = async (req, res) => {
     const { username } = req.query; 
     try {
       const user = await User.findOne({ username }); 
@@ -42,7 +42,7 @@ module.exports.GetLosses = async (req, res) => {
 Update the users stats and history of the input username
 Updates History, wins, losses, money spent and the balance
 */
-module.exports.UpdateStats = async (req, res) => {
+module.exports.updateStats = async (req, res) => {
   try {
       const { username, wins, losses, money, game, day } = req.body;
 
@@ -101,7 +101,7 @@ module.exports.UpdateStats = async (req, res) => {
   }
 };
 
-module.exports.HandleTransaction = async (req, res) => {
+module.exports.handleTransaction = async (req, res) => {
   try {
     const { username, transaction, game, day } = req.body;
 

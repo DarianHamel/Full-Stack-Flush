@@ -48,7 +48,7 @@ const MyProfile = () => {
     try {
       var newLimit = timeLimit * 60;
       await axios.post(
-        "http://localhost:5050/SetTimeLimit",
+        "http://localhost:5050/setTimeLimit",
         { username: cookies.username, newLimit },
         { withCredentials: true }
       );
@@ -67,7 +67,7 @@ const MyProfile = () => {
   const handleSaveMoneyLimit = async () => {
     try {
       await axios.post(
-        "http://localhost:5050/SetMoneyLimit",
+        "http://localhost:5050/setMoneyLimit",
         { username: cookies.username, moneyLimit },
         { withCredentials: true }
       );
