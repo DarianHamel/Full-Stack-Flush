@@ -106,7 +106,10 @@ module.exports.HandleTransaction = async (req, res) => {
     const { username, transaction, game, day } = req.body;
 
     if (!username || !transaction || game !== "Poker") {
-      return res.status(400).json({ message: "Invalid request. Provide a username." });
+      return res.status(400).json({ 
+        success: false,
+        message: "Invalid request. Provide a username." 
+      });
     }
 
     await History.create({
@@ -115,9 +118,14 @@ module.exports.HandleTransaction = async (req, res) => {
       game,
       day,
     });
+
+    res.status(200).json({ success: true });
     
   } catch (error) {
-
+    res.status(500).json({ 
+      success: false,
+      message: "Server error" 
+    });
   }
 };
 
