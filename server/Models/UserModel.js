@@ -30,6 +30,8 @@ Update the time spent of the user with the respective timeSpent
 userSchema.methods.updateTimeSpent = async function (timeSpent) {
   this.dailyTimeSpent += timeSpent;
   this.timeSpent += timeSpent;
+  console.log("Daily Time Spent: ", this.dailyTimeSpent);
+  console.log("Total Time Spent: ", this.timeSpent);
   await this.save();
 };
 

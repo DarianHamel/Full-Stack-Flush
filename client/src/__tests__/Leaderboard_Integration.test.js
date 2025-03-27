@@ -1,98 +1,183 @@
-import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import { BrowserRouter as Router } from "react-router-dom";
-import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
-import Leaderboard from "../components/Leaderboard";
+import React from 'react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import axios from 'axios';
+import Leaderboard from '../components/Leaderboard';
+import '@testing-library/jest-dom';
 
-describe("Leaderboard Component", () => {
-  let mock;
+// Mock axios to control API responses
+jest.mock('axios');
+
+describe('Leaderboard Integration Tests', () => {
+  const mockLeaderboardData = [
+    {
+      _id: '1',
+      username: 'user1',
+      wins: 10,
+      losses: 2,
+      winLossRatio: 5.0,
+      moneySpent: 1500,
+      timeSpent: 6000 // 100 hours in minutes
+    },
+    {
+      _id: '2',
+      username: 'user2',
+      wins: 12,
+      losses: 6,
+      winLossRatio: 2.0,
+      moneySpent: 500,
+      timeSpent: 3000 // 50 hours in minutes
+    }
+  ];
 
   beforeEach(() => {
-    mock = new MockAdapter(axios);
-    mock.reset();
+    // Reset all mocks before each test
+    jest.clearAllMocks();
+    // Default mock implementation
+    axios.get.mockResolvedValue({ data: mockLeaderboardData });
   });
 
-  afterEach(() => {
-    mock.restore();
-  });
-
-  test("renders sorting dropdown options", async () => {
-    render(
-      <Router>
-        <Leaderboard />
-      </Router>
-    );
-
+  test('renders leaderboard with data from API', async () => {
+    render(<Leaderboard />);
+    
+    // Initial loading state might show "No data available" briefly
     await waitFor(() => {
-      expect(screen.getByText("Username")).toBeInTheDocument();
-      expect(screen.getByText("Wins")).toBeInTheDocument();
-      expect(screen.getByText("Losses")).toBeInTheDocument();
-      expect(screen.getByText("Win/Loss Ratio")).toBeInTheDocument();
-      expect(screen.getByText("Money Spent")).toBeInTheDocument();
-      expect(screen.getByText("Time Spent")).toBeInTheDocument();
+      expect(axios.get).toHaveBeenCalledWith(
+        'http://localhost:5050/leaderboard?sortBy=wins&order=desc&filter='
+      );
+    });
+
+    // Verify table headers
+    expect(screen.getByText('Rank')).toBeInTheDocument();
+    expect(screen.getAllByText('Username').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Wins').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Losses').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Win/Loss Ratio').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Money Spent').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Time Spent').length).toBeGreaterThan(0);
+
+    // Verify data is displayed
+    expect(screen.getByText('user1')).toBeInTheDocument();
+    expect(screen.getByText('10')).toBeInTheDocument();
+    expect(screen.getByText('5')).toBeInTheDocument();
+    expect(screen.getByText('1.5K')).toBeInTheDocument(); // formatted money
+    expect(screen.getByText('100')).toBeInTheDocument(); // formatted time
+  });
+
+  test('displays "No data available" when API returns empty array', async () => {
+    axios.get.mockResolvedValue({ data: [] });
+    render(<Leaderboard />);
+    
+    await waitFor(() => {
+      expect(screen.getByText('No data available')).toBeInTheDocument();
     });
   });
 
-  test("displays leaderboard data when API call succeeds", async () => {
-    // Mock API response
-    mock.onGet(/leaderboard/).reply(200, [
-      {
-        _id: "1",
-        username: "Player1",
-        wins: 10,
-        losses: 5,
-        winLossRatio: 2.0,
-        moneySpent: 1500,
-        timeSpent: 180,
-      },
-    ]);
-
-    render(
-      <Router>
-        <Leaderboard />
-      </Router>
-    );
-
-    // Wait for the data to be displayed
+  test('handles API error gracefully', async () => {
+    axios.get.mockRejectedValue(new Error('Network Error'));
+    console.error = jest.fn(); // suppress error logs in test output
+    
+    render(<Leaderboard />);
+    
     await waitFor(() => {
-      expect(screen.getByText("Player1")).toBeInTheDocument();
-      expect(screen.getByText("10")).toBeInTheDocument();
-      expect(screen.getByText("5")).toBeInTheDocument();
-      expect(screen.getByText("2")).toBeInTheDocument();
-      expect(screen.getByText("1.5K")).toBeInTheDocument();
-      expect(screen.getByText("3")).toBeInTheDocument();
+      expect(screen.getByText('No data available')).toBeInTheDocument();
+    });
+    expect(console.error).toHaveBeenCalledWith(
+      'An error occurred with the Network: ',
+      expect.any(Error)
+    );
+  });
+
+  test('changes sort criteria and refetches data', async () => {
+    render(<Leaderboard />);
+    
+    await waitFor(() => {
+      expect(axios.get).toHaveBeenCalledWith(
+        expect.stringContaining('sortBy=wins')
+      );
+    });
+
+    // Change sort to losses
+    fireEvent.change(screen.getByLabelText('Sort'), {
+      target: { value: 'losses' }
+    });
+
+    await waitFor(() => {
+      expect(axios.get).toHaveBeenCalledWith(
+        expect.stringContaining('sortBy=losses')
+      );
     });
   });
 
-  test("displays 'No data available' when API returns an empty array", async () => {
-    // Mock empty API response
-    mock.onGet(/leaderboard/).reply(200, []);
+  test('changes order and refetches data', async () => {
+    render(<Leaderboard />);
+    
+    await waitFor(() => {
+      expect(axios.get).toHaveBeenCalledWith(
+        expect.stringContaining('order=desc')
+      );
+    });
 
-    render(
-      <Router>
-        <Leaderboard />
-      </Router>
-    );
+    // Change order to ascending
+    fireEvent.change(screen.getByLabelText('Order'), {
+      target: { value: 'asc' }
+    });
 
     await waitFor(() => {
-      expect(screen.getByText("No data available")).toBeInTheDocument();
+      expect(axios.get).toHaveBeenCalledWith(
+        expect.stringContaining('order=asc')
+      );
     });
   });
 
-  test("displays an error message when API call fails", async () => {
-    // Mock failed API response
-    mock.onGet(/leaderboard/).reply(500);
+  test('applies filter and refetches data', async () => {
+    render(<Leaderboard />);
+    
+    await waitFor(() => {
+      expect(axios.get).toHaveBeenCalledWith(
+        expect.stringContaining('filter=')
+      );
+    });
 
-    render(
-      <Router>
-        <Leaderboard />
-      </Router>
-    );
+    // Apply high spenders filter
+    fireEvent.change(screen.getByLabelText('Filter'), {
+      target: { value: 'highSpenders' }
+    });
 
     await waitFor(() => {
-      expect(screen.getByText(/No data available/i)).toBeInTheDocument();
-    }, { timeout: 5000 }); 
+      expect(axios.get).toHaveBeenCalledWith(
+        expect.stringContaining('filter=highSpenders')
+      );
+    });
+  });
+
+  test('formats numbers correctly', async () => {
+    render(<Leaderboard />);
+    
+    await waitFor(() => {
+      // Check formatting of money spent (1500 becomes 1.5K)
+      expect(screen.getByText('1.5K')).toBeInTheDocument();
+      // Check formatting of time spent (6000 minutes becomes 100 hours)
+      expect(screen.getByText('100')).toBeInTheDocument();
+    });
+  });
+
+  test('displays formatted numbers in leaderboard', async () => {
+    const testData = [{
+      _id: '1',
+      username: 'testuser',
+      wins: 10,
+      losses: 2,
+      winLossRatio: 5,
+      moneySpent: 1500000, // 1.5M
+      timeSpent: 6000 // 100 hours
+    }];
+    
+    axios.get.mockResolvedValue({ data: testData });
+    render(<Leaderboard />);
+    
+    await waitFor(() => {
+      expect(screen.getByText('1.5M')).toBeInTheDocument();
+      expect(screen.getByText('100')).toBeInTheDocument();
+    });
   });
 });

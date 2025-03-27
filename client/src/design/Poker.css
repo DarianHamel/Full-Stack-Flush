@@ -141,6 +141,25 @@
     background-color: #ccc;
     transform: scale(1.05);
   }
+
+  
+  .scored-hand {
+    font-size: 2em;
+    background-color: #fff;
+    color: #000;
+    position: fixed;
+    z-index: 999;
+    top: -10em; /*The score card stays off screen until it's needed*/
+    border-radius: 0.5em;
+    padding: 1em;
+    box-shadow: 0.3em 0.3em 1em;
+    transition: top 0.3s ease;
+  }
+
+  /* When it's visible, put it in the middle of the screen*/
+  .scored-hand.visible {
+    top: clamp(100px + 5em, 1em, 1000px);
+  }
   
   @keyframes fadeIn {
     from {

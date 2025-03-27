@@ -25,8 +25,13 @@ const Poker = ({ username }) => {
   const [timePlayed, setTimePlayed] = useState(0);
   const [moneySpent, setMoneySpent] = useState(0);
   const [limitHit, setLimitHit] = useState(false);
+  const [scoreVisible, setScoreVisible] = useState(false);
+  const [handScore, setHandScore] = useState("");
+  const [winnings, setWinnings] = useState(0); //Used on the game over screen to display winning or losses
+  const [startTime, setStartTime] = useState(-1);
   const navigate = useNavigate();
   console.log(username);
+  const HAND_SCORE_TIMER = 2000; //How long the scored hand is displayed on-screen
 
   /*
   Calls the functions within on page launch
@@ -135,6 +140,8 @@ const Poker = ({ username }) => {
     setSelectedCards([]);
     setCurrentScore(0);
     setTargetScore(data.targetScore);
+    setStartTime(Date.now());
+    console.log("Set startTime: ", startTime);
 
      // Update money spent on the backend
      try {
@@ -273,7 +280,6 @@ const Poker = ({ username }) => {
       return;
     }
 
-    const startTime = Date.now();
 
     if (selectedCards.length === 0) {
         alert("No cards selected to play!");
@@ -291,6 +297,15 @@ const Poker = ({ username }) => {
                 selectedCards,
             }),
         });
+
+        const endTime = Date.now();
+        console.log("Starttime: ", startTime);
+        console.log("EndTime: ", endTime);
+        const timeSpent = Math.floor((endTime - startTime) / 1000); // Time in seconds
+        setTimePlayed((prevTimePlayed) => prevTimePlayed + timeSpent);
+        setStartTime(Date.now());
+        console.log("Time spent:" + timeSpent);
+        await updateTimeSpent(username, timeSpent);
 
         const data = await response.json();
 
@@ -326,11 +341,13 @@ const Poker = ({ username }) => {
               if (!balanceData.success) {
                 alert(balanceData.message);
               } else {
-                alert(`You won $${winnings}`);
+                //alert(`You won $${winnings}`);
+                setWinnings(winnings);
               }
             } 
             else {
-                alert(`You lost $${betAmount}`);
+                setWinnings(betAmount);
+                //alert(`You lost $${betAmount}`);
               }
 
             // Update stats in the backend
@@ -354,7 +371,8 @@ const Poker = ({ username }) => {
         }
 
         if (data.score) {
-            alert(`Your hand scored: ${data.score}`);
+            showScore(data.score);
+            //alert(`Your hand scored: ${data.score}`);
             setCurrentScore(data.currentScore);
             setHandsRemaining(data.handsRemaining);
         } else {
@@ -378,19 +396,27 @@ const Poker = ({ username }) => {
         setPlayerHand([...remainingCards, ...drawData.newCards]);
         setSelectedCards([]);
 
-        const endTime = Date.now();
-        const timeSpent = Math.floor((endTime - startTime) / 1000); // Time in seconds
-        setTimePlayed((prevTimePlayed) => prevTimePlayed + timeSpent);
 
-        await updateTimeSpent(username, timeSpent);
-
-        if (timePlayed + timeSpent >= timeLimit) {
+        if (timePlayed >= timeLimit) {
           handleLockOut();
         }
     } catch (error) {
         console.error("Error playing hand:", error);
     }
   };
+
+  /*
+  Makes the score of the last played hand visible for a short period
+  */
+ const showScore = async (score) => {
+    setHandScore(score);
+    setScoreVisible(true);
+    const timer = setTimeout(() => {
+      setScoreVisible(false);
+      console.log("Timeout");
+    }, HAND_SCORE_TIMER);
+    return () => clearTimeout(timer);
+ };
 
   /*
   Renders the hand of the user
@@ -526,9 +552,9 @@ const Poker = ({ username }) => {
               <h1>Game Over!</h1>
               <p>Your final score: {currentScore}</p>
               {currentScore >= targetScore ? (
-                <p>Congratulations! You win!</p>
+                <p>Congratulations! You won ${winnings}!</p>
               ) : (
-                <p>Sorry, you lose. Better luck next time!</p>
+                <p>Sorry, you lost ${winnings}. <br></br>Better luck next time!</p>
               )}
               <button
                 onClick={() => {
@@ -564,6 +590,12 @@ const Poker = ({ username }) => {
             </button>
           </div>
         )}
+        {gameStarted && !gameOver && ( // Put this outside other divs so the hand score is displayed seperately from everything else
+        <div className={`scored-hand ${scoreVisible ? 'visible' : ''}`}>
+          <h1>You played:</h1>
+          <h2>{handScore}</h2>
+        </div>
+      )}
       </div>
     </AuthRedirect>
   );
