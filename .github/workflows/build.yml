@@ -91,12 +91,12 @@ jobs:
       - name: Run Server Tests
         run: |
           cd server
-          npm test
+          npx jest --coverage
 
       - name: Run Client Tests
         run: |
           cd client
-          npm test
+          npx jest --coverage
 
   sonarcloud:
     needs: [test]  # Run only if tests pass
