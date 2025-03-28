@@ -6,17 +6,17 @@ COPY server/package*.json ./server/
 COPY client/package*.json ./client/
 COPY package*.json ./
 
-RUN npm ci
+RUN npm ci --ignore-scripts
 
-RUN cd server && npm ci
+RUN cd server && npm ci --ignore-scripts
 
-RUN cd client && npm ci
+RUN cd client && npm ci --ignore-scripts
 
 COPY . .
 
 RUN cd client && npm run build
 
-RUN npm install -g serve
+RUN npm install --ignore-scripts -g serve
 
 EXPOSE 5050  
 EXPOSE 5173  
