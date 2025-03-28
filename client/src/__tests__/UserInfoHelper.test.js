@@ -1,10 +1,5 @@
 import axios from "axios";
-import {
-  checkAndResetDailyValues,
-  updateTimeSpent,
-  fetchUserBalance,
-  fetchUserLimits,
-} from "../components/helpers/UserInfoHelper";
+import { checkAndResetDailyValues, updateTimeSpent, fetchUserBalance, fetchUserLimits, } from "../components/helpers/UserInfoHelper";
 
 jest.mock("axios");
 
@@ -13,7 +8,7 @@ describe("UserInfoHelper Tests", () => {
     jest.clearAllMocks();
   });
 
-  // 1 -- Test checkAndResetDailyValues with a different day.
+  // 1 -- Test checkAndResetDailyValues with a different day
   test("checkAndResetDailyValues should reset daily limits if last login is a different day", async () => {
     const mockUsername = "testUser";
     axios.get.mockResolvedValueOnce({
