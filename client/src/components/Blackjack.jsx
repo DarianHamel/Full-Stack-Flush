@@ -22,8 +22,8 @@ export default function Blackjack({username}) {
   const [lastTrendMessage, setTrendMessage] = useState(0);
   const trendMessageTimer = 120000; // 2 minutes
   const navigate = useNavigate();
-  var startTime = Date.now();
-  var newBalance = 0;
+  let startTime = Date.now();
+  let newBalance = 0;
   const [gameState, setGameState] = useState({
     otherPlayers: [],
     dealerHand: [],
