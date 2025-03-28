@@ -49,7 +49,7 @@ const Leaderboard = () => {
     /*
     Each row has these user data displayed
     */
-    function LeaderboardRows(){
+    function leaderboardRows(){
         return leaderboard.map((entry, index) => (
             <tr key={entry._id} className="leaderboard-entry">
                 <td className="leaderboard-entry-index">{index + 1}</td>
@@ -110,7 +110,7 @@ const Leaderboard = () => {
                             </thead>
 
                             <tbody>
-                                {LeaderboardRows()}
+                                {leaderboardRows()}
                             </tbody>
                         </table>
                     </div>

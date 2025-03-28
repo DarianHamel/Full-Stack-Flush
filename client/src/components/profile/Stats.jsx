@@ -3,7 +3,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import "../../design/Profile.css";
 
-const MyProfile = () => {
+const Stats = () => {
   const [cookies] = useCookies(["username", "token"]);
   const [moneySpent, setMoneySpent] = useState(0);
   const [timeSpent, setTimeSpent] = useState(0);
@@ -81,4 +81,4 @@ const MyProfile = () => {
   );
 };
 
-export default MyProfile;
+export default Stats;

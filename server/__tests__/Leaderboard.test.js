@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const User = require("../Models/UserModel");
-const { GetLeaderboard, applyFilters, calculateWinLossRatio, sortLeaderboard } = require("../Controllers/LeaderboardController");
+const { getLeaderboard, applyFilters, calculateWinLossRatio, sortLeaderboard } = require("../Controllers/LeaderboardController");
 
 let mongoServer;
 jest.setTimeout(30000);
@@ -29,9 +29,9 @@ const mockResponse = () => {
   return res;
 };
 
-describe("GetLeaderboard API Tests", () => {
+describe("getLeaderboard API Tests", () => {
 
-    test("GetLeaderboard should return sorted users", async () => {
+    test("getLeaderboard should return sorted users", async () => {
         await User.create([
             {username: "user1", password: "hello", balance: 100, wins: 8, losses: 5, moneySpent: 200, timeSpent: 155},
             {username: "user2", password: "bye", balance: 100, wins: 10, losses: 2, moneySpent: 1000, timeSpent: 60},
@@ -41,7 +41,7 @@ describe("GetLeaderboard API Tests", () => {
         const req = {query: {sortBy: "wins", order: "desc"} };
         const res = mockResponse();
     
-        await GetLeaderboard(req, res);
+        await getLeaderboard(req, res);
     
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(
@@ -51,11 +51,11 @@ describe("GetLeaderboard API Tests", () => {
                 expect.objectContaining({username: "user3"}) ]));
     });
 
-    test("GetLeaderboard should return 400 if there's an invlid sortBy parameter", async () => {
+    test("getLeaderboard should return 400 if there's an invlid sortBy parameter", async () => {
         const req = {query: {sortBy: "gender", order: "desc"} };  // gender is not part of any of our leaderboard filters
         const res = mockResponse();
 
-        await GetLeaderboard(req, res);
+        await getLeaderboard(req, res);
         const jsonParseResponse = res.json.mock.calls[0][0];
 
         expect(res.status).toHaveBeenCalledWith(400);
@@ -63,13 +63,13 @@ describe("GetLeaderboard API Tests", () => {
 
     });
 
-    test("GetLeaderboard returns server error if User.find() fails", async () => {
+    test("getLeaderboard returns server error if User.find() fails", async () => {
         jest.spyOn(User, "find").mockRejectedValue(new Error("Database error"));
     
         const req = {query: {sortBy: "moneySpent", order: "desc"} };
         const res = mockResponse();
     
-        await GetLeaderboard(req, res);
+        await getLeaderboard(req, res);
         const jsonParseResponse = res.json.mock.calls[0][0];
     
         expect(res.status).toHaveBeenCalledWith(500);
@@ -78,7 +78,7 @@ describe("GetLeaderboard API Tests", () => {
         User.find.mockRestore();
       });
 
-      test("GetLeaderboard should use default sorting when no query parameters are given", async () => {
+      test("getLeaderboard should use default sorting when no query parameters are given", async () => {
         await User.create([
             {username: "user1", password: "hello", balance: 100, wins: 8, losses: 5, moneySpent: 200, timeSpent: 155},
             {username: "user2", password: "bye", balance: 100, wins: 10, losses: 2, moneySpent: 1000, timeSpent: 60},
@@ -88,7 +88,7 @@ describe("GetLeaderboard API Tests", () => {
         const req = { query: {} };
         const res = mockResponse();
 
-        await GetLeaderboard(req, res);
+        await getLeaderboard(req, res);
 
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(

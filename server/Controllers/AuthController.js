@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 Logic for handling signup and login requests
 Checks if username already exists for signup
 */
-module.exports.Signup = async (req, res, next) => {
+module.exports.signup = async (req, res, next) => {
   try {
     const password = req.body.password?.toString();
     const username = req.body.username?.toString();
@@ -56,7 +56,7 @@ module.exports.Signup = async (req, res, next) => {
 /*
 Checks for matching username/password pair in database
 */
-module.exports.Login = async (req, res, next) => {
+module.exports.login = async (req, res, next) => {
     try {
       const username = req.body.username?.toString();
       const password = req.body.password?.toString();

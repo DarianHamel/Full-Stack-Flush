@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const User = require("../Models/UserModel");
-const { Signup, Login } = require("../Controllers/AuthController");
+const { signup, login } = require("../Controllers/AuthController");
 
 jest.mock('../util/SecretToken', () => ({
     createSecretToken: jest.fn(() => 'test_token')
@@ -35,16 +35,16 @@ const mockResponse = () => {
 
 // ========================================================================
 
-describe("Signup API Tests", () => {
+describe("signup API Tests", () => {
 
     // 1 -- Successfully creates new user with default values (default since other values are for testing purposes)
 
-    test("Signup creates a new user using default values", async () => {
+    test("signup creates a new user using default values", async () => {
         const req = { body: { username: "testUser", password: "gr12-fff" } };
         const res = mockResponse();
         const next = jest.fn();
 
-        await Signup(req, res, next);
+        await signup(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
 
         expect(res.status).toHaveBeenCalledWith(201);
@@ -63,14 +63,14 @@ describe("Signup API Tests", () => {
 
     // 2 -- Do not create a new user if username already exists
 
-    test("Signup does not create another use if username already exists", async () => {
+    test("signup does not create another use if username already exists", async () => {
         await User.create({ username: "testUser", password: "hello" });
 
         const req = { body: { username: "testUser", password: "gr12-fff" } };
         const res = mockResponse();
         const next = jest.fn();
 
-        await Signup(req, res, next);
+        await signup(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
 
         const check = await User.findOne({ username: "testUser" });
@@ -81,13 +81,13 @@ describe("Signup API Tests", () => {
 
     // 3 -- Ensure password is stored in a hash, not plain text
 
-    test("Signup sends back passowrd is stored as a hash", async () => {
+    test("signup sends back passowrd is stored as a hash", async () => {
         const samplePass = "gr12-fff";
         const req = { body: { username: "testUser", password: samplePass } };
         const res = mockResponse();
         const next = jest.fn();
 
-        await Signup(req, res, next);
+        await signup(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
 
         expect(res.status).toHaveBeenCalledWith(201);
@@ -97,7 +97,7 @@ describe("Signup API Tests", () => {
 
     // 4 -- Returns token when there's a successful signup
 
-    test("Signup returns token when there's a successful signup", async () => {
+    test("signup returns token when there's a successful signup", async () => {
         const req = { body: { username: "testUser", password: "gr12-fff" } };
         const res = mockResponse();
         const next = jest.fn();
@@ -113,7 +113,7 @@ describe("Signup API Tests", () => {
             moneySpent: 0
         }));
 
-        await Signup(req, res, next);
+        await signup(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
 
         expect(res.status).toHaveBeenCalledWith(201);
@@ -123,12 +123,12 @@ describe("Signup API Tests", () => {
 
     // 5 -- Fail when required fails are missing 
 
-    test("Signup should fail when either username or password is not present", async () => {
+    test("signup should fail when either username or password is not present", async () => {
         const req = { body: { password: "gr12-fff", balance: 300 } };
         const res = mockResponse();
         const next = jest.fn();
 
-        await Signup(req, res, next);
+        await signup(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
 
         expect(res.status).toHaveBeenCalledWith(404);
@@ -137,14 +137,14 @@ describe("Signup API Tests", () => {
 
     // 6 -- Handles server errors 
 
-    test("Signup returns server error if User.findOne fails", async () => {
+    test("signup returns server error if User.findOne fails", async () => {
         jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database error"));
         
         const req = { body: { username: "baduser", password: "gr12-fff" }};
         const res = mockResponse();
         const next = jest.fn();
     
-        await Signup(req, res, next);
+        await signup(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
     
         expect(res.status).toHaveBeenCalledWith(500);

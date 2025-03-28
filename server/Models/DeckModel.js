@@ -1,16 +1,16 @@
-const Card = require("./Card.js");
+const Card = require("./CardModel.js");
 
 class Deck{
     constructor(){
         this.cards = [];
-        this.initialize_deck();
+        this.initializeDeck();
         this.shuffle();
     }
 
     /*
     Creates all the cards of the deck
     */
-    initialize_deck(){
+    initializeDeck(){
         const suits = ['spades', 'hearts', 'diamonds', 'clubs']
         
         for (const suit of suits){

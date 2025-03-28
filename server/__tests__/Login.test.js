@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const User = require("../Models/UserModel");
-const { Login } = require("../Controllers/AuthController");
+const { login } = require("../Controllers/AuthController");
 
 jest.mock('../util/SecretToken', () => ({
     createSecretToken: jest.fn(() => 'test_token')
@@ -35,18 +35,18 @@ const mockResponse = () => {
 
 // ========================================================================
 
-describe("Login API Tests", () => {
+describe("login API Tests", () => {
 
     // 7 -- Successfully logs in with valid credentials 
     
-    test("Login logs in users with valid login credentials", async () => {
+    test("login logs in users with valid login credentials", async () => {
         await User.create({ username: "testUser", password: "gr12-fff" });
     
         const req = { body: { username: "testUser", password: "gr12-fff" } };
         const res = mockResponse();
         const next = jest.fn();
     
-        await Login(req, res, next);
+        await login(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
     
         expect(res.status).toHaveBeenCalledWith(201);
@@ -56,14 +56,14 @@ describe("Login API Tests", () => {
 
     // 8 -- Fail login if password is wrong 
 
-    test("Login fails if password is wrong even if username is right", async () => {
+    test("login fails if password is wrong even if username is right", async () => {
         await User.create({ username: "testUser", password: "gr12-fff" });
     
         const req = { body: { username: "testUser", password: "bad-password" } };
         const res = mockResponse();
         const next = jest.fn();
     
-        await Login(req, res, next);
+        await login(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
     
         expect(res.status).toHaveBeenCalledWith(401);
@@ -72,14 +72,14 @@ describe("Login API Tests", () => {
 
     // 9 -- Fail login if username is wrong 
 
-    test("Login fails is username is wrong even if password is right", async () => {
+    test("login fails is username is wrong even if password is right", async () => {
         await User.create({ username: "testUser", password: "gr12-fff" });
     
         const req = { body: { username: "bad-username", password: "gr12-fff" } };
         const res = mockResponse();
         const next = jest.fn();
     
-        await Login(req, res, next);
+        await login(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
     
         expect(res.status).toHaveBeenCalledWith(404);
@@ -88,28 +88,28 @@ describe("Login API Tests", () => {
 
     // 10 -- Fail login if username/password is missing 
 
-    test("Login fails if either the password is missing", async () => {
+    test("login fails if either the password is missing", async () => {
         await User.create({ username: "testUser", password: "gr12-fff" });
     
         const req = { body: { username: "testUser" } };
         const res = mockResponse();
         const next = jest.fn();
     
-        await Login(req, res, next);
+        await login(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
     
         expect(res.status).toHaveBeenCalledWith(400);
         expect(jsonParseResponse.message).toEqual("All fields are required");
     });
 
-    test("Login fails if either the username is missing", async () => {
+    test("login fails if either the username is missing", async () => {
         await User.create({ username: "testUser", password: "gr12-fff" });
     
         const req = { body: { password: "gr12-fff" } };
         const res = mockResponse();
         const next = jest.fn();
     
-        await Login(req, res, next);
+        await login(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
     
         expect(res.status).toHaveBeenCalledWith(400);
@@ -118,7 +118,7 @@ describe("Login API Tests", () => {
 
     // 11 -- Token is returned after a successful login 
 
-    test("Login returns a token after a successful login", async () => {
+    test("login returns a token after a successful login", async () => {
         await User.create({ username: "testUser", password: "gr12-fff" });
 
         const req = { body: { username: "testUser", password: "gr12-fff" } };
@@ -136,7 +136,7 @@ describe("Login API Tests", () => {
             moneySpent: 0
         }));
 
-        await Login(req, res, next);
+        await login(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
 
         expect(res.status).toHaveBeenCalledWith(201);
@@ -154,7 +154,7 @@ describe("Login API Tests", () => {
         const res = mockResponse();
         const next = jest.fn();
 
-        await Login(req, res, next);
+        await login(req, res, next);
         const jsonParseResponse = res.json.mock.calls[0][0];
 
         expect(res.status).toHaveBeenCalledWith(500);

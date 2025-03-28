@@ -1,7 +1,7 @@
-const PokerGame = require("../Models/PokerGame");
-const Deck = require("../Models/Deck");
+const PokerGame = require("../Models/PokerGameModel");
+const Deck = require("../Models/DeckModel");
 
-jest.mock("../Models/Deck");
+jest.mock("../Models/DeckModel");
 
 let pokerGame;
 
