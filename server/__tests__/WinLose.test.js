@@ -2,7 +2,13 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const User = require("../Models/UserModel");
-const { GetWins, GetLosses, UpdateStats } = require("../Controllers/WinLoseController");
+const History = require("../Models/History");
+const { 
+  GetWins, 
+  GetLosses, 
+  UpdateStats,
+  HandleTransaction 
+} = require("../Controllers/WinLoseController");
 
 let mongoServer;
 
@@ -18,7 +24,8 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await User.deleteMany(); 
+  await User.deleteMany();
+  await History.deleteMany();
 });
 
 const mockResponse = () => {
@@ -28,247 +35,473 @@ const mockResponse = () => {
   return res;
 };
 
-// ========================================================================
+// Mocking User methods
+User.prototype.updateMoneyWon = jest.fn().mockImplementation(function(amount) {
+    this.balance += Number(amount);
+    return this.save();
+});
+  
+  User.prototype.updateMoneySpent = jest.fn().mockImplementation(function(amount) {
+    this.dailyMoneySpent += Number(amount);
+    this.moneySpent += Number(amount);
+    return this.save();
+});
+
 
 describe("GetWins API Tests", () => {
-
-    // 1 -- Return correct win count 
-
-    test("GetWins returns the correct win count for valid user", async () => {
-        await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
-        
-        const req = { query: { username: "mockUser" } };
-        const res = mockResponse();
-
-        await GetWins(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(jsonParseResponse).toEqual({ wins: 10 });
+  test("returns correct win count for valid user", async () => {
+    await User.create({ 
+        username: "testUser", 
+        password: "testPass",
+        wins: 5 
     });
 
-    // 2 -- Return 404 if user is not found
+    const req = { query: { username: "testUser" } };
+    const res = mockResponse();
 
-    test("GetWins returns 404 if the user if not found", async () => {
-        const req = { query: { username: "badUser" } };
-        const res = mockResponse();
+    await GetWins(req, res);
 
-        await GetWins(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ wins: 5 });
+  });
 
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(jsonParseResponse).toEqual({ message: "User not found" });
-    });
+  test("returns 404 if user not found", async () => {
+    const req = { query: { username: "nonexistent" } };
+    const res = mockResponse();
 
-    // 3 -- Handles server error when User.findOne throws an error
+    await GetWins(req, res);
 
-    test("GetWins returns server error if User.findOne() fails", async () => {
-        jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database error"));
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
+  });
 
-        const req = { query: { username: "badUser" }};
-        const res = mockResponse();
+  test("handles database errors", async () => {
+    jest.spyOn(User, "findOne").mockRejectedValue(new Error("DB error"));
+    const req = { query: { username: "test" } };
+    const res = mockResponse();
 
-        await GetWins(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
+    await GetWins(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(jsonParseResponse).toEqual({ message: "Server error" });
-
-        User.findOne.mockRestore();
-    });
-
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: "Server error" });
+    User.findOne.mockRestore();
+  });
 });
+
 
 describe("GetLosses API Tests", () => {
-
-    // 4 -- Return correct lose count 
-
-    test("GetLosses returns the correct losses for valid user", async () => {
-        await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
-
-        const req = { query: { username: "mockUser" } };
-        const res = mockResponse();
-
-        await GetLosses(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(jsonParseResponse).toEqual({ losses: 5 });
+  test("returns correct loss count for valid user", async () => {
+    await User.create({ 
+        username: "testUser",
+        password: "testPass",
+        losses: 3 
     });
 
-    // 5 -- Return 404 is user is not found
+    const req = { query: { username: "testUser" } };
+    const res = mockResponse();
 
-    test("GetLosses returns 404 if the user if not found", async () => {
-        const req = { query: { username: "badUser" } };
-        const res = mockResponse();
+    await GetLosses(req, res);
 
-        await GetLosses(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ losses: 3 });
+  });
 
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(jsonParseResponse).toEqual({ message: "User not found" });
-    });
+  test("returns 404 if user not found", async () => {
+    const req = { query: { username: "nonexistent" } };
+    const res = mockResponse();
 
-    // 6 -- Handles server error when User.findOne throws an error
+    await GetLosses(req, res);
 
-    test("GetLosses returns server error if User.findOne() fails", async () => {
-        jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database error"));
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
+  });
 
-        const req = { query: { username: "badUser" }};
-        const res = mockResponse();
+  test("handles database errors", async () => {
+    jest.spyOn(User, "findOne").mockRejectedValue(new Error("DB error"));
+    const req = { query: { username: "test" } };
+    const res = mockResponse();
 
-        await GetLosses(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
+    await GetLosses(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(jsonParseResponse).toEqual({ message: "Server error" });
-
-        User.findOne.mockRestore();
-    });
-
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: "Server error" });
+    User.findOne.mockRestore();
+  });
 });
 
+
 describe("UpdateStats API Tests", () => {
-
-    // 7 -- Updates wins and losses successfully 
-
-    test("UpdateStats will update wins and losses successfully", async () => {
-        await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
-
-        const req = { body: { username: "mockUser", wins: 2, losses: 3, game: "Poker" } };
-        const res = mockResponse();
-
-        await UpdateStats(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(jsonParseResponse).toEqual({ success: true, wins: 12, losses: 8 });
+  let user;
+  
+  beforeEach(async () => {
+    user = await User.create({ 
+      username: "testUser",
+      password: "testPass",
+      balance: 1000,
+      wins: 5,
+      losses: 3,
+      moneySpent: 50
     });
 
-    // 8 -- Returns 400 if username is not found 
+    // Clear all mock implementations before each test
+    User.prototype.updateMoneyWon.mockClear();
+    User.prototype.updateMoneySpent.mockClear();
+  });
 
-    test("UpdateStats will return 404 if user is not found", async () => {
-        const req = { body: { username: "badUser", wins: 2, losses: 3, game: "Blackjack" } };
-        const res = mockResponse();
+  test("updates wins and losses successfully", async () => {
+    const req = { 
+      body: { 
+        username: "testUser",
+        wins: 2,
+        losses: 1,
+        game: "Blackjack"
+      } 
+    };
+    const res = mockResponse();
 
-        await UpdateStats(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
+    await UpdateStats(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(jsonParseResponse).toEqual({ success: false, message: "User not found" });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      wins: 7,
+      losses: 4
     });
+  });
 
-    // 9 -- Returns 400 if wins is negative
+  test("updates wins only when losses not provided", async () => {
+    const req = {
+      body: {
+        username: "testUser",
+        wins: 3,
+        game: "Poker"  
+      }
+    };
 
-    test("UpdateStats will return a 400 if wins is negative", async () => {
-        await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
+    const res = mockResponse();
 
-        const req = { body: { username: "mockUser", wins: -2, losses: 3, game: "Poker" } };
-        const res = mockResponse();
+    await UpdateStats(req, res);
 
-        await UpdateStats(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(jsonParseResponse).toEqual({ success: false, message: "Invalid values" });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      wins: 8,
+      losses: 3
     });
+  });
 
-    // 10 -- Returns 400 if losses is negative
+  test("updates losses only when wins not provided", async () => {
+    const req = {
+      body: {
+        username: "testUser",
+        losses: 2,
+        game: "Blackjack"
+      }
+    };
 
-    test("UpdateStats will return a 400 if losses is negative", async () => {
-        await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
+    const res = mockResponse();
 
-        const req = { body: { username: "mockUser", wins: 2, losses: -3, game: "Blackjack" } };
-        const res = mockResponse();
+    await UpdateStats(req, res);
 
-        await UpdateStats(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(jsonParseResponse).toEqual({ success: false, message: "Invalid values" });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      wins: 5,
+      losses: 5
     });
+  });
 
-    // 11 -- Handles server error of User.findOne
+  test("creates history record when money is provided", async () => {
+    const req = {
+      body: {
+        username: "testUser",
+        wins: 1,
+        money: 50,
+        game: "Poker",
+        day: "2023-01-01"
+      }
+    };
 
-    test("UpdateStats will return server error if User.findOne fails", async () => {
-        await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
-        jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database error"));
+    const res = mockResponse();
 
-        const req = { body: { username: "mockUser", wins: 2, losses: 3, game: "Poker" } };
-        const res = mockResponse();
+    await UpdateStats(req, res);
 
-        await UpdateStats(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
+    const history = await History.findOne();
+    expect(history).toBeTruthy();
+    expect(history.transaction).toBe(50);
+  });
 
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(jsonParseResponse).toEqual({ success: false, message: "Server error" });
+  test("creates negative history record when losses occur", async () => {
+    const req = {
+      body: {
+        username: "testUser",
+        losses: 1,
+        money: 50,
+        game: "Blackjack",
+        day: "2023-01-01"
+      }
+    };
 
-        User.findOne.mockRestore();
-    });
+    const res = mockResponse();
 
-    // 12 -- Handles server error of User.save
+    await UpdateStats(req, res);
 
-    test("UpdateStats returns server error if User.save() fails", async () => {
-        const mockUser = new User({ username: "mockUser", password: await bcrypt.hash("gr12-fff", 12), wins: 10, losses: 5 });
-        jest.spyOn(User, "findOne").mockResolvedValue(mockUser);
-        jest.spyOn(mockUser, "save").mockRejectedValue(new Error("Database save error"));
+    const history = await History.findOne();
+    expect(history.transaction).toBe(-50);
+  });
+
+  test("updates balance when wins and money provided", async () => {
+    const initialBalance = user.balance;
+    const moneyToAdd = 75;
     
-        const req = { body: { username: "mockUser", wins: 2, losses: 3, game: "Blackjack" } };
-        const res = mockResponse();
+    const req = {
+      body: {
+        username: "testUser",
+        wins: 1,
+        money: moneyToAdd,
+        game: "Poker"
+      }
+    };
+
+    const res = mockResponse();
+
+    await UpdateStats(req, res);
+
+    // Verifying the method was called with the right amount
+    expect(User.prototype.updateMoneyWon).toHaveBeenCalledWith(moneyToAdd);
     
-        await UpdateStats(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
+    // Verifying the user's balance was updated in the database
+    const updatedUser = await User.findOne({ username: "testUser" });
+    expect(updatedUser.balance).toBe(initialBalance + moneyToAdd);
+  });
+
+  test("updates moneySpent when losses and money provided", async () => {
+    const initialMoneySpent = user.moneySpent;
+    const moneyToSpend = 25;
     
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(jsonParseResponse).toEqual({ message: "Server error", success: false });
+    const req = {
+      body: {
+        username: "testUser",
+        losses: 1,
+        money: moneyToSpend,
+        game: "Blackjack"
+      }
+    };
+
+    const res = mockResponse();
+
+    await UpdateStats(req, res);
+
+    const updatedUser = await User.findOne();
+    expect(updatedUser.moneySpent).toBe(initialMoneySpent + moneyToSpend);
+  });
+
+  test("returns 400 for negative wins", async () => {
+    const req = {
+      body: {
+        username: "testUser",
+        wins: -1,
+        game: "Poker"
+      }
+    };
+
+    const res = mockResponse();
+
+    await UpdateStats(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Invalid values"
+    });
+  });
+
+  test("returns 400 for negative losses", async () => {
+    const req = {
+      body: {
+        username: "testUser",
+        losses: -1,
+        game: "Blackjack"
+      }
+    };
+
+    const res = mockResponse();
+
+    await UpdateStats(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Invalid values"
+    });
+  });
+
+  test("returns 400 for invalid game", async () => {
+    const req = {
+      body: {
+        username: "testUser",
+        wins: 1,
+        game: "InvalidGame"
+      }
+    };
+
+    const res = mockResponse();
+
+    await UpdateStats(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Game not found"
+    });
+  });
+
+  test("returns 400 when username missing", async () => {
+    const req = {
+      body: {
+        wins: 1,
+        game: "Poker"
+      }
+    };
+
+    const res = mockResponse();
+
+    await UpdateStats(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Invalid request. Provide a username."
+    });
+  });
+
+  test("returns 404 when user not found", async () => {
+    const req = {
+      body: {
+        username: "nonexistent",
+        wins: 1,
+        game: "Blackjack"
+      }
+    };
+
+    const res = mockResponse();
+
+    await UpdateStats(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "User not found"
+    });
+  });
+
+  test("handles database errors", async () => {
+    jest.spyOn(User, "findOne").mockRejectedValue(new Error("DB error"));
+    const req = {
+      body: {
+        username: "testUser",
+        wins: 1,
+        game: "Poker"
+      }
+    };
+
+    const res = mockResponse();
+
+    await UpdateStats(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Server error"
+    });
+    User.findOne.mockRestore();
+  });
+});
+
+
+describe("HandleTransaction API Tests", () => {
+  test("creates transaction history for Poker", async () => {
+    const req = {
+      body: {
+        username: "testUser",
+        transaction: 100,
+        game: "Poker",
+        day: "2023-01-01"
+      }
+    };
+
+    const res = mockResponse();
+
+    await HandleTransaction(req, res);
+
+    const history = await History.findOne();
+    expect(history).toBeTruthy();
+    expect(history.transaction).toBe(100);
+    expect(history.game).toBe("Poker");
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true });
+  });
+
+  test("returns 400 for invalid request", async () => {
+    const req = {
+      body: {
+        username: "testUser",
+        game: "Poker"
+      }
+    };
+
+    const res = mockResponse();
+
+    await HandleTransaction(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Invalid request. Provide a username.",
+      "success": false,
+    });
+  });
+
+  test("returns 400 for non-Poker game", async () => {
+    const req = {
+      body: {
+        username: "testUser",
+        transaction: 100,
+        game: "Blackjack",
+        day: "2023-01-01"
+      }
+    };
+
+    const res = mockResponse();
+
+    await HandleTransaction(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Invalid request. Provide a username.",
+      "success": false,
+    });
+  });
+
+  test("handles database errors", async () => {
+    jest.spyOn(History, "create").mockRejectedValue(new Error("DB error"));
+    const req = {
+      body: {
+        username: "testUser",
+        transaction: 100,
+        game: "Poker",
+        day: "2023-01-01"
+      }
+    };
+
+    const res = mockResponse();
+
+    await HandleTransaction(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ 
+      success: false,
+      message: "Server error" 
+    });
     
-        User.findOne.mockRestore();
-        mockUser.save.mockRestore();
-      });
-
-    // 13 -- Only increments wins if losses isn't provided
-
-    test("UpdateStats will increment wins even if losses isn't provided", async () => {
-        await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
-
-        const req = { body: { username: "mockUser", wins: 5, game: "Poker" } };
-        const res = mockResponse();
-
-        await UpdateStats(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(jsonParseResponse).toEqual({ success: true, wins: 15, losses: 5 });
-    });
-
-    // 14 -- Only increments losses if wins isn't provided
-
-    test("UpdateStats will increment losses even if wins isn't provided", async () => {
-        await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
-
-        const req = { body: { username: "mockUser", losses: 2, game: "Blackjack" } };
-        const res = mockResponse();
-
-        await UpdateStats(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(jsonParseResponse).toEqual({ success: true, wins: 10, losses: 7 });
-    });
-
-    // 15 -- Returns 400 if username is missing
-
-    test("UpdateStats will not work if a username is missing", async () => {
-        await User.create({ username: "mockUser", password: "gr12-fff", wins: 10, losses: 5 });
-
-        const req = { body: { wins: 1, losses: 2, game: "Poker" } };
-        const res = mockResponse();
-
-        await UpdateStats(req, res);
-        const jsonParseResponse = res.json.mock.calls[0][0];
-
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(jsonParseResponse).toEqual({ message: "Invalid request. Provide a username." });
-    });
-
+    History.create.mockRestore();
+  });
 });
