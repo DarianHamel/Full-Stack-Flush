@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TutorialPage Component matches snapshot 1`] = `
+<div>
+  <div
+    class="tutorials-container"
+  >
+    <h1
+      class="tutorials-heading"
+    >
+      Game Tutorials
+    </h1>
+    <div
+      class="tutorials-list"
+    >
+      <div
+        class="tutorial-item"
+      >
+        <a
+          href="/tutorial/1"
+        >
+          Poker
+        </a>
+      </div>
+      <div
+        class="tutorial-item"
+      >
+        <a
+          href="/tutorial/2"
+        >
+          Blackjack
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;
