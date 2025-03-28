@@ -41,7 +41,7 @@ const TutorialPage = ({ username }) => {
       const response = await axios.get(USER_TUTORIALS_URL);
       if(response.data){
         console.log(response);
-        var tutsViewed = response.data.tutorialsViewed;
+        let tutsViewed = response.data.tutorialsViewed;
         const viewedIDs = [];
         tutsViewed.forEach(tutorial =>{
           viewedIDs.push(tutorial._id)
