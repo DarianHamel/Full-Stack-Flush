@@ -72,9 +72,13 @@ Update balance without requiring a password (for game results)
 added this to deal with unable to update balance after a win because password is required in other method 
 */
 module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
-  const query = {username: req.body.username?.toString(), amount: Number(req.body.amount), day: req.body.day?.toString()};
+  const query = {
+    username: req.body.username?.toString(), 
+    amount: Number(req.body.amount), 
+    day: req.body.day?.toString()
+  };
 
-  if (!query.username || typeof query.amount !== "number") {
+  if (!query.username || isNaN(query.amount)) {
     return res.status(400).json({
       message: "Invalid request. Provide username and amount as a number.",
       success: false,
@@ -98,12 +102,12 @@ module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
     console.log(user.balance);
     const transaction = query.amount;
     const game = "Poker";
-    await History.create(
-      query.username, 
+    await History.create({
+      username: query.username, 
       transaction,
       game,
-      query.day,
-    );
+      day: query.day,
+    });
 
     res.status(200).json({ balance: user.balance, success: true });
   } catch (error) {
@@ -113,14 +117,17 @@ module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
 };
 
 module.exports.UpdateMoneySpent = async (req, res) => {
-  const query = {username: req.body.username?.toString(), moneySpent: Number(req.body.moneySpent)};
+  const query = {
+    username: req.body.username?.toString(), 
+    moneySpent: Number(req.body.moneySpent)
+  };
 
   if (!query.username || isNaN(query.moneySpent)) {
     return res.status(400).json({ success: false, message: "Invalid request data" });
   }
 
   try {
-    const user = await User.findOne( query.username );
+    const user = await User.findOne( {username: query.username} );
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
