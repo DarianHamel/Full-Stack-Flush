@@ -24,15 +24,7 @@ const Profile = ({ username }) => {
   };
 
   const loadPanelData = (panel) => {
-    if (panel === "logout") {
-      console.log("Logging out..."); 
-      return;
-    }
-    if (panelComponents[panel]) {
-      setCurrentPanel(panel);
-    } else {
-      console.error(`Invalid panel: ${panel}`);
-    }
+    setCurrentPanel(panel);
   };
 
   return (
