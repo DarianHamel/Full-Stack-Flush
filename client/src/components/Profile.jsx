@@ -12,7 +12,7 @@ import StatsPanel from "./profile/Stats";
 import SupportPanel from "./profile/Support";
 import HistoryPanel from "./profile/History";
 
-const Profile = ({ username }) => {
+export const Profile = ({ username }) => {
   const [currentPanel, setCurrentPanel] = useState("profile"); //Default to profile
 
   const panelComponents = {
@@ -24,15 +24,7 @@ const Profile = ({ username }) => {
   };
 
   const loadPanelData = (panel) => {
-    if (panel === "logout") {
-      console.log("Logging out..."); 
-      return;
-    }
-    if (panelComponents[panel]) {
-      setCurrentPanel(panel);
-    } else {
-      console.error(`Invalid panel: ${panel}`);
-    }
+    setCurrentPanel(panel);
   };
 
   return (
