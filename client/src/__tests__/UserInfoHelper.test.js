@@ -1,5 +1,5 @@
 import axios from "axios";
-import { checkAndResetDailyValues, updateTimeSpent, fetchUserBalance, fetchUserLimits, } from "../components/helpers/UserInfoHelper";
+import { checkAndResetDailyValues, updateTimeSpent, fetchUserBalance, fetchUserLimits, } from "../components/helpers/userInfoHelper";
 
 jest.mock("axios");
 
