@@ -13,7 +13,7 @@ describe("UserInfoHelper Tests", () => {
     jest.clearAllMocks();
   });
 
-  // 1 -- Test checkAndResetDailyValues with a different day
+  // 1 -- Test checkAndResetDailyValues with a different day.
   test("checkAndResetDailyValues should reset daily limits if last login is a different day", async () => {
     const mockUsername = "testUser";
     axios.get.mockResolvedValueOnce({
