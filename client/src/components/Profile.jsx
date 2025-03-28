@@ -12,7 +12,7 @@ import StatsPanel from "./profile/Stats";
 import SupportPanel from "./profile/Support";
 import HistoryPanel from "./profile/History";
 
-export const Profile = ({ username }) => {
+const Profile = ({ username }) => {
   const [currentPanel, setCurrentPanel] = useState("profile"); //Default to profile
 
   const panelComponents = {
