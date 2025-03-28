@@ -13,6 +13,8 @@ beforeEach(() => {
 
 describe("PokerGame", () => {
 
+    // 1 -- Constructor of PokerGame
+
     test("should initialize with correct default values", () => {
         expect(pokerGame.id).toBe("game1");
         expect(pokerGame.difficulty).toBe("easy");
@@ -25,6 +27,8 @@ describe("PokerGame", () => {
         expect(pokerGame.targetScore).toBe(200);
     });
 
+    // 2 -- Start the game of poker
+
     test("should start the game and deal cards", () => {
         pokerGame.startGame();
         expect(pokerGame.started).toBe(true);
@@ -32,10 +36,14 @@ describe("PokerGame", () => {
         expect(pokerGame.targetScore).toBe(500);
     });
 
+    // 3 -- Return the array of cards in the player's hand
+
     test("should return the player's hand", () => {
         pokerGame.startGame();
         expect(pokerGame.getPlayerHand().length).toBe(8);
     });
+
+    // 4 -- Score the hand played
 
     test("should score a hand correctly", () => {
         const hand = [
@@ -51,10 +59,11 @@ describe("PokerGame", () => {
         expect(pokerGame.handsRemaining).toBe(3);
     });
 
+    // 5 -- Discard cards
+
     test("should handle discarding cards", () => {
         pokerGame.startGame();
     
-        // Mock the initial hand with unique cards
         pokerGame.playerHand = [
             { rank: "2", suit: "Hearts" },
             { rank: "3", suit: "Hearts" },
@@ -88,6 +97,8 @@ describe("PokerGame", () => {
         const result = pokerGame.discardCards([{ rank: "Ace", suit: "Spades" }]);
         expect(result).toBe("No discards remaining.");
     });
+
+    // 6 -- End the game
 
     test("should end the game", () => {
         pokerGame.endGame();
