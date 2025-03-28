@@ -49,7 +49,7 @@ const MyProfile = () => {
       var newLimit = timeLimit * 60;
       await axios.post(
         "http://localhost:5050/setTimeLimit",
-        { username: cookies.username, newLimit },
+        { username: cookies.username, timeLimit: newLimit },
         { withCredentials: true }
       );
       setIsEditingTime(false);
