@@ -7,7 +7,7 @@ const History = require("../Models/HistoryModel");
 /* 
 Get User Wins by username
 */
-module.exports.GetWins = async (req, res) => {
+module.exports.getWins = async (req, res) => {
     const username = req.query.username?.toString(); 
     try {
       const user = await User.findOne( {username: username} ); 
@@ -24,7 +24,7 @@ module.exports.GetWins = async (req, res) => {
 /*
 Get User Losses by username
 */
-module.exports.GetLosses = async (req, res) => {
+module.exports.getLosses = async (req, res) => {
     const  username  = req.query.username?.toString(); 
     try {
       const user = await User.findOne( {username: username }); 

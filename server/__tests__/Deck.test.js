@@ -1,5 +1,5 @@
-const Deck = require('../Models/Deck.js');
-const Card = require('../Models/Card.js');
+const Deck = require('../Models/DeckModel');
+const Card = require('../Models/CardModel');
 
 let deckInstance;
 

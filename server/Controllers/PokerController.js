@@ -28,7 +28,7 @@ module.exports.startPoker = (req, res) => {
 /*
 Draw the number of cards required for the user
 */
-module.exports.DrawCards = (req, res) => {
+module.exports.drawCards = (req, res) => {
     const gameID = req.query.gameID?.toString();
     const count = Number(req.query.count);
 

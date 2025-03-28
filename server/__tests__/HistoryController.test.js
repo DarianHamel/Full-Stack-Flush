@@ -1,10 +1,10 @@
-const { GetHistory, MakeHistory } = require("../Controllers/HistoryController");
-const History = require("../Models/History");
+const { getHistory, makeHistory } = require("../Controllers/HistoryController");
+const History = require("../Models/HistoryModel");
 const User = require("../Models/UserModel");
 
 jest.setTimeout(60000);
 
-jest.mock("../Models/History");
+jest.mock("../Models/HistoryModel");
 jest.mock("../Models/UserModel");
 
 describe("History Controller", () => {
@@ -19,10 +19,10 @@ describe("History Controller", () => {
     jest.clearAllMocks();
   });
 
-  describe("GetHistory", () => {
+  describe("getHistory", () => {
     it("should return 404 if username is missing", async () => {
       mockReq.query = {};
-      await GetHistory(mockReq, mockRes);
+      await getHistory(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(404);
       expect(mockRes.json).toHaveBeenCalledWith({ message: "Username is required" });
     });
@@ -30,7 +30,7 @@ describe("History Controller", () => {
     it("should return 400 if no transactions exist", async () => {
       mockReq.query = { username: "testUser" };
       History.find.mockResolvedValue([]);
-      await GetHistory(mockReq, mockRes);
+      await getHistory(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: "No transactions were made yet" });
     });
@@ -39,7 +39,7 @@ describe("History Controller", () => {
       const mockHistory = [{ transaction: 100, game: "Blackjack" }];
       mockReq.query = { username: "testUser" };
       History.find.mockResolvedValue(mockHistory);
-      await GetHistory(mockReq, mockRes);
+      await getHistory(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(200);
       expect(mockRes.json).toHaveBeenCalledWith(mockHistory);
     });
@@ -47,13 +47,13 @@ describe("History Controller", () => {
     it("should handle server errors", async () => {
       mockReq.query = { username: "testUser" };
       History.find.mockRejectedValue(new Error("DB Error"));
-      await GetHistory(mockReq, mockRes);
+      await getHistory(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(500);
       expect(mockRes.json).toHaveBeenCalledWith({ message: "Server error" });
     });
   });
 
-  describe("MakeHistory", () => {
+  describe("makeHistory", () => {
     beforeEach(() => {
       mockReq.body = {
         username: "testUser",
@@ -65,14 +65,14 @@ describe("History Controller", () => {
 
     it("should return 404 if required parameters are missing", async () => {
       mockReq.body = {};
-      await MakeHistory(mockReq, mockRes);
+      await makeHistory(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(404);
       expect(mockRes.json).toHaveBeenCalledWith({ message: "Needed parameters needed" });
     });
 
     it("should return 400 if user doesn't exist", async () => {
       User.findOne.mockResolvedValue(null);
-      await MakeHistory(mockReq, mockRes);
+      await makeHistory(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: "Cannot locate user" });
     });
@@ -80,7 +80,7 @@ describe("History Controller", () => {
     it("should return 400 for invalid game type", async () => {
       mockReq.body.game = "InvalidGame";
       User.findOne.mockResolvedValue({});
-      await MakeHistory(mockReq, mockRes);
+      await makeHistory(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: "Game is not found" });
     });
@@ -89,7 +89,7 @@ describe("History Controller", () => {
       mockReq.body.game = "Deposit";
       User.findOne.mockResolvedValue({});
       History.create.mockResolvedValue({});
-      await MakeHistory(mockReq, mockRes);
+      await makeHistory(mockReq, mockRes);
       expect(History.create).toHaveBeenCalled();
       expect(mockRes.status).toHaveBeenCalledWith(201);
     });
@@ -97,7 +97,7 @@ describe("History Controller", () => {
     it("should create history for valid game", async () => {
       User.findOne.mockResolvedValue({});
       History.create.mockResolvedValue({});
-      await MakeHistory(mockReq, mockRes);
+      await makeHistory(mockReq, mockRes);
       expect(History.create).toHaveBeenCalledWith({
         username: "testUser",
         transaction: 100,
@@ -108,7 +108,7 @@ describe("History Controller", () => {
 
     it("should handle server errors", async () => {
       User.findOne.mockRejectedValue(new Error("DB Error"));
-      await MakeHistory(mockReq, mockRes);
+      await makeHistory(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(500);
     });
   });

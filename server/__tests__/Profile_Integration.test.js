@@ -85,18 +85,6 @@ describe('Profile Controller Integration Tests', () => {
       expect(res.body.moneyLimit).toBe(500);
     });
 
-    /*it('should return user details without password', async () => {
-      const res = await makeRequest()
-        .get('/userInfo')
-        .query({ username: 'testuser' });
-      
-      expect(res.status).toBe(200);
-      expect(res.body.username).toBe('testuser');
-      expect(res.body.password).toBeUndefined();
-      expect(res.body.timeLimit).toBe(120);
-      expect(res.body.moneyLimit).toBe(500);
-    }); */
-
     it('should return 404 for non-existent user', async () => {
       const res = await makeRequest()
         .get('/userInfo')

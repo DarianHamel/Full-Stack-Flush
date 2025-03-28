@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 /*
 Get User Balance by username
 */
-module.exports.GetBalance = async (req, res) => {
+module.exports.getBalance = async (req, res) => {
     const username  = req.query.username?.toString(); 
     try {
       const user = await User.findOne({ username: username }); 
@@ -21,7 +21,7 @@ module.exports.GetBalance = async (req, res) => {
 /*
 Update balance for deposit or bet (POST request)
 */
-module.exports.UpdateBalance = async (req, res) => {
+module.exports.updateBalance = async (req, res) => {
   const query = {
     username: req.body.username?.toString(), 
     amount: Number(req.body.amount) || 0, 
@@ -71,7 +71,7 @@ module.exports.UpdateBalance = async (req, res) => {
 Update balance without requiring a password (for game results)
 added this to deal with unable to update balance after a win because password is required in other method 
 */
-module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
+module.exports.updateBalanceWithoutPassword = async (req, res) => {
   const query = {
     username: req.body.username?.toString(), 
     amount: Number(req.body.amount), 
@@ -121,7 +121,7 @@ Updates the money spent by the user for the day in order to track spending habit
 This is used for our safe gambling feature where if they reached the limit for the day they will be locked out
 from playing games and will be prompted to seek help
 */
-module.exports.UpdateMoneySpent = async (req, res) => {
+module.exports.updateMoneySpent = async (req, res) => {
   const query = {
     username: req.body.username?.toString(), 
     moneySpent: Number(req.body.moneySpent)

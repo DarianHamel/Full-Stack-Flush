@@ -134,13 +134,13 @@ Set the time limit of the user
 Time limit restricts the user to a playtime of {timeLimit}
 */
 module.exports.setTimeLimit = async (req, res) => {
-  const { username, newLimit } = req.body;
-  if (newLimit != undefined && newLimit > 0) {
+  const { username, timeLimit } = req.body;
+  if (timeLimit != undefined && timeLimit > 0) {
     const { user, error, status } = await findUserByUsername(username);
     if (error) {
       return res.status(status).json({ success: false, message: error });
     }
-    user.timeLimit = newLimit;
+    user.timeLimit = timeLimit;
     user.markModified("timeLimit");
     await user.save();
     res.status(200).json({ success: true, message: "Time limit updated" });
