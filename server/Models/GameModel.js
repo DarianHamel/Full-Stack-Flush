@@ -7,7 +7,7 @@ class Game{
     constructor(id){
         this.players = [];
         this.playerQueue = [];
-        this.deck;
+        this.deck = null;
         this.dealer = new Player(null, null);
         this.maxPlayers = 4;
         this.id = id;
