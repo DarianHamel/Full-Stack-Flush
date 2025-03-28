@@ -30,7 +30,7 @@ class Game{
             if(!fakeMoney){
                 handleBet(username, betAmount);
             }
-            this.start_game();
+            this.startGame();
         }
         else{
             this.playerQueue.push(new Player(ws, this.playerIdCounter, username, betAmount, fakeMoney));
