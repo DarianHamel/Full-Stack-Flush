@@ -69,7 +69,7 @@ const Leaderboard = () => {
 
             <div className="dropdowns">
                 {/*Sort dropdown */}
-                <select onChange={(newSort) => setSortBy(newSort.target.value)} value={sortBy} className="sort-dropdown">
+                <select onChange={(newSort) => setSortBy(newSort.target.value)} value={sortBy} className="sort-dropdown" aria-label="Sort">
                     <option value="username">Username</option>
                     <option value="wins">Wins</option>
                     <option value="losses">Losses</option>
@@ -79,13 +79,13 @@ const Leaderboard = () => {
                 </select>
 
                 {/*Order dropdown */}
-                <select onChange={(newOrder) => setOrderBy(newOrder.target.value)} value={order} className="order-dropdown">
+                <select onChange={(newOrder) => setOrderBy(newOrder.target.value)} value={order} className="order-dropdown" aria-label="Order">
                     <option value="desc">Descending Order</option>
                     <option value="asc">Ascending Order</option>
                 </select>
 
                 {/*Filter dropdown */}
-                <select onChange={(newFilter) => setFilter(newFilter.target.value)} value={filter} className="filter-dropdown">
+                <select onChange={(newFilter) => setFilter(newFilter.target.value)} value={filter} className="filter-dropdown" aria-label="Filter">
                     <option value="">All Users</option>
                     <option value="highSpenders">High Spenders ($1500+)</option>
                     <option value="longestPlayers">Longest Playtime (100+ hrs)</option>

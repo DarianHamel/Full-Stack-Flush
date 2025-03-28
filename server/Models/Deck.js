@@ -32,14 +32,6 @@ class Deck{
     }
 
     /*
-    Deals the first card from the deck
-    Returns a single card
-    */
-    dealCard(numCards) {
-        return this.cards.splice(0, numCards);
-    }
-
-    /*
     Changes the rank from a numeric value to the respective word value
     */
     changeCard(card) { 
