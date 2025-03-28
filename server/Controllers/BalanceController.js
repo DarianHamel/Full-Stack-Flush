@@ -116,6 +116,11 @@ module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
   }
 };
 
+/* 
+Updates the money spent by the user for the day in order to track spending habits
+This is used for our safe gambling feature where if they reached the limit for the day they will be locked out
+from playing games and will be prompted to seek help
+*/
 module.exports.UpdateMoneySpent = async (req, res) => {
   const query = {
     username: req.body.username?.toString(), 
