@@ -1,5 +1,5 @@
-const Player = require ("./Player.js");
-const Deck = require("./Deck.js");
+const Player = require ("./PlayerModel.js");
+const Deck = require("./DeckModel.js");
 const { handleLose, handleWin } = require("../util/HandleWinLoss.js");
 const { handleBet } = require("../util/HandleBet.js");
 
@@ -7,7 +7,7 @@ class Game{
     constructor(id){
         this.players = [];
         this.playerQueue = [];
-        this.deck;
+        this.deck = null;
         this.dealer = new Player(null, null);
         this.maxPlayers = 4;
         this.id = id;
@@ -21,14 +21,16 @@ class Game{
     /*
     Add a player to this game if it's not started yet or stick them in the queue
     */
-    add_player(ws, username, betAmount, fakeMoney){
+    addPlayer(ws, username, betAmount, fakeMoney){
 
         //Now start the game or let the player know the current state
         if (!this.started){
             this.players.push(new Player(ws, this.playerIdCounter, username, betAmount, fakeMoney));
             this.playerIdCounter++;
-            handleBet(username, betAmount);
-            this.start_game();
+            if(!fakeMoney){
+                handleBet(username, betAmount);
+            }
+            this.startGame();
         }
         else{
             this.playerQueue.push(new Player(ws, this.playerIdCounter, username, betAmount, fakeMoney));
@@ -40,7 +42,7 @@ class Game{
     /*
     Start the game with the players in the queue 
     */
-    start_game(){
+    startGame(){
         //Setup the game
         this.playingPlayer = 0;
         this.playersPlayingAgain = 0;
@@ -89,7 +91,7 @@ class Game{
         }
 
         //Let the player know the dealer's first card
-        this.message_dealer_card(0);
+        this.messageDealerCard(0);
 
         //Then tell the player every other player's deal
         for (const player of this.players){
@@ -110,26 +112,26 @@ class Game{
         }
 
         //Check if dealer has 21, end match if so
-        if (this.dealer.get_total() === 21){
+        if (this.dealer.getTotal() === 21){
             console.log("Dealer has natural")
             //let the player's know what the dealer's other card is
-            this.message_dealer_card(1);
+            this.messageDealerCard(1);
             
-            this.end_game();
+            this.endGame();
         }
         //Otherwise move onto the first player's turn
         else{
-            this.next_turn();
+            this.nextTurn();
         }
     }
 
     /*
     Tell the current player that it's their turn or move onto the dealer
     */
-    next_turn(){
+    nextTurn(){
 
         //Skip each player with 21
-        while (this.playingPlayer < this.players.length && this.players[this.playingPlayer].get_total() == 21){
+        while (this.playingPlayer < this.players.length && this.players[this.playingPlayer].getTotal() == 21){
             this.playingPlayer++;
         }
         
@@ -139,36 +141,36 @@ class Game{
         //Dealer's turn
         else{
             console.log("dealer's turn");
-            this.dealer_turn();
+            this.dealerTurn();
         }
     }
 
     /*
     Do all the steps for the dealer's turn
     */
-    dealer_turn(){
+    dealerTurn(){
         //First, let the player's know what the dealer's other card is
-        this.message_dealer_card(1);
+        this.messageDealerCard(1);
 
         //Keep getting cards until the dealer's hand is over 17 and let the players know the new card
-        while(this.dealer.get_total() < 17){
+        while(this.dealer.getTotal() < 17){
             this.dealer.hand.push(this.deck.cards.pop());
             
-            this.message_dealer_card(this.dealer.hand.length - 1);
+            this.messageDealerCard(this.dealer.hand.length - 1);
         }
 
-        this.end_game();
+        this.endGame();
     }
 
     /*
     Calculate who won or lost and tell them
     */
-    end_game(){
-        const dealerHand = this.dealer.get_total();
+    endGame(){
+        const dealerHand = this.dealer.getTotal();
         const game = "Blackjack";
         
         for (const player of this.players){
-            const playerHand = player.get_total();
+            const playerHand = player.getTotal();
             if (playerHand <= 21 && (dealerHand > 21 || playerHand > dealerHand)){
                 console.log(player.bet);
                 handleWin(player.username, 2*player.bet, game); //Update the state of the users bet and number of wins
@@ -205,9 +207,9 @@ class Game{
     Handle player actions
     Deal a new card for HIT
     Go to the next person on STAND
-    Mark the player as wanting to play again on PLAY_AGAIN
+    Mark the player as wanting to play again on playAgain
     */
-    async handle_action(action, ws, bet){
+    async handleAction(action, ws, bet){
         for (const player of this.players){
             if (player.ws === ws){
                 console.log(player.username + " called " + action + " in game " + this.id);
@@ -219,7 +221,7 @@ class Game{
                         }
                         //Just kick them if they're out of sync
                         else{
-                            this.kick_player(player.ws);
+                            this.kickPlayer(player.ws);
                         }
                         break;
                     case "STAND":
@@ -229,30 +231,31 @@ class Game{
                         }
                         //Just kick them if they're out of sync
                         else{
-                            this.kick_player(player.ws);
+                            this.kickPlayer(player.ws);
                         }
                         break;
                     case "PLAY_AGAIN":
                         //Check if the game is over
                         if (this.gameOver){
+                            var message;
                             if(player.fakeMoney){ //Handle if the user is playing with fake currency
                                 player.bet = 0;
                             }else{
                                 player.bet = bet;
+                                message = await handleBet(player.username, player.bet); //Only call /bet if we're using real money
                             }
-                            const message = await handleBet(player.username, player.bet);
                             player.ws.send(JSON.stringify({type: "TREND_CHANGE", message: message || null}));
-                            this.play_again();
+                            this.playAgain();
                         }
                         //Just kick them if they're out of sync
                         else{
-                            this.kick_player(player.ws);
+                            this.kickPlayer(player.ws);
                         }
                         break;
                     default:
                         //Kick the player if they send an unknown action
                         console.log("Unknown action");
-                        this.kick_player(player.ws);
+                        this.kickPlayer(player.ws);
                 }
             }
         }
@@ -261,8 +264,8 @@ class Game{
     /*
     Kicks the player with the specified websocket
     */
-   kick_player(ws){
-        this.remove_player(ws);
+   kickPlayer(ws){
+        this.removePlayer(ws);
         ws.close();
    }
 
@@ -292,17 +295,17 @@ class Game{
         }
 
         //Check if they bust
-        if (player.get_total() > 21){
+        if (player.getTotal() > 21){
             player.ws.send(JSON.stringify({type: "BUST"}));
             this.playingPlayer++;
-            this.next_turn();
+            this.nextTurn();
         }
         //Check if they have 21, skip them if so
-        else if (player.get_total() == 21){
+        else if (player.getTotal() == 21){
             //Let them know that they have 21
             player.ws.send(JSON.stringify({type: "TWENTY_ONE"}));
             this.playingPlayer++;
-            this.next_turn();
+            this.nextTurn();
         }
     }
 
@@ -312,18 +315,18 @@ class Game{
     */
     stand(player){
         this.playingPlayer++;
-        this.next_turn();
+        this.nextTurn();
     }
 
     /*
     Increment the counter for the number of players who want to play again
     When all the players want to play again, restart the game
     */
-    play_again(){
+    playAgain(){
         this.playersPlayingAgain++;
 
         if (this.playersPlayingAgain >= this.players.length){
-            this.start_game();
+            this.startGame();
         }
     }
     
@@ -331,7 +334,7 @@ class Game{
     Remove the player with the matching websocket
     Returns a bool for whether a player was removed or not
     */
-    remove_player(ws){
+    removePlayer(ws){
         let output = false;
 
         for( let i=0; i<this.players.length; i++){
@@ -342,12 +345,12 @@ class Game{
 
                 //If the currently-playing player left, start the next turn to prevent locking up
                 if (i==this.playingPlayer){
-                    this.next_turn();
+                    this.nextTurn();
                 }
 
                 //Start the next game if enough players want to
                 if (this.playersPlayingAgain >= this.players.length){
-                    this.start_game();
+                    this.startGame();
                 }
             }
         }
@@ -365,7 +368,7 @@ class Game{
     /*
     Let all of the players know about the dealer's card at the provided index
     */
-    message_dealer_card(index){
+    messageDealerCard(index){
         for (const player of this.players){
             player.ws.send(JSON.stringify({
                 type: "DEALER_CARD",

@@ -4,7 +4,7 @@ const User = require("../Models/UserModel");
 Get the leaderboard
 Returns the results in the appropriate sorting after calculating the win loss ratios
 */
-module.exports.GetLeaderboard = async(req, res) => {
+module.exports.getLeaderboard = async(req, res) => {
     try {
         const sortBy = req.query.sortBy?.toString() || "wins";
         const order = req.query.order?.toString() || "desc";

@@ -1,20 +1,38 @@
 export default {
-    testEnvironment: 'jest-environment-jsdom',
-    transform: {
-      '^.+\.jsx?$': 'babel-jest',
-      '^.+\.css$': 'jest-transform-css',
-    },
-    moduleNameMapper: {
-      '\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    },
-    transformIgnorePatterns: [
-      '/node_modules/',
-    ],
-    collectCoverage: true,
-    coverageReporters: ['text', 'html'],
-    coverageDirectory: 'coverage',
-    maxWorkers: 2, // Prevents excessive parallel workers
-    restoreMocks: true, // Ensures clean mocks
-    clearMocks: true, // Resets mock state before each test
-    forceExit: true, // Prevents Jest from hanging
-  };
+  testEnvironment: 'jest-environment-jsdom',
+  setupFilesAfterEnv: ['@testing-library/jest-dom'], 
+  transform: {
+    '^.+\\.[jt]sx?$': 'babel-jest', 
+    '^.+\\.css$': 'jest-transform-css',
+  },
+  moduleNameMapper: {
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '^@/(.*)$': '<rootDir>/src/$1', 
+  },
+  transformIgnorePatterns: [
+    '/node_modules/(?!react-toastify)', 
+  ],
+  collectCoverage: true,
+  coverageReporters: ['text', 'html', 'lcov'], 
+  coverageDirectory: 'coverage',
+  coveragePathIgnorePatterns: [ 
+    '/node_modules/',
+    '/src/design/', 
+    'setupTests.js',
+    'jest.config.js'
+  ],
+  testMatch: [ 
+    '<rootDir>/src/**/*.{spec,test}.{js,jsx}',
+    '<rootDir>/__tests__/**/*.{spec,test}.{js,jsx}'
+  ],
+  maxWorkers: 2,
+  restoreMocks: true,
+  clearMocks: true,
+  forceExit: true,
+  
+  testEnvironmentOptions: {
+    url: 'http://localhost' 
+  },
+  
+  moduleDirectories: ['node_modules', 'src']
+};

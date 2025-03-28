@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const User = require("../Models/UserModel");
-const History = require("../Models/History");
+const History = require("../Models/HistoryModel");
 const { 
-  GetWins, 
-  GetLosses, 
-  UpdateStats,
-  HandleTransaction 
+  getWins, 
+  getLosses, 
+  updateStats,
+  handleTransaction 
 } = require("../Controllers/WinLoseController");
 
 let mongoServer;
@@ -48,7 +48,7 @@ User.prototype.updateMoneyWon = jest.fn().mockImplementation(function(amount) {
 });
 
 
-describe("GetWins API Tests", () => {
+describe("getWins API Tests", () => {
   test("returns correct win count for valid user", async () => {
     await User.create({ 
         username: "testUser", 
@@ -59,7 +59,7 @@ describe("GetWins API Tests", () => {
     const req = { query: { username: "testUser" } };
     const res = mockResponse();
 
-    await GetWins(req, res);
+    await getWins(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ wins: 5 });
@@ -69,7 +69,7 @@ describe("GetWins API Tests", () => {
     const req = { query: { username: "nonexistent" } };
     const res = mockResponse();
 
-    await GetWins(req, res);
+    await getWins(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
@@ -80,7 +80,7 @@ describe("GetWins API Tests", () => {
     const req = { query: { username: "test" } };
     const res = mockResponse();
 
-    await GetWins(req, res);
+    await getWins(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ message: "Server error" });
@@ -89,7 +89,7 @@ describe("GetWins API Tests", () => {
 });
 
 
-describe("GetLosses API Tests", () => {
+describe("getLosses API Tests", () => {
   test("returns correct loss count for valid user", async () => {
     await User.create({ 
         username: "testUser",
@@ -100,7 +100,7 @@ describe("GetLosses API Tests", () => {
     const req = { query: { username: "testUser" } };
     const res = mockResponse();
 
-    await GetLosses(req, res);
+    await getLosses(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ losses: 3 });
@@ -110,7 +110,7 @@ describe("GetLosses API Tests", () => {
     const req = { query: { username: "nonexistent" } };
     const res = mockResponse();
 
-    await GetLosses(req, res);
+    await getLosses(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
@@ -121,7 +121,7 @@ describe("GetLosses API Tests", () => {
     const req = { query: { username: "test" } };
     const res = mockResponse();
 
-    await GetLosses(req, res);
+    await getLosses(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ message: "Server error" });
@@ -130,7 +130,7 @@ describe("GetLosses API Tests", () => {
 });
 
 
-describe("UpdateStats API Tests", () => {
+describe("updateStats API Tests", () => {
   let user;
   
   beforeEach(async () => {
@@ -159,7 +159,7 @@ describe("UpdateStats API Tests", () => {
     };
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
@@ -180,7 +180,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
@@ -201,7 +201,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
@@ -224,7 +224,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     const history = await History.findOne();
     expect(history).toBeTruthy();
@@ -244,7 +244,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     const history = await History.findOne();
     expect(history.transaction).toBe(-50);
@@ -265,7 +265,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     // Verifying the method was called with the right amount
     expect(User.prototype.updateMoneyWon).toHaveBeenCalledWith(moneyToAdd);
@@ -290,7 +290,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     const updatedUser = await User.findOne();
     expect(updatedUser.moneySpent).toBe(initialMoneySpent + moneyToSpend);
@@ -307,7 +307,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
@@ -327,7 +327,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
@@ -347,7 +347,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
@@ -366,7 +366,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
@@ -385,7 +385,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
@@ -406,7 +406,7 @@ describe("UpdateStats API Tests", () => {
 
     const res = mockResponse();
 
-    await UpdateStats(req, res);
+    await updateStats(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
@@ -418,7 +418,7 @@ describe("UpdateStats API Tests", () => {
 });
 
 
-describe("HandleTransaction API Tests", () => {
+describe("handleTransaction API Tests", () => {
   test("creates transaction history for Poker", async () => {
     const req = {
       body: {
@@ -431,7 +431,7 @@ describe("HandleTransaction API Tests", () => {
 
     const res = mockResponse();
 
-    await HandleTransaction(req, res);
+    await handleTransaction(req, res);
 
     const history = await History.findOne();
     expect(history).toBeTruthy();
@@ -451,7 +451,7 @@ describe("HandleTransaction API Tests", () => {
 
     const res = mockResponse();
 
-    await HandleTransaction(req, res);
+    await handleTransaction(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
@@ -472,7 +472,7 @@ describe("HandleTransaction API Tests", () => {
 
     const res = mockResponse();
 
-    await HandleTransaction(req, res);
+    await handleTransaction(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
@@ -494,7 +494,7 @@ describe("HandleTransaction API Tests", () => {
 
     const res = mockResponse();
 
-    await HandleTransaction(req, res);
+    await handleTransaction(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ 

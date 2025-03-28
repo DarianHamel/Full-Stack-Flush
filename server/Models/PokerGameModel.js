@@ -1,4 +1,4 @@
-const Deck = require("../Models/Deck.js");
+const Deck = require("../Models/DeckModel");
 
 class PokerGame {
     constructor(id, difficulty = "easy") {

@@ -1,9 +1,9 @@
 const express = require("express");
-const { GetTutorials, GetTutorialId } = require("../Controllers/TutorialController.js");
+const { getTutorials } = require("../Controllers/TutorialController.js");
 
 const router = express.Router();
 
-router.get("/api/tutorials", GetTutorials);
+router.get("/api/tutorials", getTutorials);
 
 
 module.exports = router;

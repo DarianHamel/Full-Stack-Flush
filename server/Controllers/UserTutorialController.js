@@ -3,7 +3,7 @@ const UserTutorial = require('../Models/UserTutorialModel');
 /*
 Get tutorials viewed by a user
 */
-module.exports.GetUserTutorials = async (req, res) => {
+module.exports.getUserTutorials = async (req, res) => {
   try {
     const userTutorials = await UserTutorial.findOne({ username: req.params.username }).populate('tutorialsViewed');
     res.json(userTutorials);
@@ -15,7 +15,7 @@ module.exports.GetUserTutorials = async (req, res) => {
 /*
 Mark a tutorial as viewed by a user
 */
-module.exports.MarkTutorialAsViewed = async (req, res) => {
+module.exports.markTutorialAsViewed = async (req, res) => {
   try {
     const { tutorialId } = req.body;
     let userTutorials = await UserTutorial.findOne({ username: req.params.username });

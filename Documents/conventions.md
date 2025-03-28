@@ -4,12 +4,16 @@
 All JavaScript files will use the PascalCase naming convention
 
 ## Variables
-Normal variables will use the camelCase naming convention
+Normal variables will use the camelCase naming convention (primarily used)
 
 Global variables and constants will use UPPERCASE letters
 
+*There is an exception for naming variables in JavaScript as local variables are declared with ```const``` so they will still use camelCase for their naming conventions*
+
+*Another exception is for any React component the const declared variable for it will use PascalCase since it is a file name*
+
 ## Functions
-All functions will use the snake_case naming convention
+All functions will use the camelCase naming convention
 
 ## Comments
 All functions will be commented with a block header that look like this

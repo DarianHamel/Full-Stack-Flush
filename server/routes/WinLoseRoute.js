@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { GetWins, GetLosses, UpdateStats, HandleTransaction } = require("../Controllers/WinLoseController");
+const { getWins, getLosses, updateStats, handleTransaction } = require("../Controllers/WinLoseController");
 
-router.get("/getWins", GetWins);
-router.get("/getLosses", GetLosses);
-router.post("/updateStats", UpdateStats);
-router.post("/handleTransaction", HandleTransaction);
+router.get("/getWins", getWins);
+router.get("/getLosses", getLosses);
+router.post("/updateStats", updateStats);
+router.post("/handleTransaction", handleTransaction);
 
 module.exports = router;

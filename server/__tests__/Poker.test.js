@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
-const PokerGame = require("../Models/PokerGame");
-const { StartPoker, DrawCards, ScoreHand, sortHand } = require("../Controllers/PokerController");
+const PokerGame = require("../Models/PokerGameModel");
+const { startPoker, drawCards, scoreHand, sortHand } = require("../Controllers/PokerController");
 
-jest.mock("../Models/PokerGame");
+jest.mock("../Models/PokerGameModel");
 
 let mockGameInstance;
 let mockResponse;
@@ -35,15 +35,15 @@ beforeEach(() => {
 
 // ========================================================================
 
-describe("StartPoker API Tests", () => {
+describe("startPoker API Tests", () => {
 
     // 1 -- Starts the Game 
 
-    test("StartPoker starts a new game and returns initial data", async () => {
+    test("startPoker starts a new game and returns initial data", async () => {
         const req = { body: { difficulty: "easy" } };
         const res = mockResponse();
 
-        StartPoker(req, res);
+        startPoker(req, res);
 
         expect(mockGameInstance.startGame).toHaveBeenCalled();
         expect(res.json).toHaveBeenCalledWith({
@@ -59,11 +59,11 @@ describe("StartPoker API Tests", () => {
 
 });
 
-describe("DrawCards API Tests", () => {
+describe("drawCards API Tests", () => {
 
     // 2 -- Returns new cards when game exists
 
-    test("DrawCards returns new cards when game exists", () => {
+    test("drawCards returns new cards when game exists", () => {
         const req = { query: { gameID: "full-stack-flush", count: "1" } };
         const res = mockResponse();
     
@@ -71,7 +71,7 @@ describe("DrawCards API Tests", () => {
     
         mockGameInstance.deck.dealCard.mockReturnValue([{ rank: "10", suit: "diamonds" }]);
     
-        DrawCards(req, res);
+        drawCards(req, res);
     
         expect(mockGameInstance.deck.dealCard).toHaveBeenCalledWith(1);
         expect(res.json).toHaveBeenCalledWith({ newCards: [{ rank: "10", suit: "diamonds" }] });
@@ -79,13 +79,13 @@ describe("DrawCards API Tests", () => {
 
     // 3 -- Drawing cards returns 400 if the count parameter is invalid (should be a number in a string)
 
-    test("DrawCards returns 400 if count parameter is invalid", () => {
+    test("drawCards returns 400 if count parameter is invalid", () => {
         const req = { query: { gameID: "full-stack-flush", count: "invalid" } };
         const res = mockResponse();
     
         global.activeGames = { "full-stack-flush": mockGameInstance };
     
-        DrawCards(req, res);
+        drawCards(req, res);
     
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({ error: "Invalid count parameter" });
@@ -93,13 +93,13 @@ describe("DrawCards API Tests", () => {
 
     // 4 -- Drawing cards returns 404 if game is not found
 
-    test("DrawCards returns 404 if game is not found", () => {
+    test("drawCards returns 404 if game is not found", () => {
         const req = { query: { gameID: "full-stack-flush", count: "invalid" } };
         const res = mockResponse();
     
         global.activeGames = { "full-stack-flush": undefined };
     
-        DrawCards(req, res);
+        drawCards(req, res);
     
         expect(res.status).toHaveBeenCalledWith(404);
         expect(res.json).toHaveBeenCalledWith({ error: "Game not found" });
@@ -107,16 +107,16 @@ describe("DrawCards API Tests", () => {
 
 });
 
-describe("ScoreHand API Tests", () => {
+describe("scoreHand API Tests", () => {
 
     // 5 -- Returns score and updated game state
 
-    test("ScoreHand returns score and updated game state", () => {
+    test("scoreHand returns score and updated game state", () => {
         const req = { body: { gameID: "full-stack-flush", selectedCards: [] } };
         const res = mockResponse();
     
         global.activeGames = { "full-stack-flush": mockGameInstance };
-        ScoreHand(req, res);
+        scoreHand(req, res);
     
         expect(mockGameInstance.scoreHand).toHaveBeenCalledWith([]);
         expect(res.json).toHaveBeenCalledWith({ score: 50, currentScore: 50, handsRemaining: 3, 
@@ -125,14 +125,14 @@ describe("ScoreHand API Tests", () => {
 
     // 6 -- Scoring returns 404 if game not found
 
-    test("ScoreHand returns 404 if game not found", () => {
+    test("scoreHand returns 404 if game not found", () => {
 
         const req = { body: { gameID: "full-stack-flush", selectedCards: [] } };
         const res = mockResponse();
     
         global.activeGames = {};
     
-        ScoreHand(req, res);
+        scoreHand(req, res);
     
         expect(res.status).toHaveBeenCalledWith(404);
         expect(res.json).toHaveBeenCalledWith({ error: "Game not found" });

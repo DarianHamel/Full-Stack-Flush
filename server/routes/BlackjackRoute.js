@@ -1,5 +1,5 @@
 const axios = require("axios");
-const Game = require("../Models/Game.js");
+const Game = require("../Models/GameModel.js");
 
 const blackjackState = {
     games: [],
@@ -9,7 +9,7 @@ const blackjackState = {
 /*
 Handle connection between player and server, handles user limits and ensures bets are valid.
 */
-async function handle_web_socket(ws, username){
+async function handleWebSocket(ws, username){
 
     console.log(username + " websocket connected");
     
@@ -28,10 +28,10 @@ async function handle_web_socket(ws, username){
                 }else if(moneySpent + Number(JSON.parse(msg).bet) <= moneyLimit || usingFakeMoney){
                     console.log("Bet amount: ", JSON.parse(msg).bet);
                     if(!usingFakeMoney){
-                        assign_player(ws, username, JSON.parse(msg).bet, false);
+                        assignPlayer(ws, username, JSON.parse(msg).bet, false);
                     }else{
                         console.log("Fake money bet");
-                        assign_player(ws, username, 0, usingFakeMoney); //Don't actually bet any money
+                        assignPlayer(ws, username, 0, usingFakeMoney); //Don't actually bet any money
                     }
                     ws.send(JSON.stringify({type: "JOIN"}));
                 }else if(JSON.parse(msg).bet > balance){
@@ -43,10 +43,10 @@ async function handle_web_socket(ws, username){
             }
             else{
                 if(!usingFakeMoney){
-                    handle_message(JSON.parse(msg), ws, username, JSON.parse(msg).bet);
+                    handleMessage(JSON.parse(msg), ws, username, JSON.parse(msg).bet);
                 }else{
                     console.log("Fake money bet");
-                    handle_message(JSON.parse(msg), ws, username, 0);
+                    handleMessage(JSON.parse(msg), ws, username, 0);
                 }
             }
         }
@@ -58,12 +58,12 @@ async function handle_web_socket(ws, username){
     });
     
     ws.on('close', () => {
-        remove_player(ws);
+        removePlayer(ws);
     });
     
     ws.on('error', (error) => {
         console.log('Websocket error: ', error);
-        remove_player(ws);
+        removePlayer(ws);
     })
 
 }
@@ -71,7 +71,7 @@ async function handle_web_socket(ws, username){
 /*
 Assign new players to a game, make a new one if none available
 */
-function assign_player(ws, username, bet, fakeMoney){
+function assignPlayer(ws, username, bet, fakeMoney){
     let game;
     //Search the games for a viable one to join
     for (const g of blackjackState.games){
@@ -85,7 +85,7 @@ function assign_player(ws, username, bet, fakeMoney){
         blackjackState.gameIdCounter++;
         blackjackState.games.push(game);
     }
-    game.add_player(ws, username, bet, fakeMoney);    
+    game.addPlayer(ws, username, bet, fakeMoney);    
 
     return game;
 
@@ -94,9 +94,9 @@ function assign_player(ws, username, bet, fakeMoney){
 /*
 Remove players who leave from their game and close the game if it's empty
 */
-function remove_player(ws){
+function removePlayer(ws){
     for (let i=0; i<blackjackState.games.length; i++){
-        if (blackjackState.games[i].remove_player(ws) && blackjackState.games[i].players.length == 0){
+        if (blackjackState.games[i].removePlayer(ws) && blackjackState.games[i].players.length == 0){
             console.log("Game " + blackjackState.games[i].id + " empty, removing");
             blackjackState.games.splice(i,1);
         }
@@ -106,7 +106,7 @@ function remove_player(ws){
 /*
 Pass the action and websocket to every game, the game will deal with it if needed
 */
-async function handle_message(message, ws, username, bet){
+async function handleMessage(message, ws, username, bet){
     if (message.type === "ACTION"){
         if(message.action === "PLAY_AGAIN"){
             const response = await axios.get('http://localhost:5050/getLimits', {params: {username}});
@@ -129,7 +129,7 @@ async function handle_message(message, ws, username, bet){
                 }
             }
         for (const g of blackjackState.games){
-            g.handle_action(message.action, ws, bet);
+            g.handleAction(message.action, ws, bet);
         }
     }
     else{
@@ -139,12 +139,12 @@ async function handle_message(message, ws, username, bet){
 }
 
 //export default router;
-//export { handle_web_socket };
+//export { handleWebSocket };
 module.exports = { 
-    handle_web_socket,
+    handleWebSocket,
     //Export these for testing
     blackjackState,
-    assign_player,
-    remove_player,
-    handle_message
+    assignPlayer,
+    removePlayer,
+    handleMessage
 };

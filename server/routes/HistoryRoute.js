@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { GetHistory, MakeHistory } = require("../Controllers/HistoryController");
+const { getHistory, makeHistory } = require("../Controllers/HistoryController");
 
-router.get("/getHistory", GetHistory);
-router.post("/makeHistory", MakeHistory);
+router.get("/getHistory", getHistory);
+router.post("/makeHistory", makeHistory);
 
 module.exports = router;
