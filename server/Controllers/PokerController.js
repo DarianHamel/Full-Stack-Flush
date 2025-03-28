@@ -29,8 +29,8 @@ module.exports.StartPoker = (req, res) => {
 Draw the number of cards required for the user
 */
 module.exports.DrawCards = (req, res) => {
-    const { gameID, count } = req.query;
-    console.log("DrawCards Request:", { gameID, count });
+    const gameID = req.query.gameID?.toString();
+    const count = Number(req.query.count);
 
     const game = global.activeGames[gameID];
     if (!game) {
