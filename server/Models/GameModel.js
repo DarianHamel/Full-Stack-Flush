@@ -27,8 +27,10 @@ class Game{
         if (!this.started){
             this.players.push(new Player(ws, this.playerIdCounter, username, betAmount, fakeMoney));
             this.playerIdCounter++;
-            handleBet(username, betAmount);
-            this.startGame();
+            if(!fakeMoney){
+                handleBet(username, betAmount);
+            }
+            this.start_game();
         }
         else{
             this.playerQueue.push(new Player(ws, this.playerIdCounter, username, betAmount, fakeMoney));
@@ -235,12 +237,13 @@ class Game{
                     case "PLAY_AGAIN":
                         //Check if the game is over
                         if (this.gameOver){
+                            var message;
                             if(player.fakeMoney){ //Handle if the user is playing with fake currency
                                 player.bet = 0;
                             }else{
                                 player.bet = bet;
+                                message = await handleBet(player.username, player.bet); //Only call /bet if we're using real money
                             }
-                            const message = await handleBet(player.username, player.bet);
                             player.ws.send(JSON.stringify({type: "TREND_CHANGE", message: message || null}));
                             this.playAgain();
                         }
