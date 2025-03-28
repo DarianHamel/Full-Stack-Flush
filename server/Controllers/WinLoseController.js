@@ -75,12 +75,12 @@ module.exports.UpdateStats = async (req, res) => {
         if (query.losses > 0) { // make money deposited a negative is lost
           transaction = query.money * -1;
         }
-        await History.create(
-          query.username, 
+        await History.create({
+          username: query.username, 
           transaction,
-          query.game,
-          query.day,
-        );
+          game: query.game,
+          day: query.day,
+        });
       }
 
       if (query.wins > 0){ 
