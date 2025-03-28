@@ -8,9 +8,9 @@ const History = require("../Models/History");
 Get User Wins by username
 */
 module.exports.GetWins = async (req, res) => {
-    const { username } = req.query; 
+    const username = req.query.username?.toString(); 
     try {
-      const user = await User.findOne({ username }); 
+      const user = await User.findOne( {username: username} ); 
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -25,9 +25,9 @@ module.exports.GetWins = async (req, res) => {
 Get User Losses by username
 */
 module.exports.GetLosses = async (req, res) => {
-    const { username } = req.query; 
+    const  username  = req.query.username?.toString(); 
     try {
-      const user = await User.findOne({ username }); 
+      const user = await User.findOne( {username: username }); 
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -44,49 +44,56 @@ Updates History, wins, losses, money spent and the balance
 */
 module.exports.UpdateStats = async (req, res) => {
   try {
-      const { username, wins, losses, money, game, day } = req.body;
+      const query = {
+        username: req.body.username?.toString(),
+        wins: Number(req.body.wins) || 0,
+        losses: Number(req.body.losses) || 0,
+        money: Number(req.body.money) || 0,
+        game: req.body.game?.toString() ,
+        day: req.body.day?.toString(),
+      }
 
-      if (!username) {
+      if (query.username === undefined) {
         return res.status(400).json({ message: "Invalid request. Provide a username." });
       }
 
-      if (wins < 0 || losses < 0) {
+      if (query.wins < 0 || query.losses < 0) {
           return res.status(400).json({ success: false, message: "Invalid values" });
       }
 
-      if (game !== "Blackjack" && game !== "Poker") {
+      if (query.game !== "Blackjack" && query.game !== "Poker") {
         return res.status(400).json({ success: false, message: "Game not found" });
       }
 
-      const user = await User.findOne({ username }); // This will search by username field
+      const user = await User.findOne( {username: query.username} ); // This will search by username field
       if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
       // only add a history when there is money involved 
       // which was integrated after another sprint 
-      if (money !== undefined) {
-        let transaction = money;
-        if (losses !== undefined && losses > 0) { // make money deposited a negative is lost
-          transaction = money * -1;
+      if (query.money !== 0) {
+        let transaction = query.money;
+        if (query.losses > 0) { // make money deposited a negative is lost
+          transaction = query.money * -1;
         }
-        await History.create({
-          username, 
+        await History.create(
+          query.username, 
           transaction,
-          game,
-          day,
-        });
+          query.game,
+          query.day,
+        );
       }
 
-      if (wins !== undefined && wins > 0){ 
-        user.wins += wins;
-        if(money !== undefined){
-          await user.updateMoneyWon(money);
+      if (query.wins > 0){ 
+        user.wins += query.wins;
+        if(query.money){
+          await user.updateMoneyWon(query.money);
         }
       }
 
-      if (losses !== undefined && losses > 0){
-        user.losses += losses;
-        if(money !== undefined){
-          await user.updateMoneySpent(money);
+      if (query.losses > 0){
+        user.losses += query.losses;
+        if(query.money){
+          await user.updateMoneySpent(query.money);
         }
       }
 
@@ -103,7 +110,13 @@ module.exports.UpdateStats = async (req, res) => {
 
 module.exports.HandleTransaction = async (req, res) => {
   try {
-    const { username, transaction, game, day } = req.body;
+    const query = {
+      username: req.body.username?.toString(),
+      transaction: req.body.transaction?.toString(),
+      game: req.body.game?.toString(),
+      day: req.body.day?.toString(),
+    }
+    const {username, transaction, game, day} = query;
 
     if (!username || !transaction || game !== "Poker") {
       return res.status(400).json({ message: "Invalid request. Provide a username." });

@@ -29,7 +29,8 @@ module.exports.StartPoker = (req, res) => {
 Draw the number of cards required for the user
 */
 module.exports.DrawCards = (req, res) => {
-    const { gameID, count } = req.query;
+    const gameID = req.query.gameID?.toString();
+    const count = Number(req.query.count);
 
     if (!activeGames[gameID]) {
         return res.status(404).json({ message: "Game not found" });

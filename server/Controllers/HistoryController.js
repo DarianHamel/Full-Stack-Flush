@@ -7,7 +7,7 @@ inside the History database
 */
 module.exports.GetHistory = async (req, res, next) => {
     try {
-        const { username } = req.query;
+        const username  = req.query.username.toString();
 
         if (!username) {
             return res.status(404).json({ message: "Username is required" });
@@ -31,13 +31,13 @@ or a Blackjack/Poker game is played and they have placed a bet
 */
 module.exports.MakeHistory = async (req, res, next) => {
     try {
-        const { username, transaction, day, game } = req.body;
+        const query = {username: req.body.username.toString(), transaction: req.body.transaction.toString(), day: req.body.day.toString(), game: req.body.game.toString()};
 
-        if (username === undefined || transaction === undefined || game === undefined) {
+        if (query.username === undefined || query.transaction === undefined || query.game === undefined) {
             return res.status(404).json({ message: "Needed parameters needed" });
         }
 
-        const existingUser = await User.findOne({ username });
+        const existingUser = await User.findOne( query.username );
         if (existingUser == undefined) {
             return res.status(400).json({ message: "Cannot locate user" });
         }
@@ -46,12 +46,12 @@ module.exports.MakeHistory = async (req, res, next) => {
             return res.status(400).json({ message: "Game is not found" });
         }
 
-        const userHistory = await History.create({
-            username, 
-            transaction, 
-            game,
-            day,
-        });
+        const userHistory = await History.create(
+            query.username, 
+            query.transaction, 
+            query.game,
+            query.day,
+        );
 
         res.status(201).json({ message: "Added user transaction" });
     } catch (error) {

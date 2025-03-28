@@ -5,6 +5,7 @@ Find a user in the database by their username
 Returns the user if found or the respective error and status
 */
 const findUserByUsername = async (username) => {
+  username = username.toString();
   try {
     const user = await User.findOne({ username });
     if (!user) {
