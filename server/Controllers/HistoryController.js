@@ -7,13 +7,12 @@ inside the History database
 */
 module.exports.getHistory = async (req, res, next) => {
     try {
-        const { username } = req.query;
-
+        const username  = req.query.username?.toString();
         if (!username) {
             return res.status(404).json({ message: "Username is required" });
         }
 
-        const userHistory = await History.find({ username });
+        const userHistory = await History.find({ username: username });
         if (userHistory.length === 0) {
             return res.status(400).json({ message: "No transactions were made yet" });
         }  
@@ -31,26 +30,26 @@ or a Blackjack/Poker game is played and they have placed a bet
 */
 module.exports.makeHistory = async (req, res, next) => {
     try {
-        const { username, transaction, day, game } = req.body;
+        const query = {username: req.body.username?.toString(), transaction: Number(req.body.transaction), day: req.body.day?.toString(), game: req.body.game?.toString()};
 
-        if (username === undefined || transaction === undefined || game === undefined) {
+        if (!query.username || isNaN(query.transaction)|| !query.game) {
             return res.status(404).json({ message: "Needed parameters needed" });
         }
 
-        const existingUser = await User.findOne({ username });
+        const existingUser = await User.findOne( {username: query.username} );
         if (existingUser == undefined) {
             return res.status(400).json({ message: "Cannot locate user" });
         }
 
-        if (game !== "Deposit" && game !== "Blackjack" && game !== "Poker") {
+        if (query.game !== "Deposit" && query.game !== "Blackjack" && query.game !== "Poker") {
             return res.status(400).json({ message: "Game is not found" });
         }
 
         const userHistory = await History.create({
-            username, 
-            transaction, 
-            game,
-            day,
+            username: query.username, 
+            transaction: query.transaction, 
+            game: query.game,
+            day: query.day,
         });
 
         res.status(201).json({ message: "Added user transaction" });

@@ -8,7 +8,8 @@ Checks if username already exists for signup
 */
 module.exports.signup = async (req, res, next) => {
   try {
-    const { password, username, createdAt, balance, wins, losses, timeSpent, moneySpent } = req.body;
+    const password = req.body.password?.toString();
+    const username = req.body.username?.toString();
 
     if (password == undefined || username == undefined) {
       return res.status(404).json({ message: "Needed parameters needed" });
@@ -19,10 +20,14 @@ module.exports.signup = async (req, res, next) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
+    const balance = 100;
+    const wins = 0;
+    const losses = 0;
+    const timeSpent = 0;
+    const moneySpent = 0;
     const user = await User.create({ 
       password, 
       username, 
-      createdAt, 
       balance: balance ?? 100, 
       wins: wins ?? 0,
       losses: losses ?? 0,
@@ -53,7 +58,8 @@ Checks for matching username/password pair in database
 */
 module.exports.login = async (req, res, next) => {
     try {
-      const { username, password } = req.body;
+      const username = req.body.username?.toString();
+      const password = req.body.password?.toString();
 
       if(username == undefined) {
         return res.status(400).json({message:'All fields are required'})

@@ -63,7 +63,7 @@ export default function Blackjack({username}) {
         balance: balance
       }));
     } catch (error) {
-      // console.error('Error fetching user balance:', error);
+      console.error('Error fetching user balance:', error);
     }
   }
 
@@ -83,7 +83,7 @@ export default function Blackjack({username}) {
         handleLockOut();
       }
     } catch (error) {
-      // console.error('Error fetching user limits:', error);
+      console.error('Error fetching user limits:', error);
     }
   }
 
@@ -117,7 +117,7 @@ export default function Blackjack({username}) {
       newBalance = 10000;
       gameState.balance = 10000;
     }else{
-      if (betAmount <= 0 || betAmount > gameState.balance) {
+      if (betAmount < 0 || betAmount > gameState.balance) {
         toast.info("Invalid bet amount", {position: "top-center"});
         return;
       }
@@ -161,13 +161,13 @@ export default function Blackjack({username}) {
       }
 
       newSocket.onerror = (error) => {
-        // console.error('Websocket error: ', error);
+        console.error('Websocket error: ', error);
       }
 
       setSocket(newSocket);
 
     } catch (error) {
-      // console.error('A problem occurred starting blackjack game: ', error);
+      console.error('A problem occurred starting blackjack game: ', error);
     }
   }
 

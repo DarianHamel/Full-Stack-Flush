@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const User = require("../Models/UserModel");
-const { Signup, Login } = require("../Controllers/AuthController");
+const { Login } = require("../Controllers/AuthController");
 
 jest.mock('../util/SecretToken', () => ({
     createSecretToken: jest.fn(() => 'test_token')

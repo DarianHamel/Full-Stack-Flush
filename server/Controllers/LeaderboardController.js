@@ -6,8 +6,10 @@ Returns the results in the appropriate sorting after calculating the win loss ra
 */
 module.exports.getLeaderboard = async(req, res) => {
     try {
-        const {sortBy = "wins", order = "desc", filter = ""} = req.query; //sort by wins as default
-
+        const sortBy = req.query.sortBy?.toString() || "wins";
+        const order = req.query.order?.toString() || "desc";
+        const filter = req.query.filter?.toString() || "";
+        
         const sortFields = ["username", "winLossRatio", "wins", "losses", "moneySpent", "timeSpent"]; // sorting options
 
         if(!sortFields.includes(sortBy)){

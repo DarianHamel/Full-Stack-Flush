@@ -7,10 +7,10 @@ Then it updates their balance so that a user can't leave a game and retain their
 Also sends back spending habits after the user has logged in enough times to determine habits of the users
 */
 module.exports.bet = async (req, res) => {
-    const { username, money } = req.body;
+    const username = req.body.username?.toString();
+    const money = Number(req.body.money);
     var mess = "";
     console.log(req.body);
-
     // validation for numeric amounts
     if (isNaN(money)) {
         return res.status(400).json({ message: "Bet amount must be a number" });
@@ -20,13 +20,12 @@ module.exports.bet = async (req, res) => {
     if (money <= 0) {
         return res.status(400).json({ message: "Bet amount must be positive" });
     }
-
     try {
         const user = await User.findOne({ username });
         if (!user) {    
             return res.status(404).json({ message: "User not found" });
         }
-        if(money > user.balance){
+        if(Number(money) > user.balance){
             return res.status(400).json({ message: "Insufficient balance" });
         }
         /*if (!game) {
