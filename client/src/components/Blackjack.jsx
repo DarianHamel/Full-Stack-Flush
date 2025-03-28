@@ -117,7 +117,7 @@ export default function Blackjack({username}) {
       newBalance = 10000;
       gameState.balance = 10000;
     }else{
-      if (betAmount <= 0 || betAmount > gameState.balance) {
+      if (betAmount < 0 || betAmount > gameState.balance) {
         toast.info("Invalid bet amount", {position: "top-center"});
         return;
       }
