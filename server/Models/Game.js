@@ -126,22 +126,32 @@ class Game{
     /*
     Tell the current player that it's their turn or move onto the dealer
     */
-    next_turn(){
-
-        //Skip each player with 21
-        while (this.playingPlayer < this.players.length && this.players[this.playingPlayer].get_total() == 21){
+    next_turn() {
+        // Skip each player with 21
+        while (this.playingPlayer < this.players.length && this.players[this.playingPlayer].get_total() == 21) {
             this.playingPlayer++;
         }
-        
-        if (this.playingPlayer < this.players.length){
-            this.players[this.playingPlayer].ws.send(JSON.stringify({"type": "PLAYER_TURN"}));
-        }
-        //Dealer's turn
-        else{
+    
+        // If all players have been skipped, the next turn will be the dealer's
+        if (this.playingPlayer < this.players.length) {
+            // Send a message to the player whose turn it is
+            this.players[this.playingPlayer].ws.send(JSON.stringify({ "type": "PLAYER_TURN" }));
+        } else {
+            // After all players have played, dealer's turn
             console.log("dealer's turn");
             this.dealer_turn();
         }
+    
+        // Increment to the next player's turn if they are not already at the last player
+        if (this.playingPlayer < this.players.length-1) {
+            this.playingPlayer++;
+        } else {
+            // If all players have taken their turn, reset the counter to Player 1
+            this.playingPlayer = 0;
+        }
     }
+    
+    
 
     /*
     Do all the steps for the dealer's turn
@@ -223,6 +233,12 @@ class Game{
                         }
                         break;
                     case "STAND":
+
+                        const message = {
+                            type: "STAND",
+                            message: "Player has stood.",
+                        };
+                        player.ws.send(JSON.stringify(message));
                         //Check if this player is supposed to be calling STAND
                         if (this.players[this.playingPlayer] === player){
                             this.stand(player);
@@ -241,7 +257,7 @@ class Game{
                                 player.bet = bet;
                             }
                             const message = await handleBet(player.username, player.bet);
-                            player.ws.send(JSON.stringify({type: "TREND_CHANGE", message: message || null}));
+                            player.ws.send(JSON.stringify({type: "TREND_CHANGE", message: message || null }));
                             this.play_again();
                         }
                         //Just kick them if they're out of sync
@@ -366,6 +382,11 @@ class Game{
     Let all of the players know about the dealer's card at the provided index
     */
     message_dealer_card(index){
+        if (index < 0 || index >= this.dealer.hand.length) {
+            console.error("Invalid index for dealer's hand:", index);
+            return;
+        }
+
         for (const player of this.players){
             player.ws.send(JSON.stringify({
                 type: "DEALER_CARD",
