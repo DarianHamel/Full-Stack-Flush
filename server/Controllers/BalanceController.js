@@ -6,9 +6,9 @@ const bcrypt = require("bcryptjs");
 Get User Balance by username
 */
 module.exports.GetBalance = async (req, res) => {
-    const { username } = req.query; 
+    const username  = req.query.username?.toString(); 
     try {
-      const user = await User.findOne({ username }); 
+      const user = await User.findOne({ username: username }); 
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -22,37 +22,41 @@ module.exports.GetBalance = async (req, res) => {
 Update balance for deposit or bet (POST request)
 */
 module.exports.UpdateBalance = async (req, res) => {
-  const { username, amount, password, day } = req.body;
-  
-  if (!username || typeof amount !== 'number') {
+  const query = {
+    username: req.body.username?.toString(), 
+    amount: Number(req.body.amount) || 0, 
+    password: req.body.password?.toString(), 
+    day: req.body.day?.toString(),
+  };
+  if (!query.username || query.amount === 0) {
     return res.status(400).json({ message: "Invalid request. Provide username and amount as a number.", success: false });
   }
 
   try {
-    const user = await User.findOne({ username }); 
+    const user = await User.findOne( {username: query.username} ); 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const auth = await bcrypt.compare(password, user.password);
+    const auth = await bcrypt.compare(query.password, user.password);
     if (!auth) {
       return res.status(400).json({ message: "Incorrect password", success: false }) 
     }
 
-    const newBalance = user.balance + amount; 
+    const newBalance = user.balance + query.amount; 
     if (newBalance < 0) {
       return res.status(400).json({ message: "Insufficient balance", success: false });
     }
 
     user.balance = newBalance; 
     await user.save();
-    const transaction = amount;
+    const transaction = query.amount;
     const game = "Deposit";
     await History.create({
-      username, 
+      username: query.username, 
       transaction,
       game,
-      day,
+      day: query.day,
     });
     
     res.status(200).json({ balance: user.balance, success: true });
@@ -68,9 +72,9 @@ Update balance without requiring a password (for game results)
 added this to deal with unable to update balance after a win because password is required in other method 
 */
 module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
-  const { username, amount, day } = req.body;
+  const query = {username: req.body.username?.toString(), amount: Number(req.body.amount), day: req.body.day?.toString()};
 
-  if (!username || typeof amount !== "number") {
+  if (!query.username || typeof query.amount !== "number") {
     return res.status(400).json({
       message: "Invalid request. Provide username and amount as a number.",
       success: false,
@@ -83,7 +87,7 @@ module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const newBalance = user.balance + amount;
+    const newBalance = user.balance + Number(query.amount);
     if (newBalance < 0) {
       return res.status(400).json({ message: "Insufficient balance", success: false });
     }
@@ -92,14 +96,14 @@ module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
     await user.save();
     console.log(newBalance);
     console.log(user.balance);
-    const transaction = amount;
+    const transaction = query.amount;
     const game = "Poker";
-    await History.create({
-      username, 
+    await History.create(
+      query.username, 
       transaction,
       game,
-      day,
-    });
+      query.day,
+    );
 
     res.status(200).json({ balance: user.balance, success: true });
   } catch (error) {
@@ -109,19 +113,19 @@ module.exports.UpdateBalanceWithoutPassword = async (req, res) => {
 };
 
 module.exports.UpdateMoneySpent = async (req, res) => {
-  const { username, moneySpent } = req.body;
+  const query = {username: req.body.username?.toString(), moneySpent: Number(req.body.moneySpent)};
 
-  if (!username || moneySpent === undefined) {
+  if (!query.username || isNaN(query.moneySpent)) {
     return res.status(400).json({ success: false, message: "Invalid request data" });
   }
 
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne( query.username );
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    await user.updateMoneySpent(moneySpent);
+    await user.updateMoneySpent(query.moneySpent);
     await user.save();
 
     console.log(user.moneySpent);
