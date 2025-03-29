@@ -87,7 +87,7 @@ const Poker = ({ username }) => {
     }
 
     // Fetch the user's current balance
-    const balance = await fetchBalance();
+    const balance = await fetchUserBalance(username);
     if (balance === null) {
       return;
     }
@@ -439,27 +439,6 @@ const Poker = ({ username }) => {
         ))}
       </div>
     );
-  };
-
-  /*
-  Gets the users balance to be tracked for the user's limits
-  */
-  const fetchBalance = async () => {
-    try {
-      const response = await fetch(`http://localhost:5050/balance?username=${username}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-  
-      const data = await response.json();
-      return data.balance;
-    } catch (error) {
-      console.error("Error fetching balance:", error);
-      alert("An error occurred while fetching your balance.");
-      return null;
-    }
   };
 
   // log the selected cards for debugging purposes
