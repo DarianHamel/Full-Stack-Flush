@@ -373,4 +373,232 @@ describe("Poker Component",  () => {
       expect(screen.getByAltText("7 of diamonds")).toBeInTheDocument();
       expect(screen.getByAltText("8 of diamonds")).toBeInTheDocument();
     });
+
+    test("Make sure play hand works correctly", async () => {
+      const mockUsername = "testUser";
+      
+      fetchUserLimits.mockResolvedValueOnce( {timeLimit: 100, moneyLimit: 100, timeSpent: 0, moneySpent: 0} );
+      fetch
+        .mockResolvedValueOnce({test: "test"})  /*Bet*/
+        .mockResolvedValueOnce({  /*Start game*/
+          ok: true,
+          json: async () => ({
+            gameID: 1,
+            playerHand: [
+              { suit: 'spades', rank: 2 },
+              { suit: 'spades', rank: 3 },
+              { suit: 'spades', rank: 4 },
+              { suit: 'spades', rank: 5 },
+              { suit: 'spades', rank: 6 },
+              { suit: 'spades', rank: 7 },
+              { suit: 'spades', rank: 8 },
+              { suit: 'spades', rank: 9 },
+            ],
+            handsRemaining: 4,
+            discardsRemaining: 3,
+            gameOver: false,
+            difficulty: 'easy',
+            targetScore: 500,
+          }),
+        })
+        .mockResolvedValueOnce({  /*update money spent*/
+          ok: true,
+          json: async () => ({"success":true,"message":"Money spent updated successfully","updatedDailyMoneySpent":1}),
+        })
+        .mockResolvedValueOnce({  /*handle transaction*/
+          ok: true,
+          json: async () => ({"success":true}),
+        })
+        .mockResolvedValueOnce({  /*score*/
+          ok: true,
+          json: async () => ({"score":"High Card (Score: 2)","currentScore":2,"handsRemaining":3,"discardsRemaining":3,"gameOver":false}),
+        })
+        .mockResolvedValueOnce({  /*draw*/
+          ok: true,
+          json: async () => ({"newCards":[{"suit":"spades","rank":10}]}),
+        })
+        .mockResolvedValueOnce({  /*score*/
+          ok: true,
+          json: async () => ({"score":"High Card (Score: 10)","currentScore":12,"handsRemaining":0,"discardsRemaining":3,"gameOver":false}),
+        })
+        
+
+      await act(async () => {
+          render(
+              <Router>
+                  <Poker username={mockUsername} />
+              </Router>
+          );
+      });
+
+      const betInput = screen.getByDisplayValue(0);    
+      fireEvent.change(betInput, { target: { value: 1 } });
+      expect(betInput.value).toBe("1");
+
+      await act(async () => {
+        fireEvent.click(screen.getByText("Start Game"));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByText("Play Hand"));
+      });
+      expect(window.alert).toHaveBeenCalledWith("No cards selected to play!");
+
+      await act(async () => {
+        fireEvent.click(screen.getByAltText("2 of spades"));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByText("Play Hand"));
+      });
+      expect(screen.getByText("High Card (Score: 2)")).toBeInTheDocument();
+      expect(screen.getByAltText("10 of spades")).toBeInTheDocument();
+      expect(screen.getByText("Hands Remaining: 3")).toBeInTheDocument();
+    });
+
+    test("Make sure losing works correctly", async () => {
+      const mockUsername = "testUser";
+      
+      fetchUserLimits.mockResolvedValueOnce( {timeLimit: 100, moneyLimit: 100, timeSpent: 0, moneySpent: 0} );
+      fetch
+        .mockResolvedValueOnce({test: "test"})  /*Bet*/
+        .mockResolvedValueOnce({  /*Start game*/
+          ok: true,
+          json: async () => ({
+            gameID: 1,
+            playerHand: [
+              { suit: 'spades', rank: 2 },
+              { suit: 'spades', rank: 3 },
+              { suit: 'spades', rank: 4 },
+              { suit: 'spades', rank: 5 },
+              { suit: 'spades', rank: 6 },
+              { suit: 'spades', rank: 7 },
+              { suit: 'spades', rank: 8 },
+              { suit: 'spades', rank: 9 },
+            ],
+            handsRemaining: 4,
+            discardsRemaining: 3,
+            gameOver: false,
+            difficulty: 'easy',
+            targetScore: 500,
+          }),
+        })
+        .mockResolvedValueOnce({  /*update money spent*/
+          ok: true,
+          json: async () => ({"success":true,"message":"Money spent updated successfully","updatedDailyMoneySpent":1}),
+        })
+        .mockResolvedValueOnce({  /*handle transaction*/
+          ok: true,
+          json: async () => ({"success":true}),
+        })
+        .mockResolvedValueOnce({  /*score*/
+          ok: true,
+          json: async () => ({"score":"High Card (Score: 2)","currentScore":2,"handsRemaining":0,"discardsRemaining":3,"gameOver":true}),
+        });
+        
+
+      await act(async () => {
+          render(
+              <Router>
+                  <Poker username={mockUsername} />
+              </Router>
+          );
+      });
+
+      const betInput = screen.getByDisplayValue(0);    
+      fireEvent.change(betInput, { target: { value: 1 } });
+      expect(betInput.value).toBe("1");
+
+      await act(async () => {
+        fireEvent.click(screen.getByText("Start Game"));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByText("Play Hand"));
+      });
+      expect(window.alert).toHaveBeenCalledWith("No cards selected to play!");
+
+      await act(async () => {
+        fireEvent.click(screen.getByAltText("2 of spades"));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByText("Play Hand"));
+      });
+      expect(screen.getByText("Game Over!")).toBeInTheDocument();
+      expect(screen.getByText("Your final score: 2")).toBeInTheDocument();
+      expect(screen.getByText("Sorry, you lost $1.", {exact: false})).toBeInTheDocument();
+    });
+
+    test("Make sure winning works correctly", async () => {
+      const mockUsername = "testUser";
+      
+      fetchUserLimits.mockResolvedValueOnce( {timeLimit: 100, moneyLimit: 100, timeSpent: 0, moneySpent: 0} );
+      fetch
+        .mockResolvedValueOnce({test: "test"})  /*Bet*/
+        .mockResolvedValueOnce({  /*Start game*/
+          ok: true,
+          json: async () => ({
+            gameID: 1,
+            playerHand: [
+              { suit: 'spades', rank: 2 },
+              { suit: 'spades', rank: 3 },
+              { suit: 'spades', rank: 4 },
+              { suit: 'spades', rank: 5 },
+              { suit: 'spades', rank: 6 },
+              { suit: 'spades', rank: 7 },
+              { suit: 'spades', rank: 8 },
+              { suit: 'spades', rank: 9 },
+            ],
+            handsRemaining: 4,
+            discardsRemaining: 3,
+            gameOver: false,
+            difficulty: 'easy',
+            targetScore: 500,
+          }),
+        })
+        .mockResolvedValueOnce({  /*update money spent*/
+          ok: true,
+          json: async () => ({"success":true,"message":"Money spent updated successfully","updatedDailyMoneySpent":1}),
+        })
+        .mockResolvedValueOnce({  /*handle transaction*/
+          ok: true,
+          json: async () => ({"success":true}),
+        })
+        .mockResolvedValueOnce({  /*score*/
+          ok: true,
+          json: async () => ({"score":"High Card (Score: 600)","currentScore":600,"handsRemaining":0,"discardsRemaining":3,"gameOver":false}),
+        })
+        .mockResolvedValueOnce({  /*score*/
+          ok: true,
+          json: async () => ({"balance":100,"success":true}),
+        });
+        
+
+      await act(async () => {
+          render(
+              <Router>
+                  <Poker username={mockUsername} />
+              </Router>
+          );
+      });
+
+      const betInput = screen.getByDisplayValue(0);    
+      fireEvent.change(betInput, { target: { value: 1 } });
+      expect(betInput.value).toBe("1");
+
+      await act(async () => {
+        fireEvent.click(screen.getByText("Start Game"));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByText("Play Hand"));
+      });
+      expect(window.alert).toHaveBeenCalledWith("No cards selected to play!");
+
+      await act(async () => {
+        fireEvent.click(screen.getByAltText("2 of spades"));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByText("Play Hand"));
+      });
+      expect(screen.getByText("Game Over!")).toBeInTheDocument();
+      expect(screen.getByText("Your final score: 600")).toBeInTheDocument();
+      expect(screen.getByText("Congratulations! You won $2!")).toBeInTheDocument();
+    });
 });
