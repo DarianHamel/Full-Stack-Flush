@@ -39,6 +39,82 @@ export default function Blackjack({username}) {
   });
 
   /*
+  Play the background music when the component mounts
+  Pause the music when the component unmounts
+  */
+  useEffect(() => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip audio functionality during tests
+    }
+
+    const backgroundMusic = new Audio("/audio/blackjack_music.wav"); // Create a new Audio instance
+    backgroundMusic.loop = true; // Enable looping
+    backgroundMusic.volume = 1;
+    backgroundMusic.play().catch((error) => {
+      console.error("Error playing background music:", error);
+    });
+
+    const fadeOutMusic = () => {
+      let fadeInterval = setInterval(() => {
+        if (backgroundMusic.volume > 0.05) {
+          backgroundMusic.volume -= 0.05;
+        } else {
+          clearInterval(fadeInterval);
+          backgroundMusic.pause(); // Pause the music when volume reaches 0
+          backgroundMusic.currentTime = 0;
+        }
+      }
+      , 100); // Decrease volume every 100ms
+    };
+
+    return () => {
+      fadeOutMusic();
+    };
+  }, []);
+
+  /*
+  Play the card sound effect
+  */
+  const playCardSound = () => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip card sound during tests
+    }
+
+    const cardSound = new Audio("/audio/card.mp3"); // Create a new Audio instance
+    cardSound.play().catch((error) => {
+      console.error("Error playing card sound:", error);
+    });
+  };
+
+  /*
+  Play the win sound effect
+  */
+  const playWinSound = () => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip win sound during tests
+    }
+
+    const winSound = new Audio("/audio/win.wav"); // Create a new Audio instance
+    winSound.play().catch((error) => {
+      console.error("Error playing win sound:", error);
+    });
+  };
+
+  /*
+  Play the lose sound effect
+  */
+  const playLoseSound = () => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip lose sound during tests
+    }
+
+    const loseSound = new Audio("/audio/lose.mp3"); // Create a new Audio instance
+    loseSound.play().catch((error) => {
+      console.error("Error playing lose sound:", error);
+    });
+  };
+
+  /*
   Calls the functions within on page launch
   Checks the users limits and values and resets on new day
   Gets the user balance and limits and updates const for display
@@ -132,6 +208,7 @@ export default function Blackjack({username}) {
       setLimitHit(true);
       return;
     }
+
     try{
       const newSocket = new WebSocket('ws://localhost:5050/')
 
@@ -230,8 +307,10 @@ export default function Blackjack({username}) {
             newBalance = gameState.balance;
           }
           if (message.result === "WIN") {
+            playWinSound();
             newBalance += Number(document.getElementById("betAmount").value); // Add the bet amount to the balance
           }else if (message.result === "LOSE"){
+            playLoseSound();
             newBalance -= Number(document.getElementById("betAmount").value); // Subtract the bet amount if the player
             if(message.fakeMoney !== true){
               setMoneySpent(prevMoneySpent => {
@@ -292,6 +371,7 @@ export default function Blackjack({username}) {
   function handleDeal(message){
 
     for (const card of message.cards){
+      playCardSound();
       changeCard(card);
     }
     setGameState((prevState) => ({
@@ -305,7 +385,7 @@ export default function Blackjack({username}) {
   Adds the single card the player was dealt to their hand
   */
   function handleDealSingle(message){
-
+    playCardSound();
     changeCard(message.card);
     setGameState((prevState) => ({
       ...prevState,
@@ -317,6 +397,7 @@ export default function Blackjack({username}) {
   Adds the single card to the dealer's hand
   */
   function handleDealerCard(message){
+    playCardSound();
     changeCard(message.card);
     setGameState((prevState) => ({
       ...prevState,
