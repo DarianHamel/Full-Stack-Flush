@@ -186,65 +186,78 @@ export default function Blackjack({username}) {
   /*
   Create the websocket to start the game
   */
-  async function startGame(usingFakeMoney){
+  async function startGame(usingFakeMoney) {
     console.log(usingFakeMoney);
-    if(usingFakeMoney){
+    if (usingFakeMoney) {
       setFakeMoney(true);
       newBalance = 10000;
       gameState.balance = 10000;
-    }else{
+    } else {
       if (betAmount < 0 || betAmount > gameState.balance) {
-        toast.info("Invalid bet amount", {position: "top-center"});
+        toast.info("Invalid bet amount", { position: "top-center" });
         return;
       }
-      if (limitHit){
+      if (limitHit) {
         console.log("Limit hit");
         handleLockOut();
         return;
       }
+
+      // Update money spent immediately after the game starts
+      setMoneySpent((prevMoneySpent) => {
+        const newMoney = prevMoneySpent + Number(betAmount); // Convert to number to avoid issues
+        return newMoney;
+      });
     }
-    if(gameState.balance == 0){
-      toast.info("Insufficient funds", {position: "top-center" });
+
+    if (gameState.balance === 0) {
+      toast.info("Insufficient funds", { position: "top-center" });
       setLimitHit(true);
       return;
     }
 
-    try{
-      const newSocket = new WebSocket('ws://localhost:5050/')
+    try {
+      const newSocket = new WebSocket("ws://localhost:5050/");
 
       newSocket.onopen = () => {
-        console.log('Connected to websocket server');
+        console.log("Connected to websocket server");
         startTime = Date.now();
-        if(betAmount+moneySpent <= moneyLimit || usingFakeMoney){
-          newSocket.send(JSON.stringify({type: "JOIN" , username: username, bet: betAmount, usingFakeMoney: usingFakeMoney}));
-        }else{
-          toast.info("Bet exceeds money limit", {position: "top-center"});
+        if (betAmount + moneySpent <= moneyLimit || usingFakeMoney) {
+          newSocket.send(
+            JSON.stringify({
+              type: "JOIN",
+              username: username,
+              bet: betAmount,
+              usingFakeMoney: usingFakeMoney,
+            })
+          );
+        } else {
+          toast.info("Bet exceeds money limit", { position: "top-center" });
         }
       };
 
       newSocket.onmessage = (event) => {
-        console.log('Received: ', event.data);
+        console.log("Received: ", event.data);
         handleMessage(JSON.parse(event.data));
       };
 
       newSocket.onclose = () => {
-        console.log('Disconnected from websocket server');
+        console.log("Disconnected from websocket server");
         const endTime = Date.now();
-        const timeSpent = Math.floor((endTime - startTime)/1000); //Time in seconds
+        const timeSpent = Math.floor((endTime - startTime) / 1000); // Time in seconds
         setTimePlayed(timePlayed + timeSpent);
 
         updateTimeSpent(username, timeSpent);
         resetState();
-      }
+      };
 
       newSocket.onerror = (error) => {
-        console.error('Websocket error: ', error);
-      }
+        console.error("Websocket error: ", error);
+      };
 
       setSocket(newSocket);
-
     } catch (error) {
-      console.error('A problem occurred starting blackjack game: ', error);
+      console.error("A problem occurred starting blackjack game: ", error);
     }
   }
 
@@ -296,35 +309,32 @@ export default function Blackjack({username}) {
         break;
       case "GAME_OVER":
         const endTime = Date.now();
-        const timeSpent = Math.floor((endTime - startTime)/1000); //Time in seconds
-        updateTimeSpent(username, timeSpent); //Update the time spent playing
-        setTimePlayed(timePlayed + timeSpent); //Update the const for display
+        const timeSpent = Math.floor((endTime - startTime) / 1000); // Time in seconds
+        updateTimeSpent(username, timeSpent); // Update the time spent playing
+        setTimePlayed(timePlayed + timeSpent); // Update the const for display
         startTime = Date.now();
+
         setGameState((prevState) => {
-          if(prevState.balance){
+          if (prevState.balance) {
             newBalance = prevState.balance;
-          }else{
+          } else {
             newBalance = gameState.balance;
           }
+
           if (message.result === "WIN") {
             playWinSound();
             newBalance += Number(document.getElementById("betAmount").value); // Add the bet amount to the balance
-          }else if (message.result === "LOSE"){
+          } else if (message.result === "LOSE") {
             playLoseSound();
-            newBalance -= Number(document.getElementById("betAmount").value); // Subtract the bet amount if the player
-            if(message.fakeMoney !== true){
-              setMoneySpent(prevMoneySpent => {
-                const newMoney = prevMoneySpent + Number(betAmount); //Convert to number or JS does weird things...
-                return newMoney;
-              });
-            }
+            newBalance -= Number(document.getElementById("betAmount").value); // Subtract the bet amount if the player loses
           }
+
           return {
-              ...prevState,
-              gameOver: true,
-              result: message.result,
-              balance: newBalance,
-            };
+            ...prevState,
+            gameOver: true,
+            result: message.result,
+            balance: newBalance,
+          };
         });
         break;
       case "OTHER_PLAYER_DEAL":
@@ -472,9 +482,15 @@ export default function Blackjack({username}) {
   /*
   Tell the server we wish to play again and reset the state of the game
   */
-  function playAgain(){
-    startTime = Date.now();
+  function playAgain() {
     setBetAmount(document.getElementById("betAmount").value);
+    // Update money spent when the player clicks "Play Again"
+    setMoneySpent((prevMoneySpent) => {
+      const newMoney = prevMoneySpent + Number(betAmount); // Convert to number to avoid issues
+      return newMoney;
+    });
+
+    startTime = Date.now();
     sendMessage("PLAY_AGAIN");
     setGameState({
       otherPlayers: [],
