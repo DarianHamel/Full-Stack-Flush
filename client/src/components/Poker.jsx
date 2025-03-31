@@ -19,6 +19,7 @@ const Poker = ({ username }) => {
   const [targetScore, setTargetScore] = useState(0);
   const [difficultySelected, setDifficultySelected] = useState(false); // for resetting difficulty select after game ends
   const [betAmount, setBetAmount] = useState(0);
+  const [balance, setBalance] = useState(0); // Add this state
   // all the limits tracking stuff like how blackjack implements it
   const [timeLimit, setTimeLimit] = useState(0);
   const [moneyLimit, setMoneyLimit] = useState(0);
@@ -44,6 +45,16 @@ const Poker = ({ username }) => {
   useEffect(() => {
     checkAndResetDailyValues(username);
     getUserLimits(username);
+
+    // Fetch the user's balance
+    const fetchBalance = async () => {
+      const userBalance = await fetchUserBalance(username);
+      if (userBalance !== null) {
+        setBalance(userBalance);
+      }
+    };
+
+    fetchBalance();
   }, [username]);
 
   /*
@@ -567,6 +578,9 @@ const Poker = ({ username }) => {
           {!gameStarted && (
             <>
               <h1>♠️ Poker Minigame ♥️</h1>
+              <div className="balance-display">
+                Current Balance: ${balance}
+              </div>
               <p>Welcome to the Poker Minigame! Select a difficulty and place your bet to begin.</p>
               <div className="difficulty-selection">
                 <label htmlFor="difficulty">Select Difficulty:</label>
@@ -634,7 +648,7 @@ const Poker = ({ username }) => {
                 <p>Sorry, you lost ${winnings}. <br></br>Better luck next time!</p>
               )}
               <button
-                onClick={() => {
+                onClick={async () => {
                   setGameOver(false);
                   setGameStarted(false);
                   setDifficultySelected(false);
@@ -642,7 +656,13 @@ const Poker = ({ username }) => {
                   setCurrentScore(0);
                   setHandsRemaining(0);
                   setDiscardsRemaining(0);
-                  setSelectedCards([]); 
+                  setSelectedCards([]);
+
+                  // Fetch the updated balance
+                  const updatedBalance = await fetchUserBalance(username);
+                  if (updatedBalance !== null) {
+                    setBalance(updatedBalance);
+                  }
                 }}
                 className="start-game"
               >
