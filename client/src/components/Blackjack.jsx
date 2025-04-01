@@ -216,6 +216,13 @@ export default function Blackjack({username}) {
         console.log('Connected to websocket server');
         startTime = Date.now();
         if(betAmount+moneySpent <= moneyLimit || usingFakeMoney){
+          if(usingFakeMoney !== true){
+            setMoneySpent(prevMoneySpent => {
+              const newMoney = prevMoneySpent + Number(betAmount); //Convert to number or JS does weird things...
+              return newMoney;
+          });
+          gameState.balance -= betAmount;
+          }
           newSocket.send(JSON.stringify({type: "JOIN" , username: username, bet: betAmount, usingFakeMoney: usingFakeMoney}));
         }else{
           toast.info("Bet exceeds money limit", {position: "top-center"});
@@ -269,7 +276,6 @@ export default function Blackjack({username}) {
         setGameState((prevState) => ({
           ...prevState,
           playing: true,
-          balance: newBalance,
         }));
         break;
       case "DEAL":
@@ -308,16 +314,9 @@ export default function Blackjack({username}) {
           }
           if (message.result === "WIN") {
             playWinSound();
-            newBalance += Number(document.getElementById("betAmount").value); // Add the bet amount to the balance
+            newBalance += 2*Number(document.getElementById("betAmount").value); // Add the bet amount to the balance
           }else if (message.result === "LOSE"){
             playLoseSound();
-            newBalance -= Number(document.getElementById("betAmount").value); // Subtract the bet amount if the player
-            if(message.fakeMoney !== true){
-              setMoneySpent(prevMoneySpent => {
-                const newMoney = prevMoneySpent + Number(betAmount); //Convert to number or JS does weird things...
-                return newMoney;
-              });
-            }
           }
           return {
               ...prevState,
@@ -475,6 +474,13 @@ export default function Blackjack({username}) {
   function playAgain(){
     startTime = Date.now();
     setBetAmount(document.getElementById("betAmount").value);
+    if(fakeMoney !== true){
+      setMoneySpent(prevMoneySpent => {
+        const newMoney = prevMoneySpent + Number(document.getElementById("betAmount").value); //Convert to number or JS does weird things...
+        return newMoney;
+    });
+    }
+    newBalance = gameState.balance - document.getElementById("betAmount").value;
     sendMessage("PLAY_AGAIN");
     setGameState({
       otherPlayers: [],
@@ -487,6 +493,7 @@ export default function Blackjack({username}) {
       bust: false,
       gameOver: false,
       result: null,
+      balance: newBalance
     });
   }
 

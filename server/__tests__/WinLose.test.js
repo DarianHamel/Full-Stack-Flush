@@ -275,27 +275,6 @@ describe("updateStats API Tests", () => {
     expect(updatedUser.balance).toBe(initialBalance + moneyToAdd);
   });
 
-  test("updates moneySpent when losses and money provided", async () => {
-    const initialMoneySpent = user.moneySpent;
-    const moneyToSpend = 25;
-    
-    const req = {
-      body: {
-        username: "testUser",
-        losses: 1,
-        money: moneyToSpend,
-        game: "Blackjack"
-      }
-    };
-
-    const res = mockResponse();
-
-    await updateStats(req, res);
-
-    const updatedUser = await User.findOne();
-    expect(updatedUser.moneySpent).toBe(initialMoneySpent + moneyToSpend);
-  });
-
   test("returns 400 for negative wins", async () => {
     const req = {
       body: {

@@ -92,9 +92,6 @@ module.exports.updateStats = async (req, res) => {
 
       if (query.losses > 0){
         user.losses += query.losses;
-        if(query.money){
-          await user.updateMoneySpent(query.money);
-        }
       }
 
       // so password isnt rehashed

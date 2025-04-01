@@ -19,6 +19,7 @@ const Poker = ({ username }) => {
   const [targetScore, setTargetScore] = useState(0);
   const [difficultySelected, setDifficultySelected] = useState(false); // for resetting difficulty select after game ends
   const [betAmount, setBetAmount] = useState(0);
+  const [balance, setBalance] = useState(0); // Add this state
   // all the limits tracking stuff like how blackjack implements it
   const [timeLimit, setTimeLimit] = useState(0);
   const [moneyLimit, setMoneyLimit] = useState(0);
@@ -44,6 +45,16 @@ const Poker = ({ username }) => {
   useEffect(() => {
     checkAndResetDailyValues(username);
     getUserLimits(username);
+
+    // Fetch the user's balance
+    const fetchBalance = async () => {
+      const userBalance = await fetchUserBalance(username);
+      if (userBalance !== null) {
+        setBalance(userBalance);
+      }
+    };
+
+    fetchBalance();
   }, [username]);
 
   /*
@@ -225,6 +236,9 @@ const Poker = ({ username }) => {
     const data = await response.json();
     console.log("Start Game Response:", data); // Debugging
 
+    setBetAmount(betAmount);
+    setMoneySpent(moneySpent + betAmount);
+    setBalance(balance-betAmount);
     setgameID(data.gameID);
     setPlayerHand(data.playerHand);
     setHandsRemaining(data.handsRemaining || 0);
@@ -236,29 +250,6 @@ const Poker = ({ username }) => {
     setTargetScore(data.targetScore);
     setStartTime(Date.now());
     console.log("Set startTime: ", startTime);
-
-     // Update money spent on the backend
-     try {
-      const response = await fetch("http://localhost:5050/update-money-spent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          moneySpent: betAmount,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setMoneySpent(data.updatedDailyMoneySpent); // Update the frontend with the backend's value
-      } else {
-        console.error("Failed to update money spent:", data.message);
-      }
-    } catch (error) {
-      console.error("Error updating money spent on the backend:", error);
-    }
 
     const game = "Poker";
     const transaction = await fetch("http://localhost:5050/handleTransaction", {
@@ -424,6 +415,7 @@ const Poker = ({ username }) => {
 
             if (gameResult) {
               playWinSound();
+              setBalance(balance + winnings);
               const balanceResponse = await fetch("http://localhost:5050/update-balance-no-password", {
                 method: "POST",
                 headers: {
@@ -567,6 +559,9 @@ const Poker = ({ username }) => {
           {!gameStarted && (
             <>
               <h1>♠️ Poker Minigame ♥️</h1>
+              <div className="balance-display">
+                Current Balance: ${balance}
+              </div>
               <p>Welcome to the Poker Minigame! Select a difficulty and place your bet to begin.</p>
               <div className="difficulty-selection">
                 <label htmlFor="difficulty">Select Difficulty:</label>
@@ -612,42 +607,59 @@ const Poker = ({ username }) => {
               </div>
             </>
           )}
-          {gameStarted && !gameOver && (
+          {gameStarted && (
             <>
-              <h1>Your Hand</h1>
-              <div className="hand">{renderHand(playerHand)}</div>
-              <div className="poker-score-container">
-                <h2>Current Score: {currentScore}</h2>
-                <h2>Target Score: {targetScore}</h2>
+              <div className="balance-display">
+                Current Balance: ${balance}
               </div>
-              <p>Hands Remaining: {handsRemaining}</p>
-              <p>Discards Remaining: {discardsRemaining}</p>
-            </>
-          )}
-          {gameOver && (
-            <>
-              <h1>Game Over!</h1>
-              <p>Your final score: {currentScore}</p>
-              {currentScore >= targetScore ? (
-                <p>Congratulations! You won ${winnings}!</p>
-              ) : (
-                <p>Sorry, you lost ${winnings}. <br></br>Better luck next time!</p>
+              <div className="bet-display">
+                Current Bet: ${betAmount}
+              </div>
+              {!gameOver && (
+                <>
+                  <h1>Your Hand</h1>
+                  <div className="hand">{renderHand(playerHand)}</div>
+                  <div className="poker-score-container">
+                    <h2>Current Score: {currentScore}</h2>
+                    <h2>Target Score: {targetScore}</h2>
+                  </div>
+                  <p>Hands Remaining: {handsRemaining}</p>
+                  <p>Discards Remaining: {discardsRemaining}</p>
+                </>
               )}
-              <button
-                onClick={() => {
-                  setGameOver(false);
-                  setGameStarted(false);
-                  setDifficultySelected(false);
-                  setPlayerHand([]);
-                  setCurrentScore(0);
-                  setHandsRemaining(0);
-                  setDiscardsRemaining(0);
-                  setSelectedCards([]); 
-                }}
-                className="start-game"
-              >
-                End Game
-              </button>
+              {gameOver && (
+                <>
+                  <h1>Game Over!</h1>
+                  <p>Your final score: {currentScore}</p>
+                  {currentScore >= targetScore ? (
+                    <p>Congratulations! You won ${winnings}!</p>
+                  ) : (
+                    <p>Sorry, you lost ${winnings}. <br></br>Better luck next time!</p>
+                  )}
+                  <button
+                    onClick={async () => {
+                      setGameOver(false);
+                      setGameStarted(false);
+                      setDifficultySelected(false);
+                      setPlayerHand([]);
+                      setCurrentScore(0);
+                      setHandsRemaining(0);
+                      setDiscardsRemaining(0);
+                      setSelectedCards([]);
+                      setBetAmount(0);
+
+                      // Fetch the updated balance
+                      const updatedBalance = await fetchUserBalance(username);
+                      if (updatedBalance !== null) {
+                        setBalance(updatedBalance);
+                      }
+                    }}
+                    className="start-game"
+                  >
+                    End Game
+                  </button>
+                </>
+              )}
             </>
           )}
         </div>

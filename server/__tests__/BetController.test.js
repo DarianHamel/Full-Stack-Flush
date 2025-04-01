@@ -57,7 +57,8 @@ describe("Bet Controller - Unit Tests", () => {
     test("deducts money from balance", async () => {
       const user = { 
         balance: 500, 
-        save: jest.fn().mockResolvedValue(true), 
+        save: jest.fn().mockResolvedValue(true),
+        updateMoneySpent: jest.fn().mockResolvedValue(true),
         markModified: jest.fn(),
         numLogins: 3
       };
@@ -73,7 +74,8 @@ describe("Bet Controller - Unit Tests", () => {
     test("returns updated balance", async () => {
       const user = { 
         balance: 500, 
-        save: jest.fn().mockResolvedValue(true), 
+        save: jest.fn().mockResolvedValue(true),
+        updateMoneySpent: jest.fn().mockResolvedValue(true), 
         markModified: jest.fn(),
         numLogins: 3
       };
@@ -93,6 +95,7 @@ describe("Bet Controller - Unit Tests", () => {
       const user = {
         balance: 500,
         save: jest.fn().mockResolvedValue(true),
+        updateMoneySpent: jest.fn().mockResolvedValue(true),
         markModified: jest.fn(),
         numLogins: 3,
         dailyMoneySpent: 100,
@@ -112,6 +115,7 @@ describe("Bet Controller - Unit Tests", () => {
       const user = {
         balance: 500,
         save: jest.fn().mockResolvedValue(true),
+        updateMoneySpent: jest.fn().mockResolvedValue(true),
         markModified: jest.fn(),
         numLogins: 6,
         dailyMoneySpent: 200,
@@ -131,6 +135,7 @@ describe("Bet Controller - Unit Tests", () => {
       const user = {
         balance: 500,
         save: jest.fn().mockResolvedValue(true),
+        updateMoneySpent: jest.fn().mockResolvedValue(true),
         markModified: jest.fn(),
         numLogins: 6,
         dailyMoneySpent: 50,
@@ -157,7 +162,8 @@ describe("Bet Controller - Unit Tests", () => {
     test("handles save errors", async () => {
       const user = { 
         balance: 500, 
-        save: jest.fn().mockRejectedValue(new Error("Save failed")), 
+        save: jest.fn().mockRejectedValue(new Error("Save failed")),
+        updateMoneySpent: jest.fn().mockResolvedValue(true),
         markModified: jest.fn(),
         numLogins: 3
       };
@@ -174,7 +180,8 @@ describe("Bet Controller - Unit Tests", () => {
       mockReq.body.money = 50.25;
       const user = { 
         balance: 100, 
-        save: jest.fn().mockResolvedValue(true), 
+        save: jest.fn().mockResolvedValue(true),
+        updateMoneySpent: jest.fn().mockResolvedValue(true),
         markModified: jest.fn(),
         numLogins: 3
       };
@@ -189,7 +196,8 @@ describe("Bet Controller - Unit Tests", () => {
       mockReq.body.money = 500;
       const user = { 
         balance: 500, 
-        save: jest.fn().mockResolvedValue(true), 
+        save: jest.fn().mockResolvedValue(true),
+        updateMoneySpent: jest.fn().mockResolvedValue(true),
         markModified: jest.fn(),
         numLogins: 3
       };
@@ -206,6 +214,7 @@ describe("Bet Controller - Unit Tests", () => {
       const user = {
         balance: 500,
         save: jest.fn().mockResolvedValue(true),
+        updateMoneySpent: jest.fn().mockResolvedValue(true),
         markModified: jest.fn(),
         numLogins: 0, // This will cause division by zero
         dailyMoneySpent: 100,
@@ -226,6 +235,7 @@ describe("Bet Controller - Unit Tests", () => {
       const user = {
         balance: 500,
         save: jest.fn().mockResolvedValue(true),
+        updateMoneySpent: jest.fn().mockResolvedValue(true),
         markModified: jest.fn(),
         numLogins: 6,
         dailyMoneySpent: "invalid", // Will cause NaN in calculation

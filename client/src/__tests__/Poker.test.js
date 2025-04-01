@@ -166,10 +166,6 @@ describe("Poker Component",  () => {
             targetScore: 500,
           }),
         })
-        .mockResolvedValueOnce({  /*update money spent*/
-          ok: true,
-          json: async () => ({"success":true,"message":"Money spent updated successfully","updatedDailyMoneySpent":1}),
-        })
         .mockResolvedValueOnce({  /*handle transaction*/
           ok: true,
           json: async () => ({"success":true}),
@@ -258,10 +254,6 @@ describe("Poker Component",  () => {
             targetScore: 500,
           }),
         })
-        .mockResolvedValueOnce({  /*update money spent*/
-          ok: true,
-          json: async () => ({"success":true,"message":"Money spent updated successfully","updatedDailyMoneySpent":1}),
-        })
         .mockResolvedValueOnce({  /*handle transaction*/
           ok: true,
           json: async () => ({"success":true}),
@@ -315,7 +307,7 @@ describe("Poker Component",  () => {
       await act(async () => {
         fireEvent.click(screen.getByText("Sort by Rank"));
       });
-      expect(fetch.mock.calls[4]).toEqual(["http://localhost:5050/poker/sort-hand", {
+      expect(fetch.mock.calls[3]).toEqual(["http://localhost:5050/poker/sort-hand", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -345,7 +337,7 @@ describe("Poker Component",  () => {
       await act(async () => {
         fireEvent.click(screen.getByText("Sort by Suit"));
       });
-      expect(fetch.mock.calls[5]).toEqual(["http://localhost:5050/poker/sort-hand", {
+      expect(fetch.mock.calls[4]).toEqual(["http://localhost:5050/poker/sort-hand", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -400,10 +392,6 @@ describe("Poker Component",  () => {
             difficulty: 'easy',
             targetScore: 500,
           }),
-        })
-        .mockResolvedValueOnce({  /*update money spent*/
-          ok: true,
-          json: async () => ({"success":true,"message":"Money spent updated successfully","updatedDailyMoneySpent":1}),
         })
         .mockResolvedValueOnce({  /*handle transaction*/
           ok: true,
@@ -481,10 +469,6 @@ describe("Poker Component",  () => {
             targetScore: 500,
           }),
         })
-        .mockResolvedValueOnce({  /*update money spent*/
-          ok: true,
-          json: async () => ({"success":true,"message":"Money spent updated successfully","updatedDailyMoneySpent":1}),
-        })
         .mockResolvedValueOnce({  /*handle transaction*/
           ok: true,
           json: async () => ({"success":true}),
@@ -552,10 +536,6 @@ describe("Poker Component",  () => {
             difficulty: 'easy',
             targetScore: 500,
           }),
-        })
-        .mockResolvedValueOnce({  /*update money spent*/
-          ok: true,
-          json: async () => ({"success":true,"message":"Money spent updated successfully","updatedDailyMoneySpent":1}),
         })
         .mockResolvedValueOnce({  /*handle transaction*/
           ok: true,
