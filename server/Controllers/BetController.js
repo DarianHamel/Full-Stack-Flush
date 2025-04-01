@@ -31,6 +31,7 @@ module.exports.bet = async (req, res) => {
         /*if (!game) {
             return res.status(400).json({ message: "No game was found" });
         }*/
+        user.updateMoneySpent(money);
         user.balance -= Number(money); // Remove money from user account so they cannot leave the game before it completes
         user.markModified("balance");
         await user.save();

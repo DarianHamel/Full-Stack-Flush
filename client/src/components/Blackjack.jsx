@@ -22,8 +22,8 @@ export default function Blackjack({username}) {
   const [lastTrendMessage, setTrendMessage] = useState(0);
   const trendMessageTimer = 120000; // 2 minutes
   const navigate = useNavigate();
-  let startTime = Date.now();
-  let newBalance = 0;
+  var startTime = Date.now();
+  var newBalance = 0;
   const [gameState, setGameState] = useState({
     otherPlayers: [],
     dealerHand: [],
@@ -37,6 +37,82 @@ export default function Blackjack({username}) {
     result: null,
     balance: 0, //Defaults to 0 until we get the user's balance
   });
+
+  /*
+  Play the background music when the component mounts
+  Pause the music when the component unmounts
+  */
+  useEffect(() => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip audio functionality during tests
+    }
+
+    const backgroundMusic = new Audio("/audio/blackjack_music.wav"); // Create a new Audio instance
+    backgroundMusic.loop = true; // Enable looping
+    backgroundMusic.volume = 1;
+    backgroundMusic.play().catch((error) => {
+      console.error("Error playing background music:", error);
+    });
+
+    const fadeOutMusic = () => {
+      let fadeInterval = setInterval(() => {
+        if (backgroundMusic.volume > 0.05) {
+          backgroundMusic.volume -= 0.05;
+        } else {
+          clearInterval(fadeInterval);
+          backgroundMusic.pause(); // Pause the music when volume reaches 0
+          backgroundMusic.currentTime = 0;
+        }
+      }
+      , 100); // Decrease volume every 100ms
+    };
+
+    return () => {
+      fadeOutMusic();
+    };
+  }, []);
+
+  /*
+  Play the card sound effect
+  */
+  const playCardSound = () => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip card sound during tests
+    }
+
+    const cardSound = new Audio("/audio/card.mp3"); // Create a new Audio instance
+    cardSound.play().catch((error) => {
+      console.error("Error playing card sound:", error);
+    });
+  };
+
+  /*
+  Play the win sound effect
+  */
+  const playWinSound = () => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip win sound during tests
+    }
+
+    const winSound = new Audio("/audio/win.wav"); // Create a new Audio instance
+    winSound.play().catch((error) => {
+      console.error("Error playing win sound:", error);
+    });
+  };
+
+  /*
+  Play the lose sound effect
+  */
+  const playLoseSound = () => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip lose sound during tests
+    }
+
+    const loseSound = new Audio("/audio/lose.mp3"); // Create a new Audio instance
+    loseSound.play().catch((error) => {
+      console.error("Error playing lose sound:", error);
+    });
+  };
 
   /*
   Calls the functions within on page launch
@@ -132,6 +208,7 @@ export default function Blackjack({username}) {
       setLimitHit(true);
       return;
     }
+
     try{
       const newSocket = new WebSocket('ws://localhost:5050/')
 
@@ -139,6 +216,13 @@ export default function Blackjack({username}) {
         console.log('Connected to websocket server');
         startTime = Date.now();
         if(betAmount+moneySpent <= moneyLimit || usingFakeMoney){
+          if(usingFakeMoney !== true){
+            setMoneySpent(prevMoneySpent => {
+              const newMoney = prevMoneySpent + Number(betAmount); //Convert to number or JS does weird things...
+              return newMoney;
+          });
+          gameState.balance -= betAmount;
+          }
           newSocket.send(JSON.stringify({type: "JOIN" , username: username, bet: betAmount, usingFakeMoney: usingFakeMoney}));
         }else{
           toast.info("Bet exceeds money limit", {position: "top-center"});
@@ -192,7 +276,6 @@ export default function Blackjack({username}) {
         setGameState((prevState) => ({
           ...prevState,
           playing: true,
-          balance: newBalance,
         }));
         break;
       case "DEAL":
@@ -230,15 +313,10 @@ export default function Blackjack({username}) {
             newBalance = gameState.balance;
           }
           if (message.result === "WIN") {
-            newBalance += Number(document.getElementById("betAmount").value); // Add the bet amount to the balance
+            playWinSound();
+            newBalance += 2*Number(document.getElementById("betAmount").value); // Add the bet amount to the balance
           }else if (message.result === "LOSE"){
-            newBalance -= Number(document.getElementById("betAmount").value); // Subtract the bet amount if the player
-            if(message.fakeMoney !== true){
-              setMoneySpent(prevMoneySpent => {
-                const newMoney = prevMoneySpent + Number(betAmount); //Convert to number or JS does weird things...
-                return newMoney;
-              });
-            }
+            playLoseSound();
           }
           return {
               ...prevState,
@@ -292,6 +370,7 @@ export default function Blackjack({username}) {
   function handleDeal(message){
 
     for (const card of message.cards){
+      playCardSound();
       changeCard(card);
     }
     setGameState((prevState) => ({
@@ -305,7 +384,7 @@ export default function Blackjack({username}) {
   Adds the single card the player was dealt to their hand
   */
   function handleDealSingle(message){
-
+    playCardSound();
     changeCard(message.card);
     setGameState((prevState) => ({
       ...prevState,
@@ -317,6 +396,7 @@ export default function Blackjack({username}) {
   Adds the single card to the dealer's hand
   */
   function handleDealerCard(message){
+    playCardSound();
     changeCard(message.card);
     setGameState((prevState) => ({
       ...prevState,
@@ -394,6 +474,13 @@ export default function Blackjack({username}) {
   function playAgain(){
     startTime = Date.now();
     setBetAmount(document.getElementById("betAmount").value);
+    if(fakeMoney !== true){
+      setMoneySpent(prevMoneySpent => {
+        const newMoney = prevMoneySpent + Number(document.getElementById("betAmount").value); //Convert to number or JS does weird things...
+        return newMoney;
+    });
+    }
+    newBalance = gameState.balance - document.getElementById("betAmount").value;
     sendMessage("PLAY_AGAIN");
     setGameState({
       otherPlayers: [],
@@ -406,6 +493,7 @@ export default function Blackjack({username}) {
       bust: false,
       gameOver: false,
       result: null,
+      balance: newBalance
     });
   }
 

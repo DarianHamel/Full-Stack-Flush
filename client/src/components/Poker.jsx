@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../design/Poker.css";
 import { Link, useNavigate } from "react-router-dom";
 import Card from "./Card.jsx";
@@ -19,6 +19,7 @@ const Poker = ({ username }) => {
   const [targetScore, setTargetScore] = useState(0);
   const [difficultySelected, setDifficultySelected] = useState(false); // for resetting difficulty select after game ends
   const [betAmount, setBetAmount] = useState(0);
+  const [balance, setBalance] = useState(0); // Add this state
   // all the limits tracking stuff like how blackjack implements it
   const [timeLimit, setTimeLimit] = useState(0);
   const [moneyLimit, setMoneyLimit] = useState(0);
@@ -30,6 +31,9 @@ const Poker = ({ username }) => {
   const [winnings, setWinnings] = useState(0); //Used on the game over screen to display winning or losses
   const [startTime, setStartTime] = useState(-1);
   const navigate = useNavigate();
+  const musicRef = useRef(null);
+  const shuffleSoundRef = useRef(null);
+  const cardSoundRef = useRef(null);
   console.log(username);
   const HAND_SCORE_TIMER = 2000; //How long the scored hand is displayed on-screen
 
@@ -41,7 +45,106 @@ const Poker = ({ username }) => {
   useEffect(() => {
     checkAndResetDailyValues(username);
     getUserLimits(username);
+
+    // Fetch the user's balance
+    const fetchBalance = async () => {
+      const userBalance = await fetchUserBalance(username);
+      if (userBalance !== null) {
+        setBalance(userBalance);
+      }
+    };
+
+    fetchBalance();
   }, [username]);
+
+  /*
+  Play the background music when the component mounts
+  Pause the music when the component unmounts
+  */
+  useEffect(() => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip audio functionality during tests
+    }
+
+    const backgroundMusic = new Audio("/audio/poker_music.wav"); // Create a new Audio instance
+    backgroundMusic.loop = true; // Enable looping
+    backgroundMusic.play().catch((error) => {
+      console.error("Error playing background music:", error);
+    });
+
+    const fadeOutMusic = () => {
+      let fadeInterval = setInterval(() => {
+        if (backgroundMusic.volume > 0.05) {
+          backgroundMusic.volume -= 0.05;
+        } else {
+          clearInterval(fadeInterval);
+          backgroundMusic.pause(); // Pause the music when volume reaches 0
+          backgroundMusic.currentTime = 0;
+        }
+      }
+      , 100); // Decrease volume every 100ms
+    };
+
+    return () => {
+      fadeOutMusic(); 
+    };
+  }, []);
+
+   /*
+  Play the shuffle sound effect
+   */
+   const playShuffleSound = () => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip shuffle sound during tests
+    }
+
+    const shuffleSound = new Audio("/audio/shuffle.wav"); // Create a new Audio instance
+    shuffleSound.play().catch((error) => {
+      console.error("Error playing shuffle sound:", error);
+    });
+  };
+
+  /*
+  Play the card sound effect
+  */
+  const playCardSound = () => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip card sound during tests
+    }
+
+    const cardSound = new Audio("/audio/card.mp3"); // Create a new Audio instance
+    cardSound.play().catch((error) => {
+      console.error("Error playing card sound:", error);
+    });
+  };
+
+  /*
+  Play the win sound effect
+  */
+  const playWinSound = () => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip win sound during tests
+    }
+
+    const winSound = new Audio("/audio/win.wav"); // Create a new Audio instance
+    winSound.play().catch((error) => {
+      console.error("Error playing win sound:", error);
+    });
+  };
+
+  /*
+  Play the lose sound effect
+  */
+  const playLoseSound = () => {
+    if (process.env.NODE_ENV === "test") {
+      return; // Skip lose sound during tests
+    }
+
+    const loseSound = new Audio("/audio/lose.mp3"); // Create a new Audio instance
+    loseSound.play().catch((error) => {
+      console.error("Error playing lose sound:", error);
+    });
+  };
 
   /*
   Get the limits of the user (on page launch)
@@ -120,6 +223,8 @@ const Poker = ({ username }) => {
       }),
     });
 
+    playShuffleSound();
+
     const response = await fetch("http://localhost:5050/poker/start", {
       method: "POST",
       headers: {
@@ -131,6 +236,9 @@ const Poker = ({ username }) => {
     const data = await response.json();
     console.log("Start Game Response:", data); // Debugging
 
+    setBetAmount(betAmount);
+    setMoneySpent(moneySpent + betAmount);
+    setBalance(balance-betAmount);
     setgameID(data.gameID);
     setPlayerHand(data.playerHand);
     setHandsRemaining(data.handsRemaining || 0);
@@ -142,29 +250,6 @@ const Poker = ({ username }) => {
     setTargetScore(data.targetScore);
     setStartTime(Date.now());
     console.log("Set startTime: ", startTime);
-
-     // Update money spent on the backend
-     try {
-      const response = await fetch("http://localhost:5050/update-money-spent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          moneySpent: betAmount,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setMoneySpent(data.updatedDailyMoneySpent); // Update the frontend with the backend's value
-      } else {
-        console.error("Failed to update money spent:", data.message);
-      }
-    } catch (error) {
-      console.error("Error updating money spent on the backend:", error);
-    }
 
     const game = "Poker";
     const transaction = await fetch("http://localhost:5050/handleTransaction", {
@@ -188,6 +273,7 @@ const Poker = ({ username }) => {
   Adds the selected card to the array of selected cards if there is room (max 5)
   */
   const handleCardClick = (card) => {
+    playCardSound();
     setSelectedCards((prevSelectedCards) => {
       const isSelected = prevSelectedCards.some(
         (selectedCard) => selectedCard.rank === card.rank && selectedCard.suit === card.suit
@@ -233,6 +319,7 @@ const Poker = ({ username }) => {
     const response = await fetch(`http://localhost:5050/poker/draw?gameID=${gameID}&count=${selectedCards.length}`,);
 
     const data = await response.json();
+    playShuffleSound();
 
     setPlayerHand([...remainingCards, ...data.newCards]);
     setSelectedCards([]);
@@ -259,6 +346,7 @@ const Poker = ({ username }) => {
           hand: playerHand
         }),
       });
+      playShuffleSound();
 
       const data = await response.json();
       setPlayerHand(data.sortedHand);
@@ -308,6 +396,7 @@ const Poker = ({ username }) => {
         await updateTimeSpent(username, timeSpent);
 
         const data = await response.json();
+        playShuffleSound();
 
         if (data.handsRemaining === 0) {
           const finalScore = data.currentScore;
@@ -325,6 +414,8 @@ const Poker = ({ username }) => {
             console.log(winnings);
 
             if (gameResult) {
+              playWinSound();
+              setBalance(balance + winnings);
               const balanceResponse = await fetch("http://localhost:5050/update-balance-no-password", {
                 method: "POST",
                 headers: {
@@ -341,13 +432,12 @@ const Poker = ({ username }) => {
               if (!balanceData.success) {
                 alert(balanceData.message);
               } else {
-                //alert(`You won $${winnings}`);
                 setWinnings(winnings);
               }
             } 
             else {
+                playLoseSound();
                 setWinnings(betAmount);
-                //alert(`You lost $${betAmount}`);
               }
 
             // Update stats in the backend
@@ -469,6 +559,9 @@ const Poker = ({ username }) => {
           {!gameStarted && (
             <>
               <h1>♠️ Poker Minigame ♥️</h1>
+              <div className="balance-display">
+                Current Balance: ${balance}
+              </div>
               <p>Welcome to the Poker Minigame! Select a difficulty and place your bet to begin.</p>
               <div className="difficulty-selection">
                 <label htmlFor="difficulty">Select Difficulty:</label>
@@ -514,42 +607,59 @@ const Poker = ({ username }) => {
               </div>
             </>
           )}
-          {gameStarted && !gameOver && (
+          {gameStarted && (
             <>
-              <h1>Your Hand</h1>
-              <div className="hand">{renderHand(playerHand)}</div>
-              <div className="poker-score-container">
-                <h2>Current Score: {currentScore}</h2>
-                <h2>Target Score: {targetScore}</h2>
+              <div className="balance-display">
+                Current Balance: ${balance}
               </div>
-              <p>Hands Remaining: {handsRemaining}</p>
-              <p>Discards Remaining: {discardsRemaining}</p>
-            </>
-          )}
-          {gameOver && (
-            <>
-              <h1>Game Over!</h1>
-              <p>Your final score: {currentScore}</p>
-              {currentScore >= targetScore ? (
-                <p>Congratulations! You won ${winnings}!</p>
-              ) : (
-                <p>Sorry, you lost ${winnings}. <br></br>Better luck next time!</p>
+              <div className="bet-display">
+                Current Bet: ${betAmount}
+              </div>
+              {!gameOver && (
+                <>
+                  <h1>Your Hand</h1>
+                  <div className="hand">{renderHand(playerHand)}</div>
+                  <div className="poker-score-container">
+                    <h2>Current Score: {currentScore}</h2>
+                    <h2>Target Score: {targetScore}</h2>
+                  </div>
+                  <p>Hands Remaining: {handsRemaining}</p>
+                  <p>Discards Remaining: {discardsRemaining}</p>
+                </>
               )}
-              <button
-                onClick={() => {
-                  setGameOver(false);
-                  setGameStarted(false);
-                  setDifficultySelected(false);
-                  setPlayerHand([]);
-                  setCurrentScore(0);
-                  setHandsRemaining(0);
-                  setDiscardsRemaining(0);
-                  setSelectedCards([]); 
-                }}
-                className="start-game"
-              >
-                End Game
-              </button>
+              {gameOver && (
+                <>
+                  <h1>Game Over!</h1>
+                  <p>Your final score: {currentScore}</p>
+                  {currentScore >= targetScore ? (
+                    <p>Congratulations! You won ${winnings}!</p>
+                  ) : (
+                    <p>Sorry, you lost ${winnings}. <br></br>Better luck next time!</p>
+                  )}
+                  <button
+                    onClick={async () => {
+                      setGameOver(false);
+                      setGameStarted(false);
+                      setDifficultySelected(false);
+                      setPlayerHand([]);
+                      setCurrentScore(0);
+                      setHandsRemaining(0);
+                      setDiscardsRemaining(0);
+                      setSelectedCards([]);
+                      setBetAmount(0);
+
+                      // Fetch the updated balance
+                      const updatedBalance = await fetchUserBalance(username);
+                      if (updatedBalance !== null) {
+                        setBalance(updatedBalance);
+                      }
+                    }}
+                    className="start-game"
+                  >
+                    End Game
+                  </button>
+                </>
+              )}
             </>
           )}
         </div>
