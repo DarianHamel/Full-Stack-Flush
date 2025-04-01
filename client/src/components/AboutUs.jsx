@@ -2,7 +2,7 @@ import React from "react";
 import "../design/AboutUs.css";
 
 const teamMembers = [
-  { name: "Mateo DeSousa", role: "Full Stack Developer", photo: "/images/piplup.webp" },
+  { name: "Mateo DeSousa", role: "Full Stack Developer", photo: "/images/mateo.jpg" },
   { name: "Kaye Mendoza", role: "Full Stack Developer", photo: "/images/kaye.png" },
   { name: "Darian Hamel", role: "Full Stack Developer", photo: "/images/darian.png" },
   { name: "Prashant Nigam", role: "Full Stack Developer", photo: "/images/prash.png" },
