@@ -62,7 +62,7 @@ describe("Stats Component", () => {
       expect(screen.getByText("120 Minutes")).toBeInTheDocument(); // timeSpent in minutes
       expect(screen.getByText("10")).toBeInTheDocument(); // wins
       expect(screen.getByText("5")).toBeInTheDocument(); // losses
-      expect(screen.getByText("0.67")).toBeInTheDocument(); // win/loss ratio
+      expect(screen.getByText("2.00")).toBeInTheDocument(); // win/loss ratio
     });
   });
 
