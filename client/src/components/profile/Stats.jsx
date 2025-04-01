@@ -45,7 +45,7 @@ const Stats = () => {
   */
   useEffect(() => {
     if (wins + losses > 0) {
-      setRatio((wins / (wins + losses)));
+      setRatio((wins / losses));
     }
   }, [wins, losses]);
 

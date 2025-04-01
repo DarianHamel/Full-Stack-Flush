@@ -2,12 +2,12 @@ import React from "react";
 import "../design/AboutUs.css";
 
 const teamMembers = [
-  { name: "Mateo DeSousa", role: "Full Stack Developer" },
-  { name: "Kaye Mendoza", role: "Full Stack Developer" },
-  { name: "Darian Hamel", role: "Full Stack Developer" },
-  { name: "Prashant Nigam", role: "Full Stack Developer" },
-  { name: "Scott Barrett", role: "Full Stack Developer" },
-  { name: "Chineze Obi", role: "Full Stack Developer" },
+  { name: "Mateo DeSousa", role: "Full Stack Developer", photo: "/images/mateo.jpg" },
+  { name: "Kaye Mendoza", role: "Full Stack Developer", photo: "/images/kaye.png" },
+  { name: "Darian Hamel", role: "Full Stack Developer", photo: "/images/darian.png" },
+  { name: "Prashant Nigam", role: "Full Stack Developer", photo: "/images/prash.png" },
+  { name: "Scott Barrett", role: "Full Stack Developer", photo: "/images/scott.webp"},
+  { name: "Chineze Obi", role: "Full Stack Developer", photo: "/images/chineze.png" },
 ];
 
 const AboutUs = () => {
@@ -41,7 +41,11 @@ const AboutUs = () => {
                 <div className="team-grid">
                     {teamMembers.map((member, index) => (
                     <div key={index} className="team-card">
-                        <div className="team-photo" />
+                        <img
+                          src={member.photo}
+                          alt={`${member.name}'s photo`}
+                          className="team-photo"
+                        />
                         <div className="team-name">{member.name}</div>
                         <div className="team-role">{member.role}</div>
                     </div>
