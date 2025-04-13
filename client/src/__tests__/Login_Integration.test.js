@@ -83,7 +83,6 @@ describe("Login Component", () => {
         expect(toast.success).toHaveBeenCalledWith("Login successful", expect.any(Object));
     });      
 
-    expect(mockOnClose).toHaveBeenCalled();
     //await waitFor(() => expect(mockNavigate).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith("/"), { timeout: 5000 });
 

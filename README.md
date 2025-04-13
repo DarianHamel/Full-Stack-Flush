@@ -26,7 +26,28 @@
 
 ## How to Run
 
-### Installation & Setup
+### Using Docker Hub (Option 1 - No running tests)
+
+1. **Pull the Docker image**
+
+   ```bash
+   docker pull realprash/fullstackflush
+   ```
+
+2. **Run the docker image**
+
+   ```bash
+   docker run -p 5173:5173 -p 5050:5050 realprash/fullstackflush
+   ```
+
+3. **Access the Website**  
+
+   Once the docker image is running, open your browser and go to:
+   ```
+   http://localhost:5173
+   ```
+
+### Normal Installation & Setup (Option 2 - Includes running tests)
 
 1. **Clone or Download the Repository**  
 

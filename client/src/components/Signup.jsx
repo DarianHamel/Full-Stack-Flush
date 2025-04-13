@@ -59,19 +59,19 @@ const Signup = ({ show, onClose, setShowLogin }) => {
       );
       const { success, message } = data;
       if (success) {
-        handleSuccess(message);
+        handleSuccess(message || "Registration successful!");
         setTimeout(() => {
           onClose();
           navigate("/");
         }, 500);
       } else {
-        handleError(message);
+        handleError(message || "Registration failed. Please try again.");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      handleError(error.response?.data?.message || "An error occurred. Please try again.");
     }
     setInputValue({
-      ...inputValue,
       password: "",
       username: "",
     });

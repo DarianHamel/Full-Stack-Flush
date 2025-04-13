@@ -60,20 +60,20 @@ const Login = ({ show, onClose, setShowSignup }) => {
       console.log(data);
       const { success, message } = data;
       if (success) {
-        handleSuccess(message);
-        onClose();
+        handleSuccess(message || "Login successful!");
         setTimeout(() => {
+          onClose();
           navigate("/");
-          window.location.reload(); 
+          window.location.reload();
         }, 1000);
       } else {
-        handleError(message);
+        handleError(message || "Login failed. Please try again.");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      handleError(error.response?.data?.message || "An error occurred. Please try again.");
     }
     setInputValue({
-      ...inputValue,
       username: "",
       password: "",
     });
